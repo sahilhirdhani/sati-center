@@ -5,7 +5,9 @@ export function gameState (players, config) {
         players: players.map(p => ({
             id: p.id,
             name: p.name,
-            hand: []
+            hand: [],
+            isActive: true,
+            position: null
         })),
         table: createTable(config.layoutMode),
         config,

@@ -2,7 +2,7 @@ export function createGameConfig ({
     playerCount,
     layoutMode
 }) {
-    const decks = playerCount < 5 ? 1 : 2;
+    const decks = playerCount <= 5 ? 1 : 2;
     return{
         playerCount,
         decks,
