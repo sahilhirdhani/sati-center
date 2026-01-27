@@ -13,8 +13,10 @@ function canPlayerTakeTurn (state, player) {
 }
 
 export function getStartingPlayer (state) {
+    // console.log(state)
     for (let i=0; i<state.players.length; i++) {
         const player = state.players[i];
+        // console.log(player)
         if(canPlayerTakeTurn(state, player)) {
             state.currentTurnIndex = i;
             return player;

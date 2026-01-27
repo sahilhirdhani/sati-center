@@ -11,35 +11,17 @@ function canPlace (card, pile) {
 export function getLegalMoves (hand, table, layoutMode) {
     const legal = []
 
-    // if(layoutMode === 'double-sets' || layoutMode === 'double-repeated') {
-    //     for (const card of hand) {
-    //         for (const key in table) {
-    //             if ( key.startsWith(card.suit) ){
-    //                 if (canPlace(card, table[key])) {
-    //                     legal.push({card, pileKey: key})
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     return legal
-    // }
-    // for (const card of hand) {
-    //     const pile = table[card.suit]
-    //     if (canPlace(card, pile)) {
-    //         legal.push({card, pileKey: card.suit})
-    //     }
-    // }
-
+    
     for (const card of hand) {
         if (card.value === 7) {
             for (const key in table) {
-                if (table[key].length === 0) {
+                if (table[key].length === 0 && key === card.suit) {
                     legal.push({card, pileKey: key})
                 }
             }
             continue;
         }
-
+        
         if(layoutMode === 'single'){
             const pile = table[card.suit]
             if(canPlace(card, pile)) {
@@ -47,7 +29,7 @@ export function getLegalMoves (hand, table, layoutMode) {
             }
             continue;
         }
-
+        
         for (const key in table) {
             if ( key.startsWith(card.suit) ){
                 if (canPlace(card, table[key])) {
@@ -56,6 +38,5 @@ export function getLegalMoves (hand, table, layoutMode) {
             }
         }
     }
-
     return legal
 }
