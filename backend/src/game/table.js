@@ -1,7 +1,7 @@
 import { LAYOUT_MODES } from "./config.js";
 
 export function createTable (layoutMode) {
-    if (layoutMode === LAYOUT_MODES.SINGLE) {
+    if (layoutMode === LAYOUT_MODES.SINGLE || layoutMode === LAYOUT_MODES.DOUBLE_REPEATED) {
         return {
             hearts: [],
             diamonds: [],

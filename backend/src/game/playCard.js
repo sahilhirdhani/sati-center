@@ -1,6 +1,7 @@
 import { getLegalMoves } from "./rules.js";
 import { finishPlayer } from "./gameAction.js";
 import { advanceTurn, getCurrentPlayer } from "./turnActions.js";
+import { add } from "./gameState.js";
 
 export function playCard(state, cardId, pileKey) {
     const player = getCurrentPlayer(state);
@@ -18,8 +19,8 @@ export function playCard(state, cardId, pileKey) {
     )
 
     if (!move) return false
-
-    state.table[pileKey].push(move.card)
+    
+    add(state.table, pileKey, move.card);
 
     player.hand = player.hand.filter(c => c.id !== cardId);
 

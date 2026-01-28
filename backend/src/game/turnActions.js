@@ -28,9 +28,11 @@ export function getStartingPlayer (state) {
 
 export function advanceTurn(state) {
     const total = state.players.length;
-
+    
+    // console.log("previous turn: ", state.players[state.currentTurnIndex].name)
     while (true) {
         state.currentTurnIndex = (state.currentTurnIndex + 1) % total;
+        // console.log("this turn: ", state.players[state.currentTurnIndex].name)
         const player = state.players[state.currentTurnIndex];
         if(canPlayerTakeTurn(state, player)) {
             return player;

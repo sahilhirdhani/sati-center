@@ -6,9 +6,12 @@ export function dealCards(deck, players) {
     let index = 0
 
     while( deck.length ) {
-        const a = deck.pop()
-        // console.log(a)
-        players[index%players.length].hand.push(a)
+        players[index%players.length].hand.push(deck.pop())
         index++
     }
+
+    players.forEach(p => {
+        p.hand.sort((a, b) => a.suit.localeCompare(b.suit) || a.value - b.value);
+    });
+
 }

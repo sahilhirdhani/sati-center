@@ -1,150 +1,100 @@
-// import Player from "./player.js";
-// import { createGameConfig } from "./config.js";
-// import { createDeck } from "./deck.js";
-// import { shuffle } from "./shuffle.js";
-// import { dealCards } from "./deal.js";
-// import { createGameState } from "./gameState.js";
-// import { getStartingPlayer, getCurrentPlayerLegalMoves } from "./turnActions.js";
-// import { playCard } from "./playCard.js";
-// import { getLeaderboard } from "./gameAction.js";
-
-// // 1️⃣ Create players
-// const players = [
-//     new Player("p1", "Alice"),
-//     new Player("p2", "Bob"),
-//     new Player("p3", "Charlie")
-// ];
-
-// // 2️⃣ Game config
-// const config = createGameConfig({ playerCount: players.length });
-
-// // 3️⃣ Create & shuffle deck
-// let deck = createDeck(config.decks);
-// shuffle(deck);
-
-// // 4️⃣ Deal cards
-// dealCards(deck, players);
-
-// // 5️⃣ Initialize game state
-// const state = createGameState(players, config);
-// // 6️⃣ Pick starting player
-// getStartingPlayer(state);
-
-// // 7️⃣ Auto-play loop (random legal moves)
-// while (!state.winner) {
-//     const player = state.players[state.currentTurnIndex];
-//     const legalMoves = getCurrentPlayerLegalMoves(state);
-
-//     if (legalMoves.length === 0) {
-//         // Should never happen because 7 can always be played
-//         console.log(`${player.name} has no legal moves!`);
-//     } else {
-//         // pick a random legal move
-//         const move = legalMoves[Math.floor(Math.random() * legalMoves.length)];
-//         playCard(state, move.card.id, move.pileKey);
-//         console.log(`${player.name} plays ${move.card.suit}-${move.card.value} on ${move.pileKey}`);
-//     }
-// }
-
-// // 8️⃣ Show leaderboard
-// console.log("\n🏆 Game Over! Leaderboard:");
-// getLeaderboard(state).forEach(p => {
-//     console.log(`${p.position}. ${p.name}`);
-// });
-
-
 import readlineSync from "readline-sync";
 import Player from "./player.js";
-import { createGameConfig } from "./config.js";
-import { createDeck } from "./deck.js";
-import { shuffle } from "./shuffle.js";
-import { dealCards } from "./deal.js";
-import { createGameState } from "./gameState.js";
-import { getStartingPlayer, getCurrentPlayerLegalMoves } from "./turnActions.js";
+import { setupGame } from "./gameSetup.js";
+import { getCurrentPlayer, getCurrentPlayerLegalMoves } from "./turnActions.js";
 import { playCard } from "./playCard.js";
-import { getLeaderboard } from "./gameAction.js";
 
-// 1️⃣ Create players
-const players = [
-    new Player("p1", "Sahil"),
-    new Player("p2", "Abhinav"),
-    new Player("p3", "John")
-    // new Player("bot", "Bot")
-];
+// ----- Step 1: Initialize players ----- //
+// const humanPlayers = [new Player("P_id_1","Player 1"),new Player("P_id_2","Player 2"),new Player("P_id_3","Player 3")];
 
-// 2️⃣ Config for 3 players
-const config = createGameConfig({ playerCount: players.length });
+// Ask for number of human players (1-9)
+const numHumans = Math.min(
+  Math.max(parseInt(readlineSync.question("Number of human players (1-9)? ")), 1),
+  9
+);
 
-// 3️⃣ Deck creation & shuffle
-let deck = createDeck(config.decks);
-shuffle(deck);
-
-// 4️⃣ Deal cards
-dealCards(deck, players);
-
-// 5️⃣ Initialize game state
-const state = createGameState(players, config);
-
-// 6️⃣ Pick starting player
-getStartingPlayer(state);
-
-// console.log(state.table)
-// Helper to print table
-function printTable(table) {
-    console.log("\nCurrent Table:");
-    for (const key in table) {
-        const pile = table[key];
-        pile.sort((a, b) => a.value - b.value);
-        const str = pile.map(c => `${c.suit[0]}${c.value}`).join(", ");
-        console.log(`${key}: ${str}`);
-    }
-    console.log("");
+for (let i = 1; i <= numHumans; i++) {
+  const name = readlineSync.question(`Enter name for Player ${i}: `);
+  humanPlayers.push(new Player(`p${i}`, name));
 }
 
-// 7️⃣ Game loop
+// ----- Step 2: Setup game ----- //
+const state = setupGame(humanPlayers, {layoutMode: "double-repeated"});
+
+// ----- Helper: print table ----- //
+function printTable(table) {
+  console.log("\nCurrent Table:");
+  for (const key in table) {
+    const pile = table[key];
+    const str = pile
+      .slice()
+    //   .sort((a, b) => a.value - b.value)
+      .map(c => `${c.suit[0]}${c.value}`)
+      .join(", ");
+    console.log(`${key}: ${str}`);
+  }
+  console.log("");
+}
+
+// ----- Helper: print hand ----- //
+function printHand(player) {
+  console.log(`${player.name}'s hand:`);
+  player.hand.forEach((c, idx) => {
+    console.log(`${idx + 1}: ${c.suit}-${c.value}`);
+  });
+}
+
+// ----- Step 3: Play loop ----- //
 while (!state.winner) {
-    const player = state.players[state.currentTurnIndex];
+    const player = getCurrentPlayer(state);
+
+    if (!player.isActive) continue; // safety
+
     const legalMoves = getCurrentPlayerLegalMoves(state);
 
-    printTable(state.table);
+    // ✅ AUTO-SKIP IF NO LEGAL MOVES
+    if (legalMoves.length === 0) {
+        console.log(`\n${player.name} has no legal moves. Skipping turn.`);
+        continue;
+    }
 
-    if (player.id === "bot" || player.id=== "bot2") {
-        // Bot chooses a random legal move
+    console.log(`\nIt's ${player.name}'s turn.`);
+    printTable(state.table);
+    printHand(player);
+    console.log("Legal moves:");
+    legalMoves.forEach((m, idx) => {
+        console.log(`${idx + 1}: ${m.card.suit}-${m.card.value} on ${m.pileKey}`);
+    });
+
+    if (player.isBot) {
+        // ----- BOT MOVE -----
         const move = legalMoves[Math.floor(Math.random() * legalMoves.length)];
         playCard(state, move.card.id, move.pileKey);
-        console.log(`Bot plays ${move.card.suit}-${move.card.value} on ${move.pileKey}`);
+        console.log(
+            `${player.name} plays ${move.card.suit}-${move.card.value} on ${move.pileKey}`
+        );
     } else {
-        // Human turn
-        console.log(`${player.name}'s hand:`);
-        player.hand.forEach((c, idx) => {
-            console.log(`${idx + 1}: ${c.suit}-${c.value}`);
-        });
+        // ----- HUMAN MOVE -----
+        const choice = parseInt(
+            readlineSync.question("Choose move number: ")
+        ) - 1;
 
-        // // Show legal moves indexes
-        // const legalIndexes = legalMoves.map(m => player.hand.findIndex(c => c.id === m.card.id));
-        // console.log(`Legal moves: ${legalIndexes.map(i => i + 1).join(", ")}`);
-
-        console.log(`${player.name}'s legal moves:`);
-        legalMoves.forEach((m, idx) => {
-            console.log(`${idx + 1}: ${m.card.suit}-${m.card.value} on ${m.pileKey}`);
-        });
-
-        // Ask player for choice
-        let choice;
-        while (true) {
-            choice = readlineSync.questionInt("Choose card number to play: ");
-            if (choice >= 1 && choice <= legalMoves.length) break;
-            console.log("Invalid choice, pick a legal card!");
+        if (choice >= 0 && choice < legalMoves.length) {
+            const move = legalMoves[choice];
+            playCard(state, move.card.id, move.pileKey);
+            console.log(
+                `${player.name} plays ${move.card.suit}-${move.card.value} on ${move.pileKey}`
+            );
+        } else {
+            console.log("Invalid choice. Turn skipped.");
         }
-
-        const move = legalMoves[choice - 1];
-        playCard(state, move.card.id, move.pileKey);
-        console.log(`${player.name} plays ${move.card.suit}-${move.card.value} on ${move.pileKey}`);
     }
 }
 
-// 8️⃣ Show leaderboard
-console.log("\n🏆 Game Over! Leaderboard:");
-getLeaderboard(state).forEach(p => {
-    console.log(`${p.position}. ${p.name}`);
-});
+// ----- Step 4: Game finished ----- //
+console.log("\nGame Over!\nLeaderboard:");
+state.finishedPlayers
+  .sort((a, b) => a.position - b.position)
+  .forEach(p => {
+    console.log(`${p.position}: ${p.name}`);
+  });
