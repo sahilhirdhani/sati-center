@@ -11,7 +11,8 @@ export function playCard(state, cardId, pileKey) {
     const legalMoves = getLegalMoves(
         player.hand, 
         state.table,
-        state.config.layoutMode
+        state.config.layoutMode,
+        state.cheat
     );
 
     const move = legalMoves.find(

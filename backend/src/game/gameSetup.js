@@ -54,7 +54,7 @@ export function setupGame(players, opotions = {}) {
 
     const deck =  createDeck(config.decks);
     
-    const state = createGameState(players, config)
+    const state = createGameState(players, config, opotions.cheat)
     
     const initialSeven = extractRandomSeven(deck);
 

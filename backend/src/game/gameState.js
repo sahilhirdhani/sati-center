@@ -1,6 +1,6 @@
 import { createTable } from "./table.js";
 
-export function createGameState (players, config) {
+export function createGameState (players, config, cheat) {
     return {
         players: players.map(p => ({
             id: p.id,
@@ -15,7 +15,8 @@ export function createGameState (players, config) {
         currentTurnIndex: 0,
         started: false,
         finishedPlayers: [],
-        winner: null
+        winner: null,
+        cheat: cheat
     }
 }
 

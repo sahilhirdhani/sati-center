@@ -19,7 +19,7 @@ for (let i = 1; i <= numHumans; i++) {
 }
 
 // ----- Step 2: Setup game ----- //
-const state = setupGame(humanPlayers, {layoutMode: "double-repeated"});
+const state = setupGame(humanPlayers, {layoutMode: "double-repeated", cheats: "OFF"});
 
 // ----- Helper: print table ----- //
 function printTable(table) {
@@ -80,6 +80,9 @@ while (!state.winner) {
         ) - 1;
 
         if (choice >= 0 && choice < legalMoves.length) {
+          if(state.cheat === "ON" && choice === 0){
+            continue;
+          }
             const move = legalMoves[choice];
             playCard(state, move.card.id, move.pileKey);
             console.log(

@@ -44,9 +44,11 @@ function canPlace (card, pile, layoutMode) {
     }
 }
 
-export function getLegalMoves (hand, table, layoutMode) {
+export function getLegalMoves (hand, table, layoutMode, cheat) {
     const legal = []
-
+    if(cheat==='ON'){
+        legal=["skip"]
+    }
     if(layoutMode === 'single'){
         for (const card of hand){
             if(card.value ===7){
