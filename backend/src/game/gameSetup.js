@@ -43,18 +43,18 @@ function placeInitialSeven(table, card, layoutMode) {
     }
 }
 
-export function setupGame(players, opotions = {}) {
+export function setupGame(players, layoutMode, cheatsEnabled) {
 
     players = ensureMinimumPlayers(players);
 
     const config = createGameConfig({
         playerCount: players.length,
-        layoutMode: opotions.layoutMode // ignored for <=5 players
+        layoutMode: layoutMode
     });
 
     const deck =  createDeck(config.decks);
     
-    const state = createGameState(players, config, opotions.cheat)
+    const state = createGameState(players, config, cheatsEnabled)
     
     const initialSeven = extractRandomSeven(deck);
 

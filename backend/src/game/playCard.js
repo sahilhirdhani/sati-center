@@ -12,7 +12,7 @@ export function playCard(state, cardId, pileKey) {
         player.hand, 
         state.table,
         state.config.layoutMode,
-        state.cheat
+        state.cheatsEnabled
     );
 
     const move = legalMoves.find(

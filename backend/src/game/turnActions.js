@@ -1,3 +1,4 @@
+import { remove } from "./gameState.js";
 import { getLegalMoves } from "./rules.js";
 
 function canPlayerTakeTurn (state, player) {
@@ -43,12 +44,21 @@ export function getCurrentPlayer(state) {
     return state.players[state.currentTurnIndex];
 }
 
-export function getCurrentPlayerLegalMoves(state) {
-    const player = getCurrentPlayer(state);
-    return getLegalMoves(
-        player.hand, 
-        state.table,
-        state.config.layoutMode,
-        state.cheat
-    );
+export function rollback(state, playedMoves){
+    const lastMove = playedMoves.pop()
+    state.currentTurnIndex = lastMove.lastPlayer.slice(-1)-1
+        
+    // console.log("state.currentTurnIndex: ",state.currentTurnIndex)
+    // console.log("lastMove.lastPlayer: ",lastMove.lastPlayer)
+
+    const player = getCurrentPlayer(state)
+    // console.log(player.name, ": player.name")
+    
+    player.hand.push(lastMove.card)
+    // ************* using binary find the perfect position for inserting *************************
+    
+    if(lastMove.card === "skip"){
+        return;
+    }
+    remove(state.table, lastMove.pileKey, lastMove.card)
 }

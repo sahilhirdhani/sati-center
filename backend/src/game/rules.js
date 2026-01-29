@@ -6,10 +6,10 @@ function canPlace (card, pile, layoutMode) {
     
     if(layoutMode === 'double-repeated'){
         if(card.value === 7) return true
-        if(pile.length===1){
+        if(len===1){
             return card.value === 8 || card.value === 6
         }
-        else if(pile.length === 2){
+        else if(len === 2){
             if(pile[1].value === 8 && pile[0].value === 7){
                 return card.value === 8 || card.value === 7
             }
@@ -33,22 +33,14 @@ function canPlace (card, pile, layoutMode) {
         if(min+1 === pile[1].value){
             return card.value === min
         }
-
-        
-        // if (max === pile[len-2].value || min === pile[1].value || max-1 === pile[len-2].value || min+1 === pile[1].value) {
-        //     return card.value === max +1 || card.value === min -1 || card.value === max || card.value === min
-        // }
     }
     else{
         return card.value === max +1 || card.value === min -1
     }
 }
 
-export function getLegalMoves (hand, table, layoutMode, cheat) {
+export function getLegalMoves (hand, table, layoutMode, cheatsEnabled) {
     const legal = []
-    if(cheat==='ON'){
-        legal=["skip"]
-    }
     if(layoutMode === 'single'){
         for (const card of hand){
             if(card.value ===7){
@@ -61,6 +53,7 @@ export function getLegalMoves (hand, table, layoutMode, cheat) {
             }
             else{
                 const pile = table[card.suit]
+
                 if(canPlace(card, pile, layoutMode)) {
                     legal.push({ card, pileKey: card.suit})
                 }
@@ -68,7 +61,6 @@ export function getLegalMoves (hand, table, layoutMode, cheat) {
 
         }
     }
-
     else if(layoutMode === 'double-repeated'){
         for(const card of hand){
             if(card.value ===7) {
@@ -111,6 +103,9 @@ export function getLegalMoves (hand, table, layoutMode, cheat) {
             }
         }
     }
-    // console.log(legal)
+    if(cheatsEnabled){
+        legal.unshift({card:"Skip", pileKey: "Skip"})
+        legal.push({card:"Rollback", pileKey:"Rollback"})
+    }
     return legal
 }
