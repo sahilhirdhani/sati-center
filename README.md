@@ -1,4 +1,4 @@
-# Sati Center – Game Engine
+# Satti Center – Game Engine
 
 A deterministic, rule-locked multiplayer card game engine built to support console play, REST APIs, WebSockets, and UI clients **without changing core logic**.
 
