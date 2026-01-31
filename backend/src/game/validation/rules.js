@@ -63,9 +63,9 @@ export function getLegalMoves (hand, table, layoutMode, cheatsEnabled) {
     }
     else if(layoutMode === 'double-repeated'){
         for(const card of hand){
-            if(card.value ===7) {
+            if(card.value === 7) {
                 for (const key in table) {
-                    if(card.suit === key && (table[key].length === 0 || table[key].length ===1)){
+                    if(card.suit === key /*&& (table[key].length === 0 || table[key].length ===1)*/){
                         legal.push({card, pileKey: key})
                         break;
                     }

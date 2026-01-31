@@ -1,4 +1,4 @@
-import { LAYOUT_MODES } from "./config.js";
+import { LAYOUT_MODES } from "../core/config.js";
 
 export function createTable (layoutMode) {
     if (layoutMode === LAYOUT_MODES.SINGLE || layoutMode === LAYOUT_MODES.DOUBLE_REPEATED) {

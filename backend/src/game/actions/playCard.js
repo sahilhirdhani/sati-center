@@ -1,7 +1,7 @@
-import { getLegalMoves } from "./rules.js";
+import { getLegalMoves } from "../validation/rules.js";
 import { finishPlayer } from "./gameAction.js";
-import { advanceTurn, getCurrentPlayer } from "./turnActions.js";
-import { add } from "./gameState.js";
+import { advanceTurn, getCurrentPlayer } from "../core/turnActions.js";
+import { add } from "../state/gameState.js";
 
 export function playCard(state, cardId, pileKey) {
     const player = getCurrentPlayer(state);

@@ -1,0 +1,5 @@
+export const ACTIONS = {
+    PLAY_CARD: "PLAY_CARD",
+    SKIP_TURN: "SKIP_TURN",
+    ROLLBACK_MOVE: "ROLLBACK_MOVE"
+}

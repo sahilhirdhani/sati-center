@@ -1,5 +1,5 @@
-import { remove } from "./gameState.js";
-import { getLegalMoves } from "./rules.js";
+import { remove } from "../state/gameState.js";
+import { getLegalMoves } from "../validation/rules.js";
 
 function canPlayerTakeTurn (state, player) {
     if(!player.isActive) return false;
@@ -55,7 +55,7 @@ export function rollback(state, playedMoves){
     // console.log(player.name, ": player.name")
     
     player.hand.push(lastMove.card)
-    // ************* using binary find the perfect position for inserting *************************
+    // ************************* using binary find the perfect position for inserting *************************
     
     if(lastMove.card === "skip"){
         return;

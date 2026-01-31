@@ -1,3 +1,5 @@
+import { ACTIONS } from "./actionTypes.js";
+
 export function finishPlayer(state, playerId) {
     const player = state.players.find(p => p.id === playerId);
     
@@ -10,6 +12,27 @@ export function finishPlayer(state, playerId) {
 
     if(state.finishedPlayers.length === state.players.length) {
         endGame(state);
+    }
+}
+
+export function buildAction(player, move){
+    if(move.card === "Skip"){
+        return{
+            type: ACTIONS.SKIP_TURN,
+            playerId: player.id
+        }
+    }
+    else if(move.card === "Rollback"){
+        return{
+            type: ACTIONS.ROLLBACK_MOVE,
+            playerId: player.id
+        }
+    }
+    return {
+        type: ACTIONS.PLAY_CARD,
+        playerId: player.id,
+        cardId: move.card.id,
+        pileKey: move.pileKey
     }
 }
 

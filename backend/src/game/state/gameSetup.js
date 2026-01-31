@@ -1,9 +1,9 @@
-import { createGameConfig } from "./config.js";
-import { dealCards } from "./deal.js";
-import { createDeck } from "./deck.js";
+import { createGameConfig } from "../core/config.js";
+import { dealCards } from "../core/deal.js";
+import { shuffle } from "../core/shuffle.js";
+import { createDeck } from "../models/deck.js";
+import Player from "../models/player.js";
 import { createGameState } from "./gameState.js";
-import Player from "./player.js";
-import { shuffle } from "./shuffle.js";
 
 const MIN_PLAYERS = 3;
 
@@ -16,7 +16,6 @@ function ensureMinimumPlayers(players) {
     }
     return players;
 }
-
 
 function extractRandomSeven(deck) {
     const sevens = deck.filter(card => card.value === 7)
@@ -49,22 +48,20 @@ export function setupGame(players, layoutMode, cheatsEnabled) {
 
     const config = createGameConfig({
         playerCount: players.length,
-        layoutMode: layoutMode
+        layoutMode
     });
 
-    const deck =  createDeck(config.decks);
-    
-    const state = createGameState(players, config, cheatsEnabled)
-    
+    const deck = createDeck(config.decks);
+    shuffle(deck);
+
+    const state = createGameState(players, config, cheatsEnabled);
+
     const initialSeven = extractRandomSeven(deck);
 
     placeInitialSeven(state.table, initialSeven, config.layoutMode);
 
-    shuffle(deck)
-
     dealCards(deck, state.players);
 
     state.started = true;
-
     return state;
 }
