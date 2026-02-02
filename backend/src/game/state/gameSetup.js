@@ -1,6 +1,7 @@
 import { createGameConfig } from "../core/config.js";
 import { dealCards } from "../core/deal.js";
 import { shuffle } from "../core/shuffle.js";
+import { getStartingPlayer } from "../core/turnActions.js";
 import { createDeck } from "../models/deck.js";
 import Player from "../models/player.js";
 import { createGameState } from "./gameState.js";
@@ -63,5 +64,7 @@ export function setupGame(players, layoutMode, cheatsEnabled) {
     dealCards(deck, state.players);
 
     state.started = true;
+
+    getStartingPlayer(state)
     return state;
 }
