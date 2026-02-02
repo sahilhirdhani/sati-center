@@ -8,6 +8,7 @@ import { validateActions } from "../../game/validation/turnValidator.js";
 import { getPlayerView } from "../../game/views/playerViews.js";
 import { getSpectatorView } from "../../game/views/spectatorView.js";
 import { buildAction } from "../../game/actions/gameAction.js";
+import { pickBotMove } from "../../game/bot/botAction.js";
 
 // ----- Helper: print table ----- //
 function printTable(table) {
@@ -67,7 +68,8 @@ export function runGame(players, layoutMode, cheatsEnabled) {
         // BOT MOVES
 
         if(player.isBot){
-            move = view.legalMoves[Math.floor(Math.random() * view.legalMoves.length)];
+            move = pickBotMove(legalMoves)
+            // move = view.legalMoves[Math.floor(Math.random() * view.legalMoves.length)];
             // continue;
         }
         
