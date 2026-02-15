@@ -40,6 +40,15 @@ export function getStartingPlayer (state) {
         const player = state.players[i];
         // console.log(player)
         if(canPlayerTakeTurn(state, player)) {
+            if(player.id.startsWith('bot')){
+                const legalMoves = getLegalMoves(
+                    player.hand,
+                    state.table,
+                    state.config.layoutMode
+                )
+                const action = buildAction(player, pickBotMove(legalMoves))
+                dispatchAction(state, action)
+            }
             state.currentTurnIndex = i;
             return player;
         }
