@@ -8,6 +8,14 @@ import { createGameState } from "./gameState.js";
 
 const MIN_PLAYERS = 3;
 
+function buildPlayer(players) {
+    for(let i=0; i < players.length; i++){
+        players[i] = new Player(players[i].id, players[i].name)
+        console.log("\n\nPlayer after ini: ", players[i])
+    }
+    return players
+}
+
 function ensureMinimumPlayers(players) {
     let botCount = 1;
 
@@ -44,7 +52,9 @@ function placeInitialSeven(table, card, layoutMode) {
 }
 
 export function setupGame(players, layoutMode, cheatsEnabled) {
-
+    
+    players = buildPlayer(players)
+    
     players = ensureMinimumPlayers(players);
 
     const config = createGameConfig({
