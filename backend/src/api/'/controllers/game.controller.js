@@ -4,6 +4,7 @@ import { serializeState } from "../serializers/stateSerializer.js";
 import { validateAction } from "../../game/validation/validateAction.js";
 import { dispatchAction } from "../../game/actions/dispatchAction.js";
 import { pickBotMove } from "../../game/bot/botAction.js";
+import { broadcast } from "../ws/wsHub.js";
 
 export function createGameHandler(req, res) {
     const { players, config } = req.body;
@@ -52,6 +53,11 @@ export function actionHandler(req, res) {
     }
 
     dispatchAction(state, action)
+
+    broadcast(gameId, {
+        type: "STATE_UPDATE",
+        state: serializeState(state, "admin")
+    })
 
     res.json({
         ok: true,

@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { registerApi } from './api/index.js';
+// import { registerApi } from './api/'/index.js';
 
 
 const app = express();
@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
     res.send('Sati center backend running wild n free!!!');
 });
 
-registerApi(app);
+// registerApi(app);
 
 
 export default app;
