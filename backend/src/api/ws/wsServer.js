@@ -10,57 +10,6 @@ import { setupGame } from "../../game/state/gameSetup.js";
 export function setupWebSocket(server) {
     const wss = new WebSocketServer({ server, path: "/ws" })
 
-    // wss.on("connection", (ws, req) => {
-    //     const url = new URL(req.url, "http://localhost")
-
-    //     const gameId = url.searchParams.get("gameId")
-    //     const role = url.searchParams.get("role")
-    //     const playerId = url.searchParams.get("playerId")
-
-    //     if(!gameId || !role) {
-    //         ws.close();
-    //         return;
-    //     }
-
-    //     const state = getGame(gameId)
-    //     if (!state) {
-    //         ws.close();
-    //         return;
-    //     }
-
-    //     ws.gameId = gameId
-    //     ws.role = role
-    //     ws.playerId = playerId
-
-    //     addSocket(gameId, ws);
-
-    //     ws.send(JSON.stringify({
-    //         type: "STATE",
-    //         state: serializeState(state, role, playerId)
-    //     }))
-
-    //     ws.on("message", (data) => {
-    //         try {
-    //             const message = JSON.parse(data.toString())
-
-    //             if(message.type === "ACTION"){
-    //                 handleAction(ws, message.action)
-    //             }
-    //         }
-    //         catch (err) {
-    //             ws.send(JSON.stringify({
-    //                 type: "ERROR",
-    //                 error: `Invalid message format ${err}`
-    //             }))
-    //         }
-    //     })
-
-    //     ws.on("close", () => {
-    //         removeSocket(gameId, ws)
-    //     })
-
-    // })
-
     wss.on("connection", (ws) => {
         ws.on("message", (raw) => {
             try {
@@ -68,22 +17,18 @@ export function setupWebSocket(server) {
 
                 switch (msg.type) {
                     case "CREATE_GAME":
-                        console.log("CREATE game me")
                         handleCreateGame(ws, msg);
                         break;
                         
                     case "JOIN_GAME":
-                        console.log("JOIN game me")
                         handleJoinGame(ws, msg);
                         break;
 
                     case "START_GAME":
-                        console.log("START game me")
                         handleStartGame(ws);
                         break;
                         
                     case "ACTION":
-                        console.log("ACTION me")
                         handleAction(ws, msg.action);
                         break;
 
@@ -192,9 +137,6 @@ function handleStartGame(ws) {
     if(ws.role !== "admin")
         return sendError(ws, "only admin can start");
 
-    // if(game.players.size < 3)
-    //     return sendError(ws, "minimum 3 players required");
-
     const players = Array.from(game.players.values());
 
     game.state = setupGame(players, "single", false);
@@ -205,15 +147,6 @@ function handleStartGame(ws) {
 
 function handleAction(ws, action) {
     const {gameId, playerId} = ws;
-
-    // const state = getGame(gameId)
-    // if(!state) {
-    //     ws.send(JSON.stringify({
-    //         type: "ERROR",
-    //         error: "Game not found"
-    //     }))
-    //     return
-    // }
 
     const game = getGame(gameId);
     if(!game || game.phase !== "PLAYING")
