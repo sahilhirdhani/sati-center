@@ -1,12 +1,14 @@
+import { useGameStore } from "./store/useGameStore";
+import Landing from "./pages/Landing";
+import Lobby from "./pages/Lobby";
+import Game from "./pages/Game";
 
-import './App.css'
+export default function App() {
+  const screen = useGameStore(state => state.screen);
 
-function App() {
-    return (
-        <>
-            aer
-        </>
-    )
+  if (screen === "landing") return <Landing />;
+  if (screen === "lobby") return <Lobby />;
+  if (screen === "game") return <Game />;
+
+  return null;
 }
-
-export default App
