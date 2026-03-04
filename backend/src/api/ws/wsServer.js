@@ -18,7 +18,7 @@ export function setupWebSocket(server) {
                 switch (msg.type) {
                     case "CREATE_GAME":
                         handleCreateGame(ws, msg);
-                        break;
+                        // break;
                         
                     case "JOIN_GAME":
                         handleJoinGame(ws, msg);
@@ -62,20 +62,36 @@ export function setupWebSocket(server) {
 
 }
 
-function handleCreateGame(ws) {
+function handleCreateGame(ws, msg) {
+    const { name } = msg;
+
+    if(!name) return sendError(ws, "Name is required");
+
     const gameId = "1q";
     // const gameId = crypto.randomUUID();
     const game = createGame(gameId);
 
+    const playerId = crypto.randomUUID();
+
+    game.players.set(playerId, {
+        id: playerId,
+        name
+    })
+
     ws.gameId = gameId;
     ws.role = "admin"
+    ws.playerId = playerId;
 
     addSocket(gameId, ws)
 
     ws.send(JSON.stringify({
         type: "GAME_CREATED",
-        gameId
+        gameId,
+        playerId,
+        role: "admin"
     }))
+
+    broadcastLobby(gameId);
 }
 
 function handleJoinGame(ws, msg) {
@@ -85,18 +101,22 @@ function handleJoinGame(ws, msg) {
     const game = getGame(gameId);
 
     if(msg.playerId && game.players.has(msg.playerId)) {
-        ws.playerId = msg.playerId;
-        ws.role = "player";
-        ws.gameId = msg.gameId;
 
-        const player = game.players.get(msg.playerId);
-        player.disconnected = false;
+        const existingPlayer = game.players.get(msg.playerId);
+
+        ws.playerId = msg.playerId;
+        ws.gameId = msg.gameId;
+        ws.role = ws.role || "player";
+
+        // const player = game.players.get(msg.playerId);
+        existingPlayer.disconnected = false;
 
         addSocket(gameId, ws);
 
         ws.send(JSON.stringify({
             type: "RECONNECTED",
-            playerId: msg.playerId
+            playerId: msg.playerId,
+            role: ws.role
         }))
 
         broadcastState(gameId)
@@ -117,13 +137,16 @@ function handleJoinGame(ws, msg) {
 
     ws.gameId = gameId
     ws.playerId = playerId
-    ws.role = "player";
+    if(!ws.role){
+        ws.role = "player";
+    }
 
     addSocket(gameId, ws);
 
     ws.send(JSON.stringify({
         type: "JOINED",
-        playerId
+        playerId,
+        role: ws.role
     }))
 
     broadcastLobby(gameId)
