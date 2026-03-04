@@ -1,7 +1,7 @@
 let socket = null
 
 export function connect(onMessage) {
-    socket = new WebSocket("ws://https://satti-center.onrender.com/ws")
+    socket = new WebSocket("ws://satti-center.onrender.com/ws")
     // socket = new WebSocket("ws://localhost:5000/ws")
 
     socket.onopen = () => {
