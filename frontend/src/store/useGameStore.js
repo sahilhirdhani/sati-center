@@ -1,12 +1,13 @@
 import { create } from "zustand";
 import { connect, send, disconnect } from "../network/socket.js";
 
-const saveSession = (gameId, playerId, role, name) => {
+const saveSession = (gameId, playerId, role, name, screen) => {
     localStorage.setItem("satti_session", JSON.stringify({
         gameId,
         playerId,
         role,
-        name
+        name,
+        screen
     }))
 }
 
@@ -30,7 +31,30 @@ export const useGameStore = create((set,get) => ({
     screen: "landing",
 
     connectSocket: () => {
-        connect(get().handleMessage)
+        connect(
+            (msg) => get().handleMessage(msg),
+            () => get().attemptReconnect()
+        )
+    },
+    
+    attemptReconnect: () => {
+        const session = loadSession();
+        if(!session) return
+        console.log("Auto connecting")
+        set({
+            gameId: session.gameId,
+            playerId: session.playerId,
+            role: session.role,
+            name: session.name,
+            screen: "reconnecting"
+        })
+        send({
+            type: "JOIN_GAME",
+            gameId: session.gameId,
+            playerId: session.playerId,
+            role: session.role,
+            name: session.name
+        })
     },
 
     handleMessage: (msg) => {
@@ -42,7 +66,8 @@ export const useGameStore = create((set,get) => ({
                     msg.gameId,
                     msg.playerId,
                     msg.role,
-                    // get().name
+                    get().name,
+                    "lobby",
                 )
                 set({ 
                     gameId: msg.gameId,
@@ -53,28 +78,31 @@ export const useGameStore = create((set,get) => ({
                 break;
 
             case "JOINED":
-                // const currentName = get().name;
-                console.log("chela sala")
+                const currentName = get().name;
                 saveSession(
                     get().gameId, 
                     msg.playerId, 
                     msg.role,
-                    // currentName
+                    currentName,
+                    "lobby",
                 )
 
                 set({
                     playerId: msg.playerId,
                     role: msg.role,
+                    name: currentName,
                     screen: "lobby"
                 })
                 break;
                 
             case "RECONNECTED":
+                console.log("Reconnected successfully")
                 set({
-                    // gameId: msg.gameId,
+                    gameId: msg.gameId,
                     playerId: msg.playerId,
                     role: msg.role,
-                    screen: "lobby"
+                    screen: "lobby",
+                    players: msg.players || []
                 })
                 break;
             
@@ -92,7 +120,21 @@ export const useGameStore = create((set,get) => ({
                 break;
 
             case "ERROR":
-                alert(msg.message)
+                console.log("Server error:", msg.error);
+
+                if(get().screen === "reconnecting") {
+                    clearSession();
+
+                    set({
+                        gameId: null,
+                        playerId: null,
+                        role: null,
+                        name: null,
+                        screen: "landing"
+                    })
+                }
+
+                alert(msg.error)
                 break;
             
             default:
@@ -111,27 +153,12 @@ export const useGameStore = create((set,get) => ({
     },
 
     joinGame: (gameId, name) => {
-        set ({ gameId, name})
-        const session = loadSession();
-
-        if(session && session.gameId === gameId) {
-            console.log("attempting reconnect...")
-
-            send({
-                type: "JOIN_GAME",
-                gameId: session.gameId,
-                playerId: session.playerId,
-                name: session.name,
-                role: session.role
-            })
-        } else {
-            console.log("Fresh Join")
-            send({
-                type: "JONIN_GAME",
-                gameId,
-                name
-            })
-        }
+        set ({ gameId, name}),
+        send({
+            type: "JOIN_GAME",
+            gameId,
+            name
+        })
     },
 
     startGame: () => {
@@ -146,8 +173,10 @@ export const useGameStore = create((set,get) => ({
     },
 
     leaveGame: () => {
-        disconnect();
+        send({ type: "LEAVE_GAME" })
+
         clearSession();
+        disconnect();
         set({
             gameId: null,
             playerId: null,
