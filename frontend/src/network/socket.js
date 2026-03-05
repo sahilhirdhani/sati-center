@@ -1,11 +1,12 @@
 let socket = null
 
-export function connect(onMessage) {
-    socket = new WebSocket("wss://satti-center.onrender.com/ws")
-    // socket = new WebSocket("ws://localhost:5000/ws")
+export function connect(onMessage, onOpen) {
+    // socket = new WebSocket("wss://satti-center.onrender.com/ws")
+    socket = new WebSocket("ws://localhost:5000/ws")
 
     socket.onopen = () => {
         console.log("connected to WS server")
+        if(onOpen) onOpen();
     }
     socket.onmessage = (event) => {
         const msg = JSON.parse(event.data)
@@ -28,5 +29,6 @@ export function send(msg) {
 export function disconnect() {
     if(socket) {
         socket.close();
+        socket = null;
     }
 }
