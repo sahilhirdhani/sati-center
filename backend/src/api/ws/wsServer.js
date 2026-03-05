@@ -14,11 +14,10 @@ export function setupWebSocket(server) {
         ws.on("message", (raw) => {
             try {
                 const msg = JSON.parse(raw.toString())
-
                 switch (msg.type) {
                     case "CREATE_GAME":
                         handleCreateGame(ws, msg);
-                        // break;
+                        break;
                         
                     case "JOIN_GAME":
                         handleJoinGame(ws, msg);
@@ -32,6 +31,10 @@ export function setupWebSocket(server) {
                         handleAction(ws, msg.action);
                         break;
 
+                    case "LEAVE_GAME":
+                        handleLeaveGame(ws);
+                        break;
+
                     default:
                         sendError(ws, "Unknown message type");
                 }
@@ -39,6 +42,7 @@ export function setupWebSocket(server) {
                 console.log("WS ERROR:", err)
                 sendError(ws, err)
             }
+            
         })
         ws.on("close", () => {
             console.log("Socket closed:", ws.playerId)
@@ -48,12 +52,11 @@ export function setupWebSocket(server) {
             const game = getGame(ws.gameId);
             if(!game) return;
 
-            if(ws.role === "player") {
-                const player = game.players.get(ws.playerId);
-                if(player) {
-                    player.disconnected = true;
-                }
+            const player = game.players.get(ws.playerId);
+            if(player) {
+                player.disconnected = true;
             }
+
             removeSocket(ws.gameId, ws)
 
             broadcastLobby(ws.gameId)
@@ -75,7 +78,8 @@ function handleCreateGame(ws, msg) {
 
     game.players.set(playerId, {
         id: playerId,
-        name
+        name,
+        role: "admin"
     })
 
     ws.gameId = gameId;
@@ -88,7 +92,8 @@ function handleCreateGame(ws, msg) {
         type: "GAME_CREATED",
         gameId,
         playerId,
-        role: "admin"
+        role: "admin",
+        name
     }))
 
     broadcastLobby(gameId);
@@ -99,16 +104,14 @@ function handleJoinGame(ws, msg) {
     const { gameId, name } = msg;
 
     const game = getGame(gameId);
+    if(!game) return sendError(ws, "Game not found");
 
     if(msg.playerId && game.players.has(msg.playerId)) {
-
         const existingPlayer = game.players.get(msg.playerId);
 
         ws.playerId = msg.playerId;
         ws.gameId = msg.gameId;
-        ws.role = ws.role || "player";
-
-        // const player = game.players.get(msg.playerId);
+        ws.role = msg.role || "player";
         existingPlayer.disconnected = false;
 
         addSocket(gameId, ws);
@@ -116,14 +119,14 @@ function handleJoinGame(ws, msg) {
         ws.send(JSON.stringify({
             type: "RECONNECTED",
             playerId: msg.playerId,
-            role: ws.role
+            role: ws.role,
+            name: existingPlayer.name,
+            players: Array.from(game.players.values())
         }))
 
         broadcastState(gameId)
         return;
     }
-
-    if(!game) return sendError(ws, "game not found");
 
     if(game.phase !== "LOBBY")
         return sendError(ws, "Game already started");
@@ -132,7 +135,8 @@ function handleJoinGame(ws, msg) {
 
     game.players.set(playerId, {
         id: playerId,
-        name
+        name,
+        role: "player"
     })
 
     ws.gameId = gameId
@@ -164,7 +168,6 @@ function handleStartGame(ws) {
 
     game.state = setupGame(players, "single", false);
     game.phase = "PLAYING"
-
     broadcastState(gameId)
 }
 
@@ -185,6 +188,26 @@ function handleAction(ws, action) {
     dispatchAction(game.state, action);
 
     broadcastState(gameId)
+}
+
+function handleLeaveGame(ws) {
+    const game = getGame(ws.gameId);
+    if(!game) return;
+
+    const leavingPlayer = game.players.get(ws.playerId);
+    game.players.delete(ws.playerId);
+    removeSocket(ws.gameId, ws)
+
+    if(leavingPlayer?.role === "admin") {
+        const remainingPlayers = Array.from(game.players.values());
+        if(remainingPlayers.length > 0) {
+            const newAdmin = remainingPlayers[0];
+            newAdmin.role = "admin";
+            console.log(`Admin left, new admin is ${newAdmin.name}`)
+        }
+    }
+
+    broadcastLobby(ws.gameId)
 }
 
 function broadcastState(gameId) {
@@ -208,13 +231,15 @@ function broadcastState(gameId) {
 }
 
 function broadcastLobby(gameId) {
+    
     const game = getGame(gameId);
-
+    if(!game) return;
+    
     const players = Array.from(game.players.values());
-
+    
     for (const ws of getAllSockets()) {
         if(ws.gameId !== gameId) continue;
-
+        
         ws.send(JSON.stringify({
             type: "LOBBY_UPDATE",
             players
