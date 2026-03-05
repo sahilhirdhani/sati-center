@@ -10,7 +10,7 @@ export function serializeState(state, role, playerId = null) {
     // else return `${role.slice(0,5)}, ${role.slice(-2)}`
     switch(role) {
         case "admin":
-            return getAdminView(state);
+            // return getAdminView(state);
         
         case "player":
             return getPlayerView(state, playerId)
