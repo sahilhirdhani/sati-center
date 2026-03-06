@@ -196,18 +196,26 @@ function handleLeaveGame(ws) {
 
     const leavingPlayer = game.players.get(ws.playerId);
     game.players.delete(ws.playerId);
-    removeSocket(ws.gameId, ws)
 
+    
     if(leavingPlayer?.role === "admin") {
         const remainingPlayers = Array.from(game.players.values());
         if(remainingPlayers.length > 0) {
             const newAdmin = remainingPlayers[0];
             newAdmin.role = "admin";
+
+            const sockets = getSocketsByGame(ws.gameId);
+            for(const socket of sockets) {
+                if(socket.playerId === newAdmin.id) {
+                    socket.role = "admin";
+                }
+            }
+
             console.log(`Admin left, new admin is ${newAdmin.name}`)
         }
     }
-
     broadcastLobby(ws.gameId)
+    removeSocket(ws.gameId, ws)
 }
 
 function broadcastState(gameId) {
@@ -236,14 +244,16 @@ function broadcastLobby(gameId) {
     if(!game) return;
     
     const players = Array.from(game.players.values());
-    
-    for (const ws of getAllSockets()) {
-        if(ws.gameId !== gameId) continue;
+    const clients = getSocketsByGame(gameId)
+
+    for (const ws of clients) {
         
         ws.send(JSON.stringify({
             type: "LOBBY_UPDATE",
-            players
+            players,
+            role: ws.role
         }))
+        console.log("in lobby player name:", game.players.get(ws.playerId)?.name, "player role:", ws.role)
     }
 }
 

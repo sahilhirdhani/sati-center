@@ -108,7 +108,8 @@ export const useGameStore = create((set,get) => ({
             
             case "LOBBY_UPDATE":
                 set({
-                    players: msg.players
+                    players: msg.players,
+                    role: msg.role 
                 })
                 break;
 
