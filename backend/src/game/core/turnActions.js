@@ -66,7 +66,7 @@ export function advanceTurn(state) {
         const player = state.players[state.currentTurnIndex];
         // console.log(player.id)
         if(player.isBot){
-            canBotPlay(state,player)
+            if(!canBotPlay(state,player)) continue
             break
         }
         else if(canPlayerTakeTurn(state, player)) {
