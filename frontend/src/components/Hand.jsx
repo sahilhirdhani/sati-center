@@ -13,13 +13,13 @@ export default function Hand({ hand, legalMoves }) {
     };
 
     const handleCardClick = (card) => {
-        // if(legalMoves.some( move => move.card.id === card.id )) {
-        //     sendAction({
-        //         type: "PLAY_CARD",
-        //         cardId: card.id,
-        //         pileKey: card.suit
-        //     })
-        // }
+        if(legalMoves.some( move => move.card.id === card.id )) {
+            sendAction({
+                type: "PLAY_CARD",
+                cardId: card.id,
+                pileKey: card.suit
+            })
+        }
     }
 
     return (
