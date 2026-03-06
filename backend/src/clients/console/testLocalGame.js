@@ -4,7 +4,7 @@ import { runGame } from "./game.js";
 
 
 const humanPlayers = [new Player("P_id_1","Me (the crerator)"),
-    new Player("P_id_2","You (the watcher)"),
+    // new Player("P_id_2","You (the watcher)"),
     // new Player("P_id_3","Player 3"),
     // new Player("P_id_4","Player 4"),
     // new Player("P_id_5","Player 5"),
