@@ -25,7 +25,7 @@ export default function Landing() {
 
   return (
     <div className="landing">
-      <h1>Satti</h1>
+      <h1>Satti Center</h1>
 
       <input
         placeholder="Your Name"
