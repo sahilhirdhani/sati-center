@@ -1,0 +1,107 @@
+.landingPage {
+
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* CARD */
+
+.landingCard {
+
+  width: 360px;
+
+  padding: 28px;
+
+  border-radius: 16px;
+
+  backdrop-filter: blur(14px);
+
+  background: rgba(255,255,255,0.05);
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  box-shadow:
+  0 0 40px rgba(0,0,0,0.6),
+  inset 0 0 15px rgba(255,255,255,0.05);
+
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.mainTitle{
+  font-size:32px;
+  letter-spacing:3px;
+  font-weight:700;
+
+  text-shadow:
+  0 0 10px cyan,
+  0 0 20px magenta;
+}
+
+.subTitle{
+  font-size:13px;
+  opacity:.7;
+}
+
+.version{
+  font-size:11px;
+  opacity:.4;
+}
+
+.formBox{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.inputField{
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  outline:none;
+
+  background:rgba(255,255,255,0.08);
+  color:white;
+}
+
+.buttonGroup{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+}
+
+.primaryBtn{
+
+  padding:10px 14px;
+  border-radius:8px;
+  border:none;
+  cursor:pointer;
+
+  font-weight:700;
+
+  background:linear-gradient(135deg,#6f6cff,#8a85ff);
+}
+
+.secondaryBtn{
+
+  padding:10px 14px;
+  border-radius:8px;
+  border:none;
+  cursor:pointer;
+
+  font-weight:700;
+
+  background:linear-gradient(135deg,#2ec27e,#1ea764);
+}
+
+.primaryBtn:disabled,
+.secondaryBtn:disabled{
+  opacity:.4;
+  background:#444;
+}

@@ -1,0 +1,55 @@
+.lobbyPage{
+  min-height:100vh;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.lobbyCard{
+
+  width:420px;
+
+  padding:26px;
+
+  border-radius:16px;
+
+  background:rgba(255,255,255,0.05);
+
+  border:1px solid rgba(255,255,255,0.08);
+
+  backdrop-filter:blur(12px);
+
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+
+  text-align:center;
+}
+
+.playersBox{
+
+  padding:10px;
+
+  border-radius:10px;
+
+  background:rgba(0,0,0,0.35);
+}
+
+.playerList{
+  list-style:none;
+  margin-top:10px;
+}
+
+.playerItem{
+
+  padding:8px;
+
+  border-radius:6px;
+
+  margin-bottom:6px;
+
+  background:rgba(255,255,255,0.04);
+
+  font-size:13px;
+}
