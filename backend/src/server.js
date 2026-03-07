@@ -11,16 +11,6 @@ const server = http.createServer(app);
 
 setupWebSocket(server);
 
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
     console.log(`Server is running on port ${PORT}`);
 });
-
-
-
-// import { createDeck } from "./game/deck.js";
-// import { shuffle } from "./game/shuffle.js";
-
-// const deck = createDeck(2);
-// shuffle(deck);
-
-// console.log(deck.length);
