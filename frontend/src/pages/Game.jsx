@@ -1,4 +1,4 @@
-import PlayerList from "../components/playerList";
+import PlayerList from "../components/PlayerList";
 import Table from "../components/Table";
 import Hand from "../components/Hand";
 import { useGameStore } from "../store/useGameStore";
