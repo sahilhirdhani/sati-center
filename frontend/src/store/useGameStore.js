@@ -187,6 +187,12 @@ export const useGameStore = create((set,get) => ({
             state: null,
             screen: "landing"
         })
+    },
+
+    onBackToLobby: () => {
+        set({
+            screen: "lobby",
+        })
     }
 
 }))

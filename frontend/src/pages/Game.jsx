@@ -2,13 +2,14 @@ import PlayerList from "../components/playerList";
 import Table from "../components/Table";
 import Hand from "../components/Hand";
 import { useGameStore } from "../store/useGameStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { dealCards } from "../utils/dealCard";
 import "../styles/Game.css";
+import Leaderboard from "../components/Leaderboard";
 
 export default function Game() {
-  const { state, leaveGame } = useGameStore();
-
+  const { state, onBackToLobby, leaveGame } = useGameStore();
+  
   useEffect(() => {
     if (state?.you?.hand?.length) {
       dealCards(state.you.hand);
@@ -19,7 +20,22 @@ export default function Game() {
     return <div>Loading...</div>;
   }
 
-  console.log(state.table)
+  console.log(state)
+
+  const finishedPlayers = state.finishedPlayers
+  const finishOrder = finishedPlayers.map( player => player.id)
+
+  if( finishOrder.length === state.players.length ) {
+    // All players have finished, display leaderboard
+    return (
+      <Leaderboard
+        players={state.players}
+        finishOrder={finishOrder}
+        onBackToLobby={onBackToLobby}
+        onLeave={leaveGame}
+      />
+    );
+  }
 
   return (
     <div className="gameRoot">
@@ -35,6 +51,7 @@ export default function Game() {
           <PlayerList
             players={state.players}
             currentTurn={state.currentTurnPlayerId}
+            finishOrder={finishOrder}
           />
         </div>
 
