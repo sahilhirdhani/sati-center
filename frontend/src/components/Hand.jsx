@@ -11,6 +11,13 @@ export default function Hand({ hand, legalMoves }) {
         if (suit === "clubs") return "♣";
         if (suit === "spades") return "♠";
     };
+    const cardSymbol = (value) => {
+        if (value === 1) return "A";
+        if (value === 13) return "K";
+        if (value === 12) return "Q";
+        if (value === 11) return "J";
+        return value;
+    };
 
     const handleCardClick = (card) => {
         if(legalMoves.some( move => move.card.id === card.id )) {
@@ -52,14 +59,14 @@ export default function Hand({ hand, legalMoves }) {
                                 onClick={()=> handleCardClick(card)}
                             >
                                 <div className="cardCorner top">
-                                    {card.value}
+                                    {cardSymbol(card.value)}
                                     <span>{suitSymbol(card.suit)}</span>
                                 </div>
                                 <div className="cardCenter">
                                     {suitSymbol(card.suit)}
                                 </div>
                                 <div className="cardCorner bottom">
-                                    {card.value}
+                                    {cardSymbol(card.value)}
                                     <span>{suitSymbol(card.suit)}</span>
                                 </div>
                             </button>

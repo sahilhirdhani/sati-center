@@ -6,8 +6,14 @@ const suitSymbols = {
   diamonds: "♦",
   clubs: "♣"
 };
+const cardSymbols = {
+  1: "A",
+  11: "J",
+  12: "Q",
+  13: "K"
+};
 
-const suitOrder = ["spades", "hearts", "diamonds", "clubs"];
+const suitOrder = ["hearts", "spades", "diamonds", "clubs"];
 
 export default function Table({ table }) {
 
@@ -43,7 +49,7 @@ export default function Table({ table }) {
                       <div className={`tablePlayingCard ${isRedCard ? "tableRedCard" : ""}`}>
 
                         <div className="tableCorner top">
-                          {card.value}
+                          {cardSymbols[card.value] || card.value}
                           <span>{suitSymbols[card.suit]}</span>
                         </div>
 
@@ -52,7 +58,7 @@ export default function Table({ table }) {
                         </div>
 
                         <div className="tableCorner bottom">
-                          {card.value}
+                          {cardSymbols[card.value] || card.value}
                           <span>{suitSymbols[card.suit]}</span>
                         </div>
 
