@@ -1,5 +1,6 @@
 import { WebSocketServer } from "ws";
-import crypto from "crypto";
+// import crypto from "crypto";
+import { nanoid } from "nanoid";
 import { addSocket, removeSocket, getAllSockets, getSocketsByGame } from "./wsHub.js";
 import { serializeState } from "../serializers/stateSerializer.js";
 import { createGame, getGame } from "../store/gameStore.js";
@@ -75,11 +76,13 @@ function handleCreateGame(ws, msg) {
 
     if(!name) return sendError(ws, "Name is required");
 
-    const gameId = "1q";
+    // const gameId = "1q";
+    const gameId = nanoid(6);
     // const gameId = crypto.randomUUID();
     const game = createGame(gameId);
 
-    const playerId = crypto.randomUUID();
+    // const playerId = crypto.randomUUID();
+    const playerId = nanoid(8);
 
     game.players.set(playerId, {
         id: playerId,

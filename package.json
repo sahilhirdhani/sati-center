@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "framer-motion": "^12.35.0"
+    "framer-motion": "^12.35.0",
+    "nanoid": "^5.1.6"
   }
 }
