@@ -3,8 +3,8 @@ import "../styles/Table.css";
 const suitSymbols = {
   spades: "♠",
   hearts: "♥",
-  diamonds: "♦",
-  clubs: "♣"
+  clubs: "♦",
+  diamonds: "♣"
 };
 const cardSymbols = {
   1: "A",
@@ -13,7 +13,7 @@ const cardSymbols = {
   13: "K"
 };
 
-const suitOrder = ["hearts", "spades", "diamonds", "clubs"];
+const suitOrder = [ "clubs", "spades", "hearts", "diamonds"];
 
 export default function Table({ table }) {
 
@@ -27,7 +27,7 @@ export default function Table({ table }) {
         {suitOrder.map((suit) => {
 
           const cards = table[suit] || [];
-          const isRed = suit === "hearts" || suit === "diamonds";
+          const isRed = suit === "hearts" || suit === "clubs";
 
           return (
             <div key={suit} className="suitRow">
@@ -41,7 +41,7 @@ export default function Table({ table }) {
                 {cards.map((card) => {
 
                   const isRedCard =
-                    card.suit === "hearts" || card.suit === "diamonds";
+                    card.suit === "hearts" || card.suit === "clubs";
 
                   return (
                     <div key={card.id} className="tableCard">

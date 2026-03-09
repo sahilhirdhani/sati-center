@@ -7,8 +7,8 @@ export default function Hand({ hand, legalMoves }) {
     const middle = (hand.length - 1) / 2;
     const suitSymbol = (suit) => {
         if (suit === "hearts") return "♥";
-        if (suit === "diamonds") return "♦";
-        if (suit === "clubs") return "♣";
+        if (suit === "clubs") return "♦";
+        if (suit === "diamonds") return "♣";
         if (suit === "spades") return "♠";
     };
     const cardSymbol = (value) => {
@@ -41,7 +41,7 @@ export default function Hand({ hand, legalMoves }) {
                     );
                     const red =
                         card.suit === "hearts" ||
-                        card.suit === "diamonds";
+                        card.suit === "clubs";
 
                     return (
                         <div
