@@ -120,6 +120,13 @@ export const useGameStore = create((set,get) => ({
                 })
                 break;
 
+            // case "IN_LOBBY":
+            //     set({
+            //         gameId: msg.gameId,
+            //         screen: "lobby"
+            //     })
+            //     break;
+
             case "ERROR":
                 console.log("Server error:", msg.error);
 
@@ -190,8 +197,15 @@ export const useGameStore = create((set,get) => ({
     },
 
     onBackToLobby: () => {
-        set({
+        const session = loadSession();
+        console.log("Back to lobby function called with gameId in useGameStore:", session.gameId)
+        set ({
             screen: "lobby",
+            state: null
+        })
+        send({ 
+            type: "BACK_TO_LOBBY",
+            gameId: session.gameId
         })
     }
 

@@ -35,6 +35,11 @@ export function setupWebSocket(server) {
                         handleLeaveGame(ws);
                         break;
 
+                    case "BACK_TO_LOBBY":
+                        console.log("back to lobby message received with gameId:", msg.gameId)
+                        handleBackToLobby(ws, msg);
+                        break;
+
                     default:
                         sendError(ws, "Unknown message type");
                 }
@@ -253,7 +258,7 @@ function broadcastLobby(gameId) {
             players,
             role: ws.role
         }))
-        console.log("in lobby player name:", game.players.get(ws.playerId)?.name, "player role:", ws.role)
+        // console.log("in lobby player name:", game.players.get(ws.playerId)?.name, "player role:", ws.role)
     }
 }
 
@@ -262,4 +267,17 @@ function sendError(ws, err) {
         type: "ERROR",
         error: err.message || err
     }));
+}
+
+function handleBackToLobby(msg) {
+    const { gameId } = msg
+    const game = getGame(gameId);
+    if(!game) return;
+
+    game.phase = "LOBBY";
+    game.state = null;
+    // ws.send(JSON.stringify({
+    //     type: "IN_LOBBY",
+    //     gameId: msg.gameId
+    // }))
 }
