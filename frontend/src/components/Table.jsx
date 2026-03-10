@@ -1,11 +1,13 @@
 import "../styles/Table.css";
+import { useState, useEffect } from "react";
 
 const suitSymbols = {
   spades: "♠",
   hearts: "♥",
-  clubs: "♦",
-  diamonds: "♣"
+  diamonds: "♦",
+  clubs: "♣"
 };
+
 const cardSymbols = {
   1: "A",
   11: "J",
@@ -13,12 +15,22 @@ const cardSymbols = {
   13: "K"
 };
 
-const suitOrder = [ "clubs", "spades", "hearts", "diamonds"];
+const suitOrder = ["diamonds", "spades", "hearts", "clubs"];
 
 export default function Table({ table }) {
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 601);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 601);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
-    <div className="tableSection">
+    <div className="tableSection" role="region" aria-label="Game table">
 
       <h3 className="sectionTitle">Table</h3>
 
@@ -26,25 +38,35 @@ export default function Table({ table }) {
 
         {suitOrder.map((suit) => {
 
-          const cards = table[suit] || [];
-          const isRed = suit === "hearts" || suit === "clubs";
+          // Sort cards by value descending (King first, Ace last) ONLY on mobile
+          let cards = table[suit] || [];
+          if (isMobile) {
+            cards = [...cards].sort((a, b) => b.value - a.value);
+          }
+          
+          const isRed = suit === "hearts" || suit === "diamonds";
 
           return (
-            <div key={suit} className="suitRow">
+            <div key={suit} className="suitRow" role="row">
 
-              <div className={`suitTitle ${isRed ? "redSuit" : ""}`}>
+              <div className={`suitTitle ${isRed ? "redSuit" : ""}`} role="cell">
                 {suitSymbols[suit]}
               </div>
 
-              <div className="tableCards">
+              <div className="tableCards" role="cell">
 
-                {cards.map((card) => {
+                {cards.map((card, idx) => {
 
                   const isRedCard =
-                    card.suit === "hearts" || card.suit === "clubs";
+                    card.suit === "hearts" || card.suit === "diamonds";
 
                   return (
-                    <div key={card.id} className="tableCard">
+                    <div 
+                      key={card.id} 
+                      className="tableCard"
+                      role="img"
+                      aria-label={`${cardSymbols[card.value] || card.value}${suitSymbols[card.suit]}`}
+                    >
 
                       <div className={`tablePlayingCard ${isRedCard ? "tableRedCard" : ""}`}>
 

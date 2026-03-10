@@ -1,107 +1,169 @@
+/* LANDING PAGE */
 .landingPage {
-
   min-height: 100vh;
-
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: var(--spacing-md);
 }
 
 /* CARD */
-
 .landingCard {
-
-  width: 360px;
-
-  padding: 28px;
-
+  width: clamp(280px, 90vw, 420px);
+  padding: clamp(20px, 5vw, 28px);
   border-radius: 16px;
-
   backdrop-filter: blur(14px);
-
-  background: rgba(255,255,255,0.05);
-
-  border: 1px solid rgba(255,255,255,0.08);
-
-  box-shadow:
-  0 0 40px rgba(0,0,0,0.6),
-  inset 0 0 15px rgba(255,255,255,0.05);
-
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.05);
   text-align: center;
-
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: clamp(14px, 4vw, 18px);
 }
 
-.mainTitle{
-  font-size:32px;
-  letter-spacing:3px;
-  font-weight:700;
-
-  text-shadow:
-  0 0 10px cyan,
-  0 0 20px magenta;
+.mainTitle {
+  font-size: var(--font-2xl);
+  letter-spacing: 2px;
+  font-weight: 700;
+  text-shadow: 0 0 10px cyan, 0 0 20px magenta;
+  word-break: break-word;
 }
 
-.subTitle{
-  font-size:13px;
-  opacity:.7;
+.subTitle {
+  font-size: var(--font-sm);
+  opacity: 0.7;
 }
 
-.version{
-  font-size:11px;
-  opacity:.4;
+.version {
+  font-size: var(--font-xs);
+  opacity: 0.4;
 }
 
-.formBox{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
+/* FORM BOX */
+.formBox {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 2vw, 10px);
 }
 
-.inputField{
-  padding:10px;
-  border-radius:8px;
-  border:none;
-  outline:none;
-
-  background:rgba(255,255,255,0.08);
-  color:white;
+/* INPUT FIELD */
+.inputField {
+  padding: clamp(10px, 3vw, 12px);
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  width: 100%;
 }
 
-.buttonGroup{
-  display:flex;
-  justify-content:center;
-  gap:10px;
+.inputField:focus {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
 }
 
-.primaryBtn{
-
-  padding:10px 14px;
-  border-radius:8px;
-  border:none;
-  cursor:pointer;
-
-  font-weight:700;
-
-  background:linear-gradient(135deg,#6f6cff,#8a85ff);
+.inputField::placeholder {
+  color: rgba(255, 255, 255, 0.5);
 }
 
-.secondaryBtn{
-
-  padding:10px 14px;
-  border-radius:8px;
-  border:none;
-  cursor:pointer;
-
-  font-weight:700;
-
-  background:linear-gradient(135deg,#2ec27e,#1ea764);
+/* BUTTON GROUP */
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 2vw, 10px);
+  width: 100%;
 }
 
-.primaryBtn:disabled,
-.secondaryBtn:disabled{
-  opacity:.4;
-  background:#444;
+/* PRIMARY BUTTON */
+.primaryBtn {
+  padding: clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 14px);
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: var(--font-sm);
+  background: linear-gradient(135deg, #6f6cff, #8a85ff);
+  color: white;
+  transition: all 0.2s ease;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.primaryBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(111, 108, 255, 0.4);
+}
+
+.primaryBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.primaryBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* SECONDARY BUTTON */
+.secondaryBtn {
+  padding: clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 14px);
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: var(--font-sm);
+  background: linear-gradient(135deg, #2ec27e, #1ea764);
+  color: white;
+  transition: all 0.2s ease;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.secondaryBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(46, 194, 126, 0.4);
+}
+
+.secondaryBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.secondaryBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* RESPONSIVE ADJUSTMENTS */
+@media (min-width: 601px) {
+  .buttonGroup {
+    flex-direction: row;
+  }
+
+  .primaryBtn,
+  .secondaryBtn {
+    flex: 1;
+  }
+}
+
+/* LANDSCAPE MODE */
+@media (orientation: landscape) {
+  .landingPage {
+    padding: var(--spacing-sm);
+  }
+
+  .landingCard {
+    gap: 12px;
+  }
+
+  .formBox {
+    gap: 8px;
+  }
 }

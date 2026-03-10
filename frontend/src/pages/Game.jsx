@@ -9,6 +9,7 @@ import Leaderboard from "../components/Leaderboard";
 
 export default function Game() {
   const { state, onBackToLobby, leaveGame } = useGameStore();
+  const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
   
   useEffect(() => {
     if (state?.you?.hand?.length) {
@@ -16,17 +17,40 @@ export default function Game() {
     }
   }, [state?.you?.hand]);
 
+  useEffect(() => {
+    const handleOrientationChange = () => {
+      setIsPortrait(window.innerHeight > window.innerWidth);
+    };
+
+    window.addEventListener("orientationchange", handleOrientationChange);
+    window.addEventListener("resize", handleOrientationChange);
+
+    return () => {
+      window.removeEventListener("orientationchange", handleOrientationChange);
+      window.removeEventListener("resize", handleOrientationChange);
+    };
+  }, []);
+
   if (!state) {
-    return <div>Loading...</div>;
+    return (
+      <div style={{ 
+        display: "flex", 
+        justifyContent: "center", 
+        alignItems: "center", 
+        minHeight: "100vh",
+        fontSize: "clamp(14px, 4vw, 18px)"
+      }}>
+        Loading...
+      </div>
+    );
   }
 
-  console.log(state)
+  console.log(state);
 
-  const finishedPlayers = state.finishedPlayers
-  const finishOrder = finishedPlayers.map( player => player.id)
+  const finishedPlayers = state.finishedPlayers;
+  const finishOrder = finishedPlayers.map(player => player.id);
 
-  if( finishOrder.length === state.players.length ) {
-    // All players have finished, display leaderboard
+  if (finishOrder.length === state.players.length) {
     return (
       <Leaderboard
         players={state.players}
@@ -36,6 +60,8 @@ export default function Game() {
       />
     );
   }
+
+  const isPlayerTurn = state.currentTurnPlayerId === state.you.id;
 
   return (
     <div className="gameRoot">
@@ -60,7 +86,7 @@ export default function Game() {
         </div>
 
         <div className="handArea">
-          <Hand hand={state.you.hand} legalMoves={state.legalMoves} />
+          <Hand hand={state.you.hand} legalMoves={state.legalMoves} isPlayerTurn={isPlayerTurn} />
         </div>
 
       </div>

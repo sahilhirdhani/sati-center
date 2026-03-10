@@ -1,79 +1,208 @@
 import { useGameStore } from "../store/useGameStore";
 import "../styles/Hand.css";
+import { useRef, useState, useEffect } from "react";
 
-export default function Hand({ hand, legalMoves }) {
-    const { sendAction } = useGameStore()
-    
-    const middle = (hand.length - 1) / 2;
-    const suitSymbol = (suit) => {
-        if (suit === "hearts") return "♥";
-        if (suit === "clubs") return "♦";
-        if (suit === "diamonds") return "♣";
-        if (suit === "spades") return "♠";
-    };
-    const cardSymbol = (value) => {
-        if (value === 1) return "A";
-        if (value === 13) return "K";
-        if (value === 12) return "Q";
-        if (value === 11) return "J";
-        return value;
-    };
+export default function Hand({ hand, legalMoves, isPlayerTurn }) {
+  const { sendAction } = useGameStore();
+  const containerRef = useRef(null);
+  const handStackRef = useRef(null);
+  const [gridMode, setGridMode] = useState(false);
+  const [selectedCardId, setSelectedCardId] = useState(null);
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" && window.innerWidth < 601
+  );
 
-    const handleCardClick = (card) => {
-        if(legalMoves.some( move => move.card.id === card.id )) {
-            sendAction({
-                type: "PLAY_CARD",
-                cardId: card.id,
-                pileKey: card.suit
-            })
-        }
+  
+
+  // Sort hand to alternate red and black suits
+  const sortedHand = [...hand].sort((a, b) => {
+    const suitOrder = ["diamonds", "spades", "hearts", "clubs"];
+    return suitOrder.indexOf(a.suit) - suitOrder.indexOf(b.suit);
+  });
+
+  const middle = (sortedHand.length - 1) / 2;
+
+  const suitSymbol = (suit) => {
+    if (suit === "hearts") return "♥";
+    if (suit === "spades") return "♠";
+    if (suit === "diamonds") return "♦";
+    if (suit === "clubs") return "♣";
+  };
+
+  const cardSymbol = (value) => {
+    if (value === 1) return "A";
+    if (value === 13) return "K";
+    if (value === 12) return "Q";
+    if (value === 11) return "J";
+    return value;
+  };
+
+  const isCardLegal = (card) => {
+    return legalMoves.some((move) => move.card.id === card.id);
+  };
+
+  const handleCardClick = (card) => {
+
+    if (!isPlayerTurn) return;
+
+    const isLegal = isCardLegal(card);
+
+    // If the same card is clicked again → PLAY it
+    if (selectedCardId === card.id) {
+
+        if (!isLegal) return;
+
+        sendAction({
+            type: "PLAY_CARD",
+            cardId: card.id,
+            pileKey: card.suit
+        });
+
+        setSelectedCardId(null);
+        return;
     }
 
-    return (
-        <div className="handSection">
-            <h3 className="sectionTitle">Your Hand</h3>
-            <div className="handStack">
+    // If another card was already selected
+    if (selectedCardId !== null) {
 
-                {hand.map((card, i) => {
-                    const offset = (i - middle) * 40;
-                    const isLegal = legalMoves.some(
-                        move => move.card.id === card.id
-                    );
-                    const red =
-                        card.suit === "hearts" ||
-                        card.suit === "clubs";
+        // If the new card is legal → switch selection
+        if (isLegal) {
+            setSelectedCardId(card.id);
+        } 
+        // If illegal → deselect
+        else {
+            setSelectedCardId(null);
+        }
 
-                    return (
-                        <div
-                            key={card.id}
-                            className="cardWrapper"
-                            style={{
-                                transform: `translateX(calc(-50% + ${offset}px))`,
-                                zIndex: i
-                            }}
-                        >
-                            <button
-                                className={`playingCard 
-                                ${isLegal ? "legalCard" : ""} 
-                                ${red ? "redCard" : ""}`}
-                                onClick={()=> handleCardClick(card)}
-                            >
-                                <div className="cardCorner top">
-                                    {cardSymbol(card.value)}
-                                    <span>{suitSymbol(card.suit)}</span>
-                                </div>
-                                <div className="cardCenter">
-                                    {suitSymbol(card.suit)}
-                                </div>
-                                <div className="cardCorner bottom">
-                                    {cardSymbol(card.value)}
-                                    <span>{suitSymbol(card.suit)}</span>
-                                </div>
-                            </button>
-                        </div>
-                    );
-                })}
+        return;
+    }
+
+    // First click → select if legal
+    if (isLegal) {
+        setSelectedCardId(card.id);
+    }
+};
+
+  const handleCardKeyDown = (e, card) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+
+      if (!isPlayerTurn || !isCardLegal(card)) return;
+
+      // If card is already selected, play it on Enter/Space
+      if (selectedCardId === card.id) {
+        sendAction({
+          type: "PLAY_CARD",
+          cardId: card.id,
+          pileKey: card.suit,
+        });
+        setSelectedCardId(null);
+        return;
+      }
+
+      // Otherwise select it
+      setSelectedCardId(card.id);
+    }
+  };
+
+  const handleBackgroundClick = (e) => {
+    // If clicking on the handStack background (not on a card button)
+    if (e.target === handStackRef.current) {
+      setSelectedCardId(null);
+    }
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 601);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+  if (isMobile) {
+    setGridMode(true);
+    return;
+  }
+
+  const containerWidth =
+    containerRef.current?.offsetWidth || window.innerWidth;
+
+  const requiredWidth = sortedHand.length * 80; // approx card width
+
+  if (requiredWidth > containerWidth * 0.9) {
+    setGridMode(true);
+  } else {
+    setGridMode(false);
+  }
+}, [sortedHand.length, isMobile]);
+
+  return (
+    <div className="handSection" ref={containerRef}>
+      <h3 className="sectionTitle">Your Hand</h3>
+
+      <div
+        className={`handStack ${gridMode ? "gridMode" : "fanMode"}`}
+        ref={handStackRef}
+        onClick={handleBackgroundClick}
+        role="region"
+        aria-label="Player hand of cards"
+      >
+        {sortedHand.map((card, i) => {
+          const baseSpacing = 40;
+          const maxWidth = containerRef.current?.offsetWidth || window.innerWidth;
+          const maxSpread = maxWidth * 0.42; // keep cards inside screen
+          const rawOffset = (i - middle) * baseSpacing;
+          const offset = Math.max(
+            -maxSpread,
+            Math.min(maxSpread, rawOffset)
+          );
+          const isLegal = isCardLegal(card);
+          const isSelected = selectedCardId === card.id;
+          const red = card.suit === "hearts" || card.suit === "diamonds";
+
+          return (
+            <div
+              key={card.id}
+              className="cardWrapper"
+              style={
+                gridMode
+                ? { zIndex: isSelected ? 9999 : i }
+                : {
+                    transform: `translateX(calc(-50% + ${offset}px))`,
+                    zIndex: isSelected ? 9999 : i,
+                    }
+                }
+            >
+              <button
+                className={`playingCard ${
+                  isLegal && isPlayerTurn ? "legalCard" : ""
+                } ${red ? "redCard" : ""} ${
+                  !isPlayerTurn ? "notPlayerTurnCard" : ""
+                } ${isSelected && isLegal ? "selectedCard" : ""}`}
+                onClick={() => handleCardClick(card)}
+                onKeyDown={(e) => handleCardKeyDown(e, card)}
+                aria-pressed={isSelected}
+                title={`${cardSymbol(card.value)}${suitSymbol(card.suit)}`}
+              >
+                <div className="cardCorner top">
+                  {cardSymbol(card.value)}
+                  <span>{suitSymbol(card.suit)}</span>
+                </div>
+
+                <div className="cardCenter">{suitSymbol(card.suit)}</div>
+
+                <div className="cardCorner bottom">
+                  {cardSymbol(card.value)}
+                  <span>{suitSymbol(card.suit)}</span>
+                </div>
+              </button>
             </div>
-        </div>
-    );
+          );
+        })}
+      </div>
+    </div>
+  );
 }

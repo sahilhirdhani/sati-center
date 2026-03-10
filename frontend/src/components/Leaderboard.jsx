@@ -9,7 +9,7 @@ export default function Leaderboard({ players, finishOrder, onBackToLobby, onLea
 
         <h2 className="leaderboardTitle">Game Over</h2>
 
-        <div className="leaderboardList">
+        <div className="leaderboardList" role="list">
 
           {finishOrder.map((playerId, index) => {
 
@@ -20,9 +20,10 @@ export default function Leaderboard({ players, finishOrder, onBackToLobby, onLea
               <div
                 key={playerId}
                 className={`leaderboardRow ${position === 1 ? "winnerRow" : ""}`}
+                role="listitem"
               >
 
-                <div className="leaderboardPosition">
+                <div className="leaderboardPosition" aria-label={`Position ${position}`}>
                   {position === 1 ? "👑" : position}
                 </div>
 
@@ -38,11 +39,19 @@ export default function Leaderboard({ players, finishOrder, onBackToLobby, onLea
 
         <div className="leaderboardButtons">
 
-          <button className="primaryBtn" onClick={onBackToLobby}>
+          <button 
+            className="primaryBtn" 
+            onClick={onBackToLobby}
+            aria-label="Go back to the lobby"
+          >
             Back to lobby
           </button>
 
-          <button className="secondaryBtn" onClick={onLeave}>
+          <button 
+            className="secondaryBtn" 
+            onClick={onLeave}
+            aria-label="Leave the game room"
+          >
             Leave Room
           </button>
 
