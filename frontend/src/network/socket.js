@@ -4,8 +4,8 @@ const MAX_RECONNECT_ATTEMPTS = 5;
 const RECONNECT_DELAY = 3000;
 
 export function connect(onMessage, onOpen) {
-    // socket = new WebSocket("wss://satti-center.onrender.com/ws");
-    socket = new WebSocket("ws://localhost:5000/ws")
+    socket = new WebSocket("wss://satti-center.onrender.com/ws");
+    // socket = new WebSocket("ws://localhost:5000/ws")
 
     socket.onopen = () => {
         console.log("connected to WS server");
