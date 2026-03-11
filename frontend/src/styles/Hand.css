@@ -1,4 +1,5 @@
 /* HAND SECTION */
+
 .handSection {
   width: 100%;
   display: flex;
@@ -17,28 +18,30 @@
   font-weight: 600;
 }
 
-/* HAND STACK - MOBILE GRID LAYOUT (NO SCROLL) */
+/* ============================= */
+/* GRID MODE (MOBILE DEFAULT)   */
+/* ============================= */
+
 .handStack {
   position: relative;
   width: 100%;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(clamp(55px, 12vw, 75px), 1fr));
   gap: clamp(8px, 2vw, 12px);
-  padding: 0px 0 0;
-  margin-left: -18px;
+  padding: 0 10px;
   box-sizing: border-box;
   justify-items: center;
   align-items: center;
 }
 
-/* POSITION WRAPPER - GRID ITEM */
+/* CARD WRAPPER */
+
 .cardWrapper {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: -50px;
-  /* margin-left: -18px; */
   z-index: 10;
 }
 
@@ -46,69 +49,112 @@
   z-index: 9999;
 }
 
-/* PLAYING CARD - MOBILE FIRST */
+/* ============================= */
+/* CARD STYLE                   */
+/* ============================= */
+
 .playingCard {
   width: clamp(60px, 15vw, 80px);
   height: clamp(90px, 22.5vw, 120px);
+
   border-radius: 8px;
   background: white;
   border: 2px solid #e0e0e0;
+
   position: relative;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  padding: clamp(4px, 1vw, 6px);
+
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+
+  transition: all 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+
+  padding: clamp(4px,1vw,6px);
+
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+
   cursor: pointer;
 }
 
-/* HOVER/ACTIVE LIFT - ONLY FOR LEGAL CARDS */
+/* ============================= */
+/* LEGAL CARD                   */
+/* ============================= */
+
+.legalCard {
+  border: 2px solid #ffd700;
+  box-shadow:
+    0 0 8px rgba(255,215,0,0.7),
+    0 4px 8px rgba(0,0,0,0.3);
+}
+
 .legalCard:hover {
   transform: translateY(-50px) scale(1.08);
-  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.55), 0 20px 35px rgba(0, 0, 0, 0.45);
+
+  box-shadow:
+    0 0 14px rgba(255,215,0,0.9),
+    0 0 30px rgba(255,215,0,0.6),
+    0 12px 25px rgba(0,0,0,0.4);
 }
 
 .legalCard:active {
   transform: translateY(-40px) scale(1.06);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), 0 15px 30px rgba(0, 0, 0, 0.4);
 }
 
-/* SELECTED CARD - FIRST CLICK (ONLY LEGAL CARDS) */
+/* ============================= */
+/* SELECTED CARD                */
+/* ============================= */
+
 .selectedCard {
   transform: translateY(-50px) scale(1.08);
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 12px 20px rgba(0, 0, 0, 0.55), 0 20px 35px rgba(0, 0, 0, 0.45);
+
   border: 2px solid #ffd700;
+
+  box-shadow:
+    0 0 20px rgba(255,215,0,0.8),
+    0 12px 20px rgba(0,0,0,0.55),
+    0 20px 35px rgba(0,0,0,0.45);
 }
 
-.selectedCard:hover {
-  box-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 12px 20px rgba(0, 0, 0, 0.55), 0 20px 35px rgba(0, 0, 0, 0.45);
+/* ============================= */
+/* NOT PLAYER TURN              */
+/* ============================= */
+
+.notPlayerTurnCard {
+  color: #bdbdbd;
+  background: #f5f5f5;
+  border-color: #e0e0e0;
+
+  opacity: 0.7;
+  filter: grayscale(100%);
+  cursor: not-allowed;
 }
 
-.selectedCard:active {
-  transform: translateY(-40px) scale(1.06);
-  box-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 10px 20px rgba(0, 0, 0, 0.5), 0 15px 30px rgba(0, 0, 0, 0.4);
+.notPlayerTurnCard:hover,
+.notPlayerTurnCard:active {
+  transform: none;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
-/* TOUCH DEVICE - TAP FEEDBACK */
-@media (hover: none) and (pointer: coarse) {
-  .playingCard {
-    min-height: 44px;
-    min-width: 44px;
-  }
+/* ============================= */
+/* SUIT COLORS                  */
+/* ============================= */
 
-  .legalCard:active {
-    transform: translateY(-35px) scale(1.08);
-    z-index: 1000;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), 0 15px 30px rgba(0, 0, 0, 0.4);
-  }
+.redCard {
+  color: #d32f2f;
 }
 
-/* CARD CORNERS */
+.playingCard:not(.redCard) {
+  color: #111;
+}
+
+/* ============================= */
+/* CARD CORNERS                 */
+/* ============================= */
+
 .cardCorner {
   position: absolute;
-  font-size: clamp(12px, 2.5vw, 14px);
+  font-size: clamp(12px,2.5vw,14px);
   font-weight: 700;
   display: flex;
   flex-direction: column;
@@ -118,17 +164,17 @@
 }
 
 .cardCorner span {
-  font-size: clamp(12px, 2.5vw, 14px);
+  font-size: clamp(12px,2.5vw,14px);
 }
 
 .cardCorner.top {
-  top: clamp(4px, 1vw, 6px);
-  left: clamp(4px, 1vw, 6px);
+  top: clamp(4px,1vw,6px);
+  left: clamp(4px,1vw,6px);
 }
 
 .cardCorner.bottom {
-  bottom: clamp(4px, 1vw, 6px);
-  right: clamp(4px, 1vw, 6px);
+  bottom: clamp(4px,1vw,6px);
+  right: clamp(4px,1vw,6px);
   transform: rotate(180deg);
 }
 
@@ -137,121 +183,43 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: clamp(20px, 5vw, 28px);
+
+  transform: translate(-50%,-50%);
+
+  font-size: clamp(20px,5vw,28px);
 }
 
-/* SUIT COLORS */
-.redCard {
-  color: #d32f2f;
-}
-
-.playingCard:not(.redCard) {
-  color: #111;
-}
-
-/* NOT PLAYER'S TURN - GRAYSCALE STYLING */
-.notPlayerTurnCard {
-  color: #bdbdbd;
-  background: #f5f5f5;
-  border-color: #e0e0e0;
-  opacity: 0.7;
-  filter: grayscale(100%);
-  cursor: not-allowed;
-}
-
-.notPlayerTurnCard:hover,
-.notPlayerTurnCard:active {
-  transform: none;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-/* PLAYABLE CARD GLOW */
-.legalCard {
-  border: 2px solid #ffd700;
-  box-shadow: 0 0 8px rgba(255, 215, 0, 0.7), 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.legalCard:hover,
-.legalCard:active {
-  box-shadow: 0 0 14px rgba(255, 215, 0, 0.9), 0 0 30px rgba(255, 215, 0, 0.6),
-    0 12px 25px rgba(0, 0, 0, 0.4);
-}
-
-/* TABLET ADJUSTMENTS */
-@media (min-width: 601px) {
-  .handStack {
-    position: relative;
-    width: 100%;
-    height: clamp(160px, 35vh, 200px);
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    perspective: 1000px;
-    padding-left: clamp(40px, 8vw, 60px);
-    padding-right: clamp(40px, 8vw, 60px);
-    box-sizing: border-box;
-    gap: 0;
-  }
-
-  .cardWrapper {
-    position: absolute;
-    left: 50%;
-    z-index: 10;
-  }
-
-  .playingCard {
-    border-radius: 10px;
-    padding: 6px;
-  }
-}
-
-/* DESKTOP ADJUSTMENTS */
-@media (min-width: 1025px) {
-  .handStack {
-    height: 140px;
-    /* margin-left: -18px; */
-  }
-
-  .playingCard {
-    width: 70px;
-    height: 100px;
-  }
-}
-
-/* LANDSCAPE MODE OPTIMIZATION */
-@media (orientation: landscape) and (max-height: 600px) {
-  .handStack {
-    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
-    gap: 6px;
-  }
-
-  .playingCard {
-    width: clamp(50px, 10vh, 70px);
-    height: clamp(75px, 15vh, 100px);
-  }
-}
-/* FAN MODE (desktop/tablet) */
+/* ============================= */
+/* FAN MODE (TABLET/DESKTOP)    */
+/* ============================= */
 
 .fanMode {
   position: relative;
   width: 100%;
-  height: clamp(160px, 35vh, 200px);
+  height: clamp(160px,35vh,200px);
+
   display: flex;
   align-items: flex-end;
   justify-content: center;
   perspective: 1000px;
-  padding-left: clamp(40px, 8vw, 60px);
-  padding-right: clamp(40px, 8vw, 60px);
+  padding-left: clamp(40px,8vw,60px);
+  padding-right: clamp(40px,8vw,60px);
   box-sizing: border-box;
-  gap: 0;
 }
 
-/* GRID MODE (overflow fallback) */
+/* cards become absolute in fan mode */
+
+.fanMode .cardWrapper {
+  position: absolute;
+}
+
+/* ============================= */
+/* GRID MODE (OVERFLOW FALLBACK)*/
+/* ============================= */
 
 .gridMode {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(65px,1fr));
   gap: 10px;
   padding-top: 50px;
   justify-items: center;
@@ -260,10 +228,49 @@
   align-content: start;
 }
 
-/* override absolute positioning when grid is active */
+/* override absolute positioning */
 
 .gridMode .cardWrapper {
   position: relative;
   transform: none !important;
   margin-top: -40px;
+}
+
+/* ============================= */
+/* TOUCH DEVICE                 */
+/* ============================= */
+
+@media (hover:none) and (pointer:coarse) {
+
+  .playingCard {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .legalCard:active {
+    transform: translateY(-35px) scale(1.08);
+
+    z-index: 1000;
+
+    box-shadow:
+      0 10px 20px rgba(0,0,0,0.5),
+      0 15px 30px rgba(0,0,0,0.4);
+  }
+}
+
+/* ============================= */
+/* LANDSCAPE SMALL HEIGHT       */
+/* ============================= */
+
+@media (orientation: landscape) and (max-height:600px) {
+
+  .handStack {
+    grid-template-columns: repeat(auto-fit, minmax(50px,1fr));
+    gap: 6px;
+  }
+
+  .playingCard {
+    width: clamp(50px,10vh,70px);
+    height: clamp(75px,15vh,100px);
+  }
 }

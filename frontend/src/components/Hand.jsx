@@ -9,7 +9,7 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
   const [gridMode, setGridMode] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState(null);
   const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" && window.innerWidth < 601
+    typeof window !== "undefined" && window.innerWidth < 970
   );
 
   
@@ -114,7 +114,7 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 601);
+      setIsMobile(window.innerWidth < 970);
     };
 
     window.addEventListener("resize", handleResize);
@@ -124,17 +124,18 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
   useEffect(() => {
   if (isMobile) {
     setGridMode(true);
-    return;
+    // return;
   }
 
-  const containerWidth =
-    containerRef.current?.offsetWidth || window.innerWidth;
+  // const containerWidth =
+  //   containerRef.current?.offsetWidth || window.innerWidth;
 
-  const requiredWidth = sortedHand.length * 80; // approx card width
+  // const requiredWidth = sortedHand.length * 80; // approx card width
 
-  if (requiredWidth > containerWidth * 0.9) {
-    setGridMode(true);
-  } else {
+  // if (requiredWidth > containerWidth * 0.9) {
+  //   setGridMode(true);
+  // } 
+  else {
     setGridMode(false);
   }
 }, [sortedHand.length, isMobile]);
@@ -151,7 +152,7 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
         aria-label="Player hand of cards"
       >
         {sortedHand.map((card, i) => {
-          const baseSpacing = 40;
+          const baseSpacing = 45;
           const maxWidth = containerRef.current?.offsetWidth || window.innerWidth;
           const maxSpread = maxWidth * 0.42; // keep cards inside screen
           const rawOffset = (i - middle) * baseSpacing;
@@ -171,7 +172,9 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
                 gridMode
                 ? { zIndex: isSelected ? 9999 : i }
                 : {
-                    transform: `translateX(calc(-50% + ${offset}px))`,
+                    transform: !isMobile
+                    ? `translateX(${offset}px)`
+                    : "none",
                     zIndex: isSelected ? 9999 : i,
                     }
                 }
