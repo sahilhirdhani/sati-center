@@ -139,7 +139,8 @@ function handleJoinGame(ws, msg) {
     if(game.phase !== "LOBBY")
         return sendError(ws, "Game already started");
 
-    const playerId = crypto.randomUUID();
+    // const playerId = crypto.randomUUID();
+    const playerId = nanoid(8);
 
     game.players.set(playerId, {
         id: playerId,

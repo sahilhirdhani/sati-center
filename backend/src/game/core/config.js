@@ -20,11 +20,11 @@ export function createGameConfig ({ playerCount, layoutMode}) {
         if (!Object.values(LAYOUT_MODES).includes(layoutMode)){
             throw new Error("Invalid layout mode for 2 decks");
         }
-        if(layoutMode === LAYOUT_MODES.DOUBLE_REPEATED) {
-            finalLayoutMode = LAYOUT_MODES.DOUBLE_REPEATED;
+        if(layoutMode === LAYOUT_MODES.DOUBLE_SETS) {
+            finalLayoutMode = LAYOUT_MODES.DOUBLE_SETS;
         }
         else {
-            finalLayoutMode = LAYOUT_MODES.DOUBLE_SETS;
+            finalLayoutMode = LAYOUT_MODES.DOUBLE_REPEATED;
         }
     }
 
