@@ -12,7 +12,7 @@ export function createGameConfig ({ playerCount, layoutMode}) {
         throw new Error(`Player count must be between ${MIN_PLAYERS} and ${MAX_PLAYERS}`);
     }
 
-    const decks = playerCount <= 5 ? 1 : 2;
+    const decks = playerCount < 5 ? 1 : 2;
 
     let finalLayoutMode = LAYOUT_MODES.SINGLE;
 
