@@ -1,5 +1,8 @@
 import { useGameStore } from "../store/useGameStore";
 import Reconnecting from "./Reconnecting";
+import LeftPanel from "../components/LeftPanel";
+import RightPanel from "../components/RightPanel";
+import VersionPanel from "../components/VersionPanel";
 import "../styles/Lobby.css"
 
 export default function Lobby() {
@@ -13,9 +16,12 @@ export default function Lobby() {
 
   return (
     <div className="lobbyPage">
-      <div className="lobbyCard">
+      <div className="lobbyContent">
+        <div className="tableLayout">
+          <LeftPanel />
+          <div className="landingCard">
         <h1 className="mainTitle">Satti Center</h1>
-        <div className="version">v0.001 build</div>
+        <div className="version">v 1.001</div>
 
         <h2 className="subTitle">
           Game ID: {gameId}
@@ -65,6 +71,10 @@ export default function Lobby() {
             Leave
           </button>
         </div>
+      </div>
+        <RightPanel />
+        </div>
+        <VersionPanel />
       </div>
     </div>
   );

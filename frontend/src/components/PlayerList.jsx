@@ -9,7 +9,7 @@ export default function PlayerList({ players, currentTurn, finishOrder }) {
   return (
     <div className="playersSection playersBox" role="region" aria-label="Player list">
       <h3 className="sectionTitle">Players</h3>
-      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+      <div className="playerListContainer">
         {players.map(p => {
           const isTurn = p.id === currentTurn;
           const position = getPosition(p.id);

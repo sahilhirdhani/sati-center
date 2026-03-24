@@ -126,6 +126,7 @@ function handleJoinGame(ws, msg) {
 
         ws.send(JSON.stringify({
             type: "RECONNECTED",
+            gameId: msg.gameId,
             playerId: msg.playerId,
             role: ws.role,
             name: existingPlayer.name,

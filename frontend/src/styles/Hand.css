@@ -6,7 +6,8 @@
   flex-direction: column;
   align-items: center;
   height: auto;
-  min-height: 140px;
+  min-height: 100px;
+  margin-top: 30px; /* Gives extra clearance above for lifting cards */
   overflow: visible;
   position: relative;
 }
@@ -54,8 +55,8 @@
 /* ============================= */
 
 .playingCard {
-  width: clamp(60px, 15vw, 80px);
-  height: clamp(90px, 22.5vw, 120px);
+  width: clamp(45px, max(6vw, 8vh), 65px);
+  height: clamp(67.5px, max(9vw, 12vh), 97.5px);
 
   border-radius: 8px;
   background: white;
@@ -121,12 +122,12 @@
 /* ============================= */
 
 .notPlayerTurnCard {
-  color: #bdbdbd;
-  background: #f5f5f5;
-  border-color: #e0e0e0;
+  /* color: #bdbdbd; */
+  background: #aeaeae;
+  border-color: #a6a6a6; 
 
-  opacity: 0.7;
-  filter: grayscale(100%);
+  /* opacity: 0.7; */
+  /* filter: grayscale(100%); */
   cursor: not-allowed;
 }
 
@@ -196,7 +197,7 @@
 .fanMode {
   position: relative;
   width: 100%;
-  height: clamp(160px,35vh,200px);
+  height: clamp(100px, 15vh, 140px); /* Height scales responsively with screen height */
 
   display: flex;
   align-items: flex-end;

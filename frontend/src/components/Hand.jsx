@@ -126,15 +126,6 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
     setGridMode(true);
     // return;
   }
-
-  // const containerWidth =
-  //   containerRef.current?.offsetWidth || window.innerWidth;
-
-  // const requiredWidth = sortedHand.length * 80; // approx card width
-
-  // if (requiredWidth > containerWidth * 0.9) {
-  //   setGridMode(true);
-  // } 
   else {
     setGridMode(false);
   }
@@ -142,7 +133,7 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
 
   return (
     <div className="handSection" ref={containerRef}>
-      <h3 className="sectionTitle">Your Hand</h3>
+      {/* <h3 className="sectionTitle">Your Hand</h3> */}
 
       <div
         className={`handStack ${gridMode ? "gridMode" : "fanMode"}`}
@@ -181,9 +172,10 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
             >
               <button
                 className={`playingCard ${
-                  isLegal && isPlayerTurn ? "legalCard" : ""
+                  isLegal ? "legalCard" : ""
                 } ${red ? "redCard" : ""} ${
                   !isPlayerTurn ? "notPlayerTurnCard" : ""
+                } ${!isPlayerTurn && isLegal ? "legalCard" : ""
                 } ${isSelected && isLegal ? "selectedCard" : ""}`}
                 onClick={() => handleCardClick(card)}
                 onKeyDown={(e) => handleCardKeyDown(e, card)}

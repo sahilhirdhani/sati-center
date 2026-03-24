@@ -21,7 +21,7 @@
   font-size: var(--font-xl);
   letter-spacing: 2px;
   font-weight: 700;
-  text-shadow: 0 0 10px cyan, 0 0 20px magenta;
+  color: var(--accent-gold);
   word-break: break-word;
 }
 
@@ -37,27 +37,30 @@
   display: grid;
   gap: var(--spacing-lg);
   grid-template-columns: 1fr;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto auto auto;
   grid-template-areas:
     "players"
     "table"
     "hand";
   min-height: 0;
+  align-content: center; /* Center everything if there's extra vertical space */
 }
 
 /* TABLET LAYOUT */
-@media (min-width: 601px) {
+@media (min-width: 601px) and (max-width: 1024px) {
   .gameRoot {
     padding: var(--spacing-xl);
   }
 
   .gameBoard {
-    grid-template-columns: minmax(180px, 220px) 1fr;
-    grid-template-rows: 1fr auto;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
     grid-template-areas:
-      "players table"
-      "players hand";
+      "players"
+      "table"
+      "hand";
     gap: var(--spacing-xl);
+    align-content: center; /* Don't stretch the table */
   }
 
   .gameHeader {
@@ -68,11 +71,17 @@
 /* DESKTOP LAYOUT */
 @media (min-width: 1025px) {
   .gameRoot {
-    padding: var(--spacing-2xl);
+    padding: var(--spacing-md); /* Reduced padding */
   }
 
   .gameBoard {
-    gap: 24px;
+    grid-template-columns: minmax(180px, 220px) 1fr;
+    grid-template-rows: auto auto; /* Distribute rows natively to children */
+    grid-template-areas:
+      "players table"
+      "players hand";
+    gap: 12px; /* Reduced gap */
+    align-content: center; /* Keep table and hand grouping vertically centered */
   }
 }
 
@@ -87,11 +96,11 @@
   grid-area: table;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center; /* Center table contents vertically when not spanning */
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   min-height: 0;
-  flex: 1;
+  flex: none; /* Let it define its own height */
   z-index: 1;
   position: relative;
 }

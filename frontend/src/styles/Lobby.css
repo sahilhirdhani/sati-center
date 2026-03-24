@@ -1,70 +1,332 @@
-/* LOBBY PAGE */
+/* ============================= */
+/* FONTS */
+/* ============================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+
+
+/* ============================= */
+/* LOBBY PAGE BACKGROUND */
+/* ============================= */
+
 .lobbyPage {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: var(--spacing-md);
+
+  padding: 40px;
+  position: relative;
+
+  background: transparent;
+  box-shadow: none;
+  overflow: hidden;
 }
 
-/* LOBBY CARD */
-.lobbyCard {
-  width: clamp(280px, 90vw, 420px);
-  padding: clamp(20px, 5vw, 26px);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  display: flex;
-  flex-direction: column;
-  gap: clamp(12px, 3vw, 18px);
-  text-align: center;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+
+/* ============================= */
+/* FLOATING PARTICLES */
+/* ============================= */
+
+.lobbyPage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+  z-index: 0;
+
+  background-image:
+    radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
+    radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+
+  background-size: 120px 120px, 200px 200px;
+
+  animation: floatParticles 60s linear infinite;
 }
+
+@keyframes floatParticles {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 1000px 1000px, -800px 800px;
+  }
+}
+
+
+/* ============================= */
+/* LOBBY CONTENT */
+/* ============================= */
+
+.lobbyContent {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+
+/* ============================= */
+/* MAIN LAYOUT */
+/* ============================= */
+
+.tableLayout {
+  position: relative;
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 50px;
+
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto 30px;
+}
+
+
+/* ============================= */
+/* CENTER CARD */
+/* ============================= */
+
+.landingCard {
+
+  width: 460px;
+
+  padding: 45px;
+
+  border-radius: 20px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+
+  position: relative;
+
+  text-align: center;
+
+  color: #e6c98f;
+
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+}
+
+
+/* GOLD FRAME GLOW */
+
+.landingCard::before {
+  content:"";
+  position:absolute;
+
+  inset:-4px;
+
+  border-radius:22px;
+
+  box-shadow:
+    0 0 20px rgba(212,175,55,0.15),
+    0 0 45px rgba(212,175,55,0.05);
+
+  pointer-events:none;
+}
+
+
+/* TABLE LIGHT */
+
+.landingCard::after{
+  content:"";
+  position:absolute;
+
+  inset:-60px;
+
+  background: radial-gradient(
+    circle,
+    rgba(255,215,0,0.05),
+    transparent 70%
+  );
+
+  pointer-events:none;
+}
+
+
+/* ============================= */
+/* TITLE */
+/* ============================= */
 
 .mainTitle {
+  font-family: 'Cinzel','Georgia',serif;
   font-size: var(--font-2xl);
   letter-spacing: 2px;
   font-weight: 700;
-  text-shadow: 0 0 10px cyan, 0 0 20px magenta;
-  word-break: break-word;
+  color: var(--accent-gold);
+  margin: 0;
 }
+
+
+/* SUBTITLE */
 
 .subTitle {
   font-size: var(--font-sm);
   opacity: 0.7;
-  word-break: break-word;
 }
+
+
+/* VERSION */
 
 .version {
   font-size: var(--font-xs);
   opacity: 0.4;
 }
 
-/* PLAYERS BOX */
-.playersBox {
-  padding: clamp(12px, 3vw, 14px);
-  border-radius: 10px;
-  background: rgba(0, 0, 0, 0.35);
-  min-height: clamp(100px, 30vh, 200px);
+
+/* ============================= */
+/* INPUTS (for Landing page) */
+/* ============================= */
+
+.formBox {
+  margin-top: 25px;
+}
+
+.inputField {
+  width: 100%;
+
+  padding: 14px;
+
+  margin-bottom: 12px;
+
+  border-radius: 6px;
+
+  border: 1px solid #000;
+
+  background: linear-gradient(
+    180deg,
+    #0f0703,
+    #050201
+  );
+
+  color: #fff;
+
+  box-shadow:
+    inset 0 2px 6px rgba(0, 0, 0, 0.9),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.inputField::placeholder {
+  color: #666;
+}
+
+
+/* ============================= */
+/* BUTTONS */
+/* ============================= */
+
+.buttonGroup {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: 12px;
+
+  margin-top: 20px;
+}
+
+.primaryBtn,
+.secondaryBtn {
+  padding: 14px;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  font-weight: 700;
+
+  font-size: 0.95rem;
+
+  transition: all 0.2s ease;
+
+  min-height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+}
+
+.primaryBtn {
+  border: 1px solid #b8962e;
+
+  background: linear-gradient(180deg, #ffe680, #ffd700, #d4af37);
+
+  color: #3b250e;
+}
+
+.primaryBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.35);
+}
+
+.primaryBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.primaryBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.secondaryBtn {
+  border: 1px solid rgba(0, 0, 0, 0.4);
+
+  background: linear-gradient(180deg, #7a5442, #3e2723);
+
+  color: #f2d79b;
+}
+
+.secondaryBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+.secondaryBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.secondaryBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+
+/* ============================= */
+/* LOBBY SPECIFIC STYLES */
+/* ============================= */
+
+/* PLAYERS BOX */
+.playersBox {
+  padding: 14px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.35);
+  min-height: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .playersBox .subTitle {
-  margin-bottom: clamp(8px, 2vw, 10px);
+  margin-bottom: 8px;
 }
 
 /* PLAYERS LIST */
 .playerList {
   list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: clamp(6px, 1.5vw, 8px);
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
   overflow-y: auto;
-  max-height: clamp(80px, 25vh, 150px);
-  padding-right: clamp(4px, 1vw, 6px);
+  max-height: 150px;
+  padding-right: 6px;
 }
 
 .playerList::-webkit-scrollbar {
@@ -87,11 +349,12 @@
 
 /* PLAYER ITEM */
 .playerItem {
-  padding: clamp(8px, 2vw, 10px);
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.04);
   font-size: var(--font-sm);
-  word-break: break-word;
   transition: all 0.2s ease;
 }
 
@@ -99,99 +362,158 @@
   background: rgba(255, 255, 255, 0.08);
 }
 
-/* BUTTON GROUP */
-.buttonGroup {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(8px, 2vw, 10px);
-  width: 100%;
-  margin-top: var(--spacing-sm);
-}
 
-/* PRIMARY BUTTON */
-.primaryBtn {
-  padding: clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 14px);
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: var(--font-sm);
-  background: linear-gradient(135deg, #6f6cff, #8a85ff);
-  color: white;
-  transition: all 0.2s ease;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-}
+/* ============================= */
+/* MOBILE RESPONSIVENESS */
+/* ============================= */
 
-.primaryBtn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(111, 108, 255, 0.4);
-}
+@media (max-width: 768px) {
+  .lobbyPage {
+    padding: 20px;
+  }
 
-.primaryBtn:active:not(:disabled) {
-  transform: translateY(0);
-}
+  .lobbyContent {
+    width: 100%;
+  }
 
-.primaryBtn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
+  .tableLayout {
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto 20px;
+  }
 
-/* SECONDARY BUTTON */
-.secondaryBtn {
-  padding: clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 14px);
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: var(--font-sm);
-  background: linear-gradient(135deg, #2ec27e, #1ea764);
-  color: white;
-  transition: all 0.2s ease;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-}
+  .sidePanel {
+    width: 100%;
+    max-width: 100%;
+    order: 1;
+  }
 
-.secondaryBtn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(46, 194, 126, 0.4);
-}
+  .landingCard {
+    width: 100%;
+    max-width: 100%;
+    padding: 30px;
+    order: 2;
+  }
 
-.secondaryBtn:active:not(:disabled) {
-  transform: translateY(0);
-}
+  .mainTitle {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+  }
 
-.secondaryBtn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
+  .subTitle {
+    font-size: clamp(0.85rem, 3vw, 1rem);
+  }
 
-/* TABLET ADJUSTMENTS */
-@media (min-width: 601px) {
+  .version {
+    font-size: clamp(0.7rem, 2vw, 0.85rem);
+  }
+
+  .playersBox {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    min-height: fit-content;
+    height: auto;
+    gap: 4px;
+    margin-bottom: 0px;
+  }
+
+  .playerList {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    max-height: 120px;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .playerItem {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px 8px;
+    font-size: 0.85rem;
+    min-height: auto;
+    display: flex;
+    align-items: center;
+    line-height: 1.2;
+  }
+
   .buttonGroup {
-    flex-direction: row;
+    gap: 10px;
+    margin-top: 15px;
+    flex-direction: column;
   }
 
   .primaryBtn,
   .secondaryBtn {
+    padding: 12px;
+    font-size: 0.9rem;
+    min-height: 40px;
     flex: 1;
+  }
+
+  .versionPanel {
+    margin-top: 20px;
+    width: 100%;
+    order: 3;
   }
 }
 
-/* LANDSCAPE MODE */
-@media (orientation: landscape) {
-  .lobbyPage {
-    padding: var(--spacing-sm);
+/* LEFT PANEL MOBILE ORDER */
+@media (max-width: 768px) {
+  .sidePanel:first-child {
+    order: 1;
   }
 
-  .lobbyCard {
-    gap: 12px;
+  .sidePanel:last-child {
+    order: 2;
+  }
+
+  .landingCard {
+    order: 1;
+  }
+}
+
+
+/* ============================= */
+/* TABLET ADJUSTMENTS */
+/* ============================= */
+
+@media (min-width: 601px) and (max-width: 1024px) {
+  .tableLayout {
+    gap: 30px;
+  }
+
+  .landingCard {
+    width: 380px;
+    padding: 35px;
+  }
+
+  .sidePanel {
+    width: 240px;
+  }
+}
+
+
+/* ============================= */
+/* LANDSCAPE MODE */
+/* ============================= */
+
+@media (orientation: landscape) and (max-width: 900px) {
+  .lobbyPage {
+    padding: 15px;
+  }
+
+  .tableLayout {
+    gap: 20px;
+    flex-direction: column;
+  }
+
+  .landingCard {
+    padding: 25px;
+    width: 100%;
   }
 
   .playersBox {

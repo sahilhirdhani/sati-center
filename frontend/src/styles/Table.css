@@ -145,29 +145,37 @@
   }
 
   .tableCards {
-    gap: -18px;
+    padding-top: 0;
+    margin-left: 4px;
     flex-direction: row;
     flex: 1;
+    align-items: center;
   }
 
   .tableCard {
     width: 60px;
     height: 88px;
+    margin-top: 0;
+    margin-left: -18px;
+  }
+
+  .tableCard:first-child {
+    margin-left: 0;
   }
 }
 
 /* DESKTOP ADJUSTMENTS */
 @media (min-width: 1025px) {
   .tableArea {
-    padding: 24px;
-    gap: 18px;
+    padding: 16px; /* Reduced padding */
+    gap: 12px;     /* Reduced gap */
     display: flex;
     flex-direction: column;
   }
 
   .suitRow {
-    min-height: 100px;
-    gap: 12px;
+    min-height: 80px; /* Reduced min-height */
+    gap: 8px;
   }
 
   .tableCards {
@@ -176,8 +184,8 @@
   }
 
   .tableCard {
-    width: 60px;
-    height: 88px;
+    width: 50px;  /* Reduced width */
+    height: 75px; /* Reduced height */
     margin-left: -18px;
   }
 

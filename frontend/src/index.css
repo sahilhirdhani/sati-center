@@ -1,30 +1,9 @@
-/* @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&display=swap');
-
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-
-body{
-  font-family:"Orbitron","Segoe UI",sans-serif;
-  background: radial-gradient(circle at top left,#0d0d0d,#1a1a1a);
-  color:white;
-  min-height:100vh;
-}
-
-button{
-  font-family:inherit;
-}
-
-input{
-  font-family:inherit;
-} */
-
-
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&display=swap');
+/* FONTS */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap');
 
 :root {
+
   /* BREAKPOINTS */
   --mobile: 600px;
   --tablet: 1024px;
@@ -46,13 +25,18 @@ input{
   --font-2xl: clamp(28px, 8vw, 40px);
 
   /* COLORS */
-  --primary: linear-gradient(135deg, #6f6cff, #8a85ff);
-  --secondary: linear-gradient(135deg, #2ec27e, #1ea764);
-  --accent-gold: #ffd700;
-  --red: #d32f2f;
+
+  --accent-gold: #d4af37;
+  --gold-light: #f3d37c;
+  --gold-dark: #8c6a1a;
+
+  --red: #c62828;
+
   --dark-bg: #0d0d0d;
   --darker-bg: #1a1a1a;
 }
+
+/* GLOBAL RESET */
 
 * {
   box-sizing: border-box;
@@ -64,45 +48,88 @@ html {
   scroll-behavior: smooth;
 }
 
+/* BODY */
+
 body {
-  font-family: "Orbitron", "Segoe UI", sans-serif;
-  background: radial-gradient(circle at top left, #0d0d0d, #1a1a1a);
-  color: white;
+
+  font-family: "Inter", "Segoe UI", sans-serif;
+
+  background: #0d0d0d;
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(212, 175, 55, 0.05), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(212, 175, 55, 0.03), transparent 25%);
+
+  color: #e6c98f;
+
   min-height: 100vh;
+
   font-size: var(--font-base);
+
   line-height: 1.5;
 }
 
+/* HEADINGS */
+
+h1, h2, h3 {
+
+  font-family: "Cinzel", serif;
+
+  font-weight: 600;
+
+  letter-spacing: 1px;
+
+}
+
+/* BUTTONS */
+
 button {
+
   font-family: inherit;
+
   cursor: pointer;
-  transition: all 0.2s ease;
+
+  transition: transform 0.15s ease;
+
 }
 
 button:active {
-  transform: scale(0.98);
+
+  transform: scale(0.97);
+
 }
 
+/* INPUTS */
+
 input {
+
   font-family: inherit;
+
 }
 
 input::placeholder {
+
   opacity: 0.7;
+
 }
 
 /* TOUCH DEVICE OPTIMIZATIONS */
+
 @media (hover: none) and (pointer: coarse) {
+
   button {
     min-height: 44px;
     min-width: 44px;
   }
+
 }
 
-/* PREVENT ZOOM ON INPUT FOCUS */
+/* PREVENT ZOOM ON MOBILE INPUT FOCUS */
+
 @media (max-width: 768px) {
+
   input,
   button {
     font-size: 16px;
   }
+
 }

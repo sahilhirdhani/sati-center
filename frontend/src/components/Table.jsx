@@ -32,7 +32,7 @@ export default function Table({ table }) {
   return (
     <div className="tableSection" role="region" aria-label="Game table">
 
-      <h3 className="sectionTitle">Table</h3>
+      {/* <h3 className="sectionTitle">Table</h3> */}
 
       <div className="tableArea">
 
@@ -49,9 +49,9 @@ export default function Table({ table }) {
           return (
             <div key={suit} className="suitRow" role="row">
 
-              <div className={`suitTitle ${isRed ? "redSuit" : ""}`} role="cell">
+              {/* <div className={`suitTitle ${isRed ? "redSuit" : ""}`} role="cell">
                 {suitSymbols[suit]}
-              </div>
+              </div> */}
 
               <div className="tableCards" role="cell">
 

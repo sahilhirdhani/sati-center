@@ -1,0 +1,241 @@
+/* ============================= */
+/* FONTS */
+/* ============================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+
+
+/* ============================= */
+/* GAME PREP PAGE BACKGROUND */
+/* ============================= */
+
+.gamePrepPage {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 40px;
+  position: relative;
+
+  background: transparent;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+
+/* ============================= */
+/* FLOATING PARTICLES */
+/* ============================= */
+
+.gamePrepPage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+  z-index: 0;
+
+  background-image:
+    radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
+    radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+
+  background-size: 120px 120px, 200px 200px;
+
+  animation: floatParticles 60s linear infinite;
+}
+
+@keyframes floatParticles {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 1000px 1000px, -800px 800px;
+  }
+}
+
+
+/* ============================= */
+/* GAME PREP CONTENT */
+/* ============================= */
+
+.gamePrepContent {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+
+/* ============================= */
+/* MAIN LAYOUT */
+/* ============================= */
+
+.gamePrepLayout {
+  position: relative;
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+
+/* ============================= */
+/* CENTER CARD WITH ENHANCED GOLDEN SHADOW */
+/* ============================= */
+
+.gamePrepCard {
+  width: 460px;
+
+  padding: 45px;
+
+  border-radius: 20px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+
+  position: relative;
+
+  text-align: center;
+
+  color: #e6c98f;
+
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+}
+
+
+/* ENHANCED GOLD FRAME GLOW */
+
+.gamePrepCard::before {
+  content: "";
+  position: absolute;
+
+  inset: -4px;
+
+  border-radius: 22px;
+
+  box-shadow:
+    0 0 20px rgba(212, 175, 55, 0.6),
+    0 0 45px rgba(212, 175, 55, 0.35),
+    0 0 70px rgba(212, 175, 55, 0.15);
+
+  pointer-events: none;
+  animation: goldenGlow 2s ease-in-out infinite;
+}
+
+@keyframes goldenGlow {
+  0%, 100% {
+    box-shadow:
+      0 0 20px rgba(212, 175, 55, 0.6),
+      0 0 45px rgba(212, 175, 55, 0.35),
+      0 0 70px rgba(212, 175, 55, 0.15);
+  }
+  50% {
+    box-shadow:
+      0 0 25px rgba(212, 175, 55, 0.8),
+      0 0 50px rgba(212, 175, 55, 0.45),
+      0 0 80px rgba(212, 175, 55, 0.25);
+  }
+}
+
+
+/* ENHANCED TABLE LIGHT */
+
+.gamePrepCard::after {
+  content: "";
+  position: absolute;
+
+  inset: -60px;
+
+  background: radial-gradient(
+    circle,
+    rgba(255, 215, 0, 0.25),
+    rgba(255, 215, 0, 0.08),
+    transparent 70%
+  );
+
+  pointer-events: none;
+  animation: goldenPulse 2s ease-in-out infinite;
+}
+
+@keyframes goldenPulse {
+  0%, 100% {
+    background: radial-gradient(
+      circle,
+      rgba(255, 215, 0, 0.25),
+      rgba(255, 215, 0, 0.08),
+      transparent 70%
+    );
+  }
+  50% {
+    background: radial-gradient(
+      circle,
+      rgba(255, 215, 0, 0.35),
+      rgba(255, 215, 0, 0.15),
+      transparent 70%
+    );
+  }
+}
+
+
+/* ============================= */
+/* TITLE */
+/* ============================= */
+
+.mainTitle {
+  font-family: 'Cinzel', 'Georgia', serif;
+  font-size: var(--font-2xl);
+  letter-spacing: 2px;
+  font-weight: 700;
+  color: var(--accent-gold);
+  margin: 0;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+
+/* ============================= */
+/* MOBILE RESPONSIVENESS */
+/* ============================= */
+
+@media (max-width: 768px) {
+  .gamePrepPage {
+    padding: 20px;
+  }
+
+  .gamePrepContent {
+    width: 100%;
+  }
+
+  .gamePrepLayout {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .gamePrepCard {
+    width: 100%;
+    max-width: 100%;
+    padding: 30px;
+  }
+
+  .mainTitle {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+  }
+}
+
+
+/* ============================= */
+/* TABLET ADJUSTMENTS */
+/* ============================= */
+
+@media (min-width: 601px) and (max-width: 1024px) {
+  .gamePrepCard {
+    width: 380px;
+    padding: 35px;
+  }
+}
