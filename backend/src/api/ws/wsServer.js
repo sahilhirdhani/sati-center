@@ -77,7 +77,7 @@ function handleCreateGame(ws, msg) {
     if(!name) return sendError(ws, "Name is required");
 
     // const gameId = "1q";
-    const gameId = nanoid(6);
+    const gameId = Math.floor(100000 + Math.random() * 900000).toString();
     // const gameId = crypto.randomUUID();
     const game = createGame(gameId);
 
