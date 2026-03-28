@@ -14,6 +14,7 @@ export default function App() {
       if (document.visibilityState === "visible") {
         attemptReconnect();
         alert("yoi")
+        console.log("yoi in console")
       }
     };
     
