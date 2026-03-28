@@ -46,7 +46,7 @@ export const useGameStore = create((set,get) => ({
             playerId: session.playerId,
             role: session.role,
             name: session.name,
-            screen: "reconnecting"
+            // screen: "reconnecting"
         })
         send({
             type: "JOIN_GAME",

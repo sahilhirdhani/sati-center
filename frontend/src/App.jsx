@@ -34,7 +34,7 @@ export default function App() {
     };
   }, [attemptReconnect]);
   
-  // if (screen === "reconnecting") return <Reconnecting />;
+  if (screen === "reconnecting") return <Reconnecting />;
   if (screen === "landing") return <Landing />;
   if (screen === "lobby") return <Lobby />;
   if (screen === "game") return <Game />;
