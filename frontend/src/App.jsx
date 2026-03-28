@@ -4,6 +4,8 @@ import Lobby from "./pages/Lobby";
 import Game from "./pages/Game";
 import Reconnecting from "./pages/Reconnecting";
 import { useEffect } from "react";
+import Swal from 'sweetalert2';
+
 
 export default function App() {
   const screen = useGameStore(state => state.screen);
@@ -13,7 +15,15 @@ export default function App() {
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
         attemptReconnect();
-        alert("yoi")
+        // alert("yoi")
+        // setTimeout(function() { alert("YOI!"); }, 500);
+        Swal.fire({
+          title: 'Alert',
+          // text: 'This will close in 3 seconds.',
+          timer: 10, // 3000 milliseconds
+          // timerProgressBar: true,
+          showConfirmButton: false // Hides the "OK" button
+        });
         // console.log("yoi in console")
       }
     };

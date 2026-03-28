@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "framer-motion": "^12.35.0",
-    "nanoid": "^5.1.6"
+    "nanoid": "^5.1.6",
+    "sweetalert2": "^11.26.24"
   }
 }
