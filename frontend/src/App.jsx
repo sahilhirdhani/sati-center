@@ -3,17 +3,25 @@ import Landing from "./pages/Landing";
 import Lobby from "./pages/Lobby";
 import Game from "./pages/Game";
 import Reconnecting from "./pages/Reconnecting";
+import { useEffect } from "react";
 
 export default function App() {
   const screen = useGameStore(state => state.screen);
   const { attemptReconnect } = useGameStore();
 
-  document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") {
-      attemptReconnect;
-      console.log("hello")
-    }
-  });
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        attemptReconnect();
+        alert("yoi")
+      }
+    };
+    
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [attemptReconnect]);
   
   if (screen === "reconnecting") return <Reconnecting />;
   if (screen === "landing") return <Landing />;
