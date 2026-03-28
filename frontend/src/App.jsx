@@ -6,7 +6,15 @@ import Reconnecting from "./pages/Reconnecting";
 
 export default function App() {
   const screen = useGameStore(state => state.screen);
+  const { attemptReconnect } = useGameStore();
 
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      attemptReconnect;
+      console.log("hello")
+    }
+  });
+  
   if (screen === "reconnecting") return <Reconnecting />;
   if (screen === "landing") return <Landing />;
   if (screen === "lobby") return <Lobby />;
