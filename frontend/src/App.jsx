@@ -13,7 +13,7 @@ export default function App() {
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
         attemptReconnect();
-        // alert("yoi")
+        alert("yoi")
         // console.log("yoi in console")
       }
     };
