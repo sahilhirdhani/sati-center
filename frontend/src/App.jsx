@@ -16,14 +16,15 @@ export default function App() {
       if (document.visibilityState === "visible") {
         attemptReconnect();
         console.alert("yoi")
+        alert("yoi")
         // setTimeout(function() { alert("YOI!"); }, 500);
-        Swal.fire({
-          title: 'Alert',
-          // text: 'This will close in 3 seconds.',
-          timer: 10, // 3000 milliseconds
-          // timerProgressBar: true,
-          showConfirmButton: false // Hides the "OK" button
-        });
+        // Swal.fire({
+        //   title: 'Alert',
+        //   // text: 'This will close in 3 seconds.',
+        //   timer: 10, // 3000 milliseconds
+        //   // timerProgressBar: true,
+        //   showConfirmButton: false // Hides the "OK" button
+        // });
         // console.log("yoi in console")
       }
     };
