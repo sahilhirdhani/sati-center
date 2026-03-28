@@ -15,23 +15,27 @@ export default function App() {
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
         attemptReconnect();
-        console.log("yoi")
-        alert("yoi")
-        // setTimeout(function() { alert("YOI!"); }, 500);
-        // Swal.fire({
-        //   title: 'Alert',
-        //   // text: 'This will close in 3 seconds.',
-        //   timer: 10, // 3000 milliseconds
-        //   // timerProgressBar: true,
-        //   showConfirmButton: false // Hides the "OK" button
-        // });
-        // console.log("yoi in console")
+      }
+    };
+
+    const handleFocus = () => {
+      attemptReconnect();
+    };
+
+    const handlePageShow = (event) => {
+      if (event.persisted) {
+        attemptReconnect();
       }
     };
     
     document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("focus", handleFocus);
+    window.addEventListener("pageshow", handlePageShow);
+
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("focus", handleFocus);
+      window.removeEventListener("pageshow", handlePageShow);
     };
   }, [attemptReconnect]);
   
