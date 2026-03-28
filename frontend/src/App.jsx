@@ -15,7 +15,7 @@ export default function App() {
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
         attemptReconnect();
-        // alert("yoi")
+        console.alert("yoi")
         // setTimeout(function() { alert("YOI!"); }, 500);
         Swal.fire({
           title: 'Alert',
