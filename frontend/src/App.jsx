@@ -11,31 +11,45 @@ export default function App() {
   const screen = useGameStore(state => state.screen);
   const { attemptReconnect } = useGameStore();
 
+  // useEffect(() => {
+  //   const handleVisibilityChange = () => {
+  //     if (document.visibilityState === "visible") {
+  //       attemptReconnect();
+  //     }
+  //   };
+
+  //   const handleFocus = () => {
+  //     attemptReconnect();
+  //   };
+
+  //   const handlePageShow = (event) => {
+  //     if (event.persisted) {
+  //       attemptReconnect();
+  //     }
+  //   };
+    
+  //   document.addEventListener("visibilitychange", handleVisibilityChange);
+  //   window.addEventListener("focus", handleFocus);
+  //   window.addEventListener("pageshow", handlePageShow);
+
+  //   return () => {
+  //     document.removeEventListener("visibilitychange", handleVisibilityChange);
+  //     window.removeEventListener("focus", handleFocus);
+  //     window.removeEventListener("pageshow", handlePageShow);
+  //   };
+  // }, [attemptReconnect]);
+
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
         attemptReconnect();
+        alert("Welcome Back")
       }
     };
 
-    const handleFocus = () => {
-      attemptReconnect();
-    };
-
-    const handlePageShow = (event) => {
-      if (event.persisted) {
-        attemptReconnect();
-      }
-    };
-    
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    window.addEventListener("focus", handleFocus);
-    window.addEventListener("pageshow", handlePageShow);
-
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-      window.removeEventListener("focus", handleFocus);
-      window.removeEventListener("pageshow", handlePageShow);
     };
   }, [attemptReconnect]);
   
