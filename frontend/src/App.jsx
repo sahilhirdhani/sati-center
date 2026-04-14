@@ -38,20 +38,6 @@ export default function App() {
   //     window.removeEventListener("pageshow", handlePageShow);
   //   };
   // }, [attemptReconnect]);
-
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        attemptReconnect();
-        alert("Welcome Back")
-      }
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, [attemptReconnect]);
   
   if (screen === "reconnecting") return <Reconnecting />;
   if (screen === "landing") return <Landing />;
