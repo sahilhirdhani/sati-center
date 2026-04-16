@@ -17,7 +17,8 @@ export function createGame(gameId) {
         id: gameId,
         phase: "LOBBY",
         players: new Map(),
-        state: null
+        state: null,
+        chatMessages: []
     }
 
     game.set(gameId, game_)

@@ -18,11 +18,15 @@ const cardSymbols = {
 const suitOrder = ["diamonds", "spades", "hearts", "clubs"];
 
 export default function Table({ table }) {
-  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 601);
+  const [isCompact, setIsCompact] = useState(typeof window !== 'undefined' && window.innerWidth < 1025);
+
+  const renderedPiles = isCompact
+    ? suitOrder.filter((suit) => (table[suit] || []).length > 0)
+    : suitOrder;
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 601);
+      setIsCompact(window.innerWidth < 1025);
     };
 
     window.addEventListener("resize", handleResize);
@@ -31,70 +35,60 @@ export default function Table({ table }) {
 
   return (
     <div className="tableSection" role="region" aria-label="Game table">
-
-      {/* <h3 className="sectionTitle">Table</h3> */}
-
       <div className="tableArea">
+        {renderedPiles.length === 0 ? (
+          <div className="tableEmpty">No cards on the table</div>
+        ) : (
+          renderedPiles.map((suit) => {
+            let cards = table[suit] || [];
+            if (isCompact) {
+              cards = [...cards].sort((a, b) => b.value - a.value);
+            }
 
-        {suitOrder.map((suit) => {
+            const isRed = suit === "hearts" || suit === "diamonds";
 
-          // Sort cards by value descending (King first, Ace last) ONLY on mobile
-          let cards = table[suit] || [];
-          if (isMobile) {
-            cards = [...cards].sort((a, b) => b.value - a.value);
-          }
-          
-          const isRed = suit === "hearts" || suit === "diamonds";
+            return (
+              <div key={suit} className="tableRow" role="row">
+                {isCompact && (
+                  <div className={`tableRowLabel ${isRed ? "redSuit" : ""}`} role="cell" aria-label={suit}>
+                    {suitSymbols[suit]}
+                  </div>
+                )}
 
-          return (
-            <div key={suit} className="suitRow" role="row">
+                <div className="tableCards" role="cell">
+                  {cards.map((card) => {
+                    const isRedCard = card.suit === "hearts" || card.suit === "diamonds";
 
-              {/* <div className={`suitTitle ${isRed ? "redSuit" : ""}`} role="cell">
-                {suitSymbols[suit]}
-              </div> */}
+                    return (
+                      <div
+                        key={card.id}
+                        className="tableCard"
+                        role="img"
+                        aria-label={`${cardSymbols[card.value] || card.value}${suitSymbols[card.suit]}`}
+                      >
+                        <div className={`tablePlayingCard ${isRedCard ? "tableRedCard" : ""}`}>
+                          <div className="tableCorner top">
+                            {cardSymbols[card.value] || card.value}
+                            <span>{suitSymbols[card.suit]}</span>
+                          </div>
 
-              <div className="tableCards" role="cell">
+                          <div className="tableCenter">
+                            {suitSymbols[card.suit]}
+                          </div>
 
-                {cards.map((card, idx) => {
-
-                  const isRedCard =
-                    card.suit === "hearts" || card.suit === "diamonds";
-
-                  return (
-                    <div 
-                      key={card.id} 
-                      className="tableCard"
-                      role="img"
-                      aria-label={`${cardSymbols[card.value] || card.value}${suitSymbols[card.suit]}`}
-                    >
-
-                      <div className={`tablePlayingCard ${isRedCard ? "tableRedCard" : ""}`}>
-
-                        <div className="tableCorner top">
-                          {cardSymbols[card.value] || card.value}
-                          <span>{suitSymbols[card.suit]}</span>
+                          <div className="tableCorner bottom">
+                            {cardSymbols[card.value] || card.value}
+                            <span>{suitSymbols[card.suit]}</span>
+                          </div>
                         </div>
-
-                        <div className="tableCenter">
-                          {suitSymbols[card.suit]}
-                        </div>
-
-                        <div className="tableCorner bottom">
-                          {cardSymbols[card.value] || card.value}
-                          <span>{suitSymbols[card.suit]}</span>
-                        </div>
-
                       </div>
-
-                    </div>
-                  );
-                })}
-
+                    );
+                  })}
+                </div>
               </div>
-
-            </div>
-          );
-        })}
+            );
+          })
+        )}
 
       </div>
 

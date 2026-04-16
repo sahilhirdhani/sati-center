@@ -43,6 +43,9 @@ export function setupSocketServer(httpServer) {
                         console.log("back to lobby message received with gameId:", msg.gameId);
                         handleBackToLobby(io, socket, msg);
                         break;
+                    case "CHAT_MESSAGE":
+                        handleChatMessage(io, socket, msg);
+                        break;
                     default:
                         sendError(socket, "Unknown message type");
                 }
@@ -79,6 +82,7 @@ function handleCreateGame(io, socket, msg) {
     socket.data.gameId = gameId;
     socket.data.role = "admin";
     socket.data.playerId = playerId;
+    socket.data.name = name;
 
     socket.join(gameId);
 
@@ -105,6 +109,7 @@ function handleJoinGame(io, socket, msg) {
         socket.data.playerId = msg.playerId;
         socket.data.gameId = gameId;
         socket.data.role = msg.role || existingPlayer.role || "player";
+        socket.data.name = existingPlayer.name;
         existingPlayer.disconnected = false;
 
         socket.join(gameId);
@@ -116,6 +121,11 @@ function handleJoinGame(io, socket, msg) {
             role: socket.data.role,
             name: existingPlayer.name,
             players: Array.from(game.players.values())
+        });
+
+        socket.emit("message", {
+            type: "CHAT_SYNC",
+            messages: game.chatMessages
         });
 
         broadcastState(io, gameId);
@@ -138,6 +148,7 @@ function handleJoinGame(io, socket, msg) {
     socket.data.gameId = gameId;
     socket.data.playerId = playerId;
     socket.data.role = "player";
+    socket.data.name = name;
 
     socket.join(gameId);
 
@@ -145,6 +156,11 @@ function handleJoinGame(io, socket, msg) {
         type: "JOINED",
         playerId,
         role: socket.data.role
+    });
+
+    socket.emit("message", {
+        type: "CHAT_SYNC",
+        messages: game.chatMessages
     });
 
     broadcastLobby(io, gameId);
@@ -286,4 +302,33 @@ function handleBackToLobby(io, socket, msg) {
     game.state = null;
 
     broadcastLobby(io, gameId);
+}
+
+function handleChatMessage(io, socket, msg) {
+    const { gameId, playerId, name, role } = socket.data;
+    const game = getGame(gameId);
+    if (!game) return;
+
+    const text = String(msg.text || "").trim();
+    if (!text) return;
+
+    const player = game.players.get(playerId);
+    const chatMessage = {
+        id: nanoid(10),
+        playerId,
+        playerName: player?.name || name || "Player",
+        role: role || player?.role || "player",
+        text: text.slice(0, 180),
+        createdAt: Date.now()
+    };
+
+    game.chatMessages.push(chatMessage);
+    if (game.chatMessages.length > 100) {
+        game.chatMessages.splice(0, game.chatMessages.length - 100);
+    }
+
+    io.to(gameId).emit("message", {
+        type: "CHAT_UPDATE",
+        messages: game.chatMessages
+    });
 }

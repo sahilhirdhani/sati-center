@@ -28,6 +28,7 @@ export const useGameStore = create((set,get) => ({
     name: null,
     players: [],
     state: null,
+    chatMessages: [],
     screen: "landing",
 
     connectSocket: () => {
@@ -120,6 +121,13 @@ export const useGameStore = create((set,get) => ({
                 })
                 break;
 
+            case "CHAT_SYNC":
+            case "CHAT_UPDATE":
+                set({
+                    chatMessages: msg.messages || []
+                })
+                break;
+
             // case "IN_LOBBY":
             //     set({
             //         gameId: msg.gameId,
@@ -180,6 +188,16 @@ export const useGameStore = create((set,get) => ({
         })
     },
 
+    sendChatMessage: (text) => {
+        const messageText = String(text || "").trim();
+        if (!messageText) return false;
+
+        return send({
+            type: "CHAT_MESSAGE",
+            text: messageText
+        });
+    },
+
     leaveGame: () => {
         send({ type: "LEAVE_GAME" })
 
@@ -192,6 +210,7 @@ export const useGameStore = create((set,get) => ({
             name: null,
             players: [],
             state: null,
+            chatMessages: [],
             screen: "landing"
         })
     },

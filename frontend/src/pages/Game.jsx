@@ -1,4 +1,5 @@
 import PlayerList from "../components/PlayerList"; 
+import Chatbox from "../components/Chatbox";
 import Table from "../components/Table";
 import Hand from "../components/Hand";
 import { useGameStore } from "../store/useGameStore";
@@ -9,7 +10,7 @@ import Leaderboard from "../components/Leaderboard";
 
 export default function Game() {
   const { state, onBackToLobby, leaveGame } = useGameStore();
-  const [isPortrait, setIsPortrait] = useState(window.innerHeight > window.innerWidth);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
   
   useEffect(() => {
     if (state?.you?.hand?.length) {
@@ -19,7 +20,7 @@ export default function Game() {
 
   useEffect(() => {
     const handleOrientationChange = () => {
-      setIsPortrait(window.innerHeight > window.innerWidth);
+      setIsMobile(window.innerWidth <= 600);
     };
 
     window.addEventListener("orientationchange", handleOrientationChange);
@@ -63,6 +64,28 @@ export default function Game() {
 
   const isPlayerTurn = state.currentTurnPlayerId === state.you.id;
 
+  const playerList = (
+    <PlayerList
+      players={state.players}
+      currentTurn={state.currentTurnPlayerId}
+      finishOrder={finishOrder}
+    />
+  );
+
+  const chatBox = <Chatbox />;
+
+  const gameTable = (
+    <div className="tableArea">
+      <Table table={state.table} />
+    </div>
+  );
+
+  const gameHand = (
+    <div className="handArea">
+      <Hand hand={state.you.hand} legalMoves={state.legalMoves} isPlayerTurn={isPlayerTurn} />
+    </div>
+  );
+
   return (
     <div className="gameRoot">
 
@@ -71,25 +94,26 @@ export default function Game() {
         <div className="gameVersion">v0.001 build</div>
       </div>
 
-      <div className="gameBoard">
-
-        <div className="playersArea">
-          <PlayerList
-            players={state.players}
-            currentTurn={state.currentTurnPlayerId}
-            finishOrder={finishOrder}
-          />
+      {isMobile ? (
+        <div className="mobileGameStack">
+          {playerList}
+          {chatBox}
+          {gameTable}
+          {gameHand}
         </div>
+      ) : (
+        <div className="gameBoard">
+          <div className="gameSidebar">
+            {playerList}
+            {chatBox}
+          </div>
 
-        <div className="tableArea">
-          <Table table={state.table} />
+          <div className="gameMain">
+            {gameTable}
+            {gameHand}
+          </div>
         </div>
-
-        <div className="handArea">
-          <Hand hand={state.you.hand} legalMoves={state.legalMoves} isPlayerTurn={isPlayerTurn} />
-        </div>
-
-      </div>
+      )}
 
       <div className="gameFooter">
         <button className="secondaryBtn" onClick={leaveGame}>

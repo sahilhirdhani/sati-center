@@ -1,6 +1,6 @@
 /* GAME ROOT */
 .gameRoot {
-  min-height: 100vh;
+  height: 100dvh;
   width: 100%;
   padding: var(--spacing-lg);
   display: flex;
@@ -37,30 +37,54 @@
   display: grid;
   gap: var(--spacing-lg);
   grid-template-columns: 1fr;
-  grid-template-rows: auto auto auto;
+  grid-template-rows: auto auto;
   grid-template-areas:
-    "players"
-    "table"
-    "hand";
+    "sidebar"
+    "main";
   min-height: 0;
-  align-content: center; /* Center everything if there's extra vertical space */
+  align-content: stretch;
+}
+
+.mobileGameStack {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  min-height: 0;
 }
 
 /* TABLET LAYOUT */
 @media (min-width: 601px) and (max-width: 1024px) {
   .gameRoot {
     padding: var(--spacing-xl);
+    height: auto;
+    min-height: 100dvh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
   }
 
   .gameBoard {
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
+    grid-template-rows: auto auto;
     grid-template-areas:
-      "players"
-      "table"
-      "hand";
+      "sidebar"
+      "main";
     gap: var(--spacing-xl);
-    align-content: center; /* Don't stretch the table */
+    align-content: stretch;
+  }
+
+  .mobileGameStack {
+    gap: var(--spacing-xl);
+    flex: none;
+  }
+
+  .tableArea {
+    flex: none;
+  }
+
+  .handArea {
+    flex: none;
   }
 
   .gameHeader {
@@ -75,20 +99,33 @@
   }
 
   .gameBoard {
-    grid-template-columns: minmax(180px, 220px) 1fr;
-    grid-template-rows: auto auto; /* Distribute rows natively to children */
+    grid-template-columns: minmax(180px, 240px) 1fr;
+    grid-template-rows: 1fr;
     grid-template-areas:
-      "players table"
-      "players hand";
+      "sidebar main";
     gap: 12px; /* Reduced gap */
-    align-content: center; /* Keep table and hand grouping vertically centered */
+    align-content: stretch;
   }
 }
 
-/* PLAYERS SECTION */
-.playersArea {
-  grid-area: players;
-  min-height: fit-content;
+/* SIDEBAR SECTION */
+.gameSidebar {
+  grid-area: sidebar;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  min-height: 0;
+  height: 100%;
+}
+
+/* MAIN SECTION */
+.gameMain {
+  grid-area: main;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  min-height: 0;
+  height: 100%;
 }
 
 /* TABLE SECTION */
@@ -97,10 +134,10 @@
   display: flex;
   justify-content: center;
   align-items: center; /* Center table contents vertically when not spanning */
-  overflow-x: auto;
+  overflow: hidden;
   -webkit-overflow-scrolling: touch;
   min-height: 0;
-  flex: none; /* Let it define its own height */
+  flex: 1;
   z-index: 1;
   position: relative;
 }
@@ -126,10 +163,33 @@
 @media (max-width: 600px) {
   .gameRoot {
     padding: var(--spacing-md);
+    height: auto;
+    min-height: 100dvh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
   }
 
   .gameHeader {
     flex-direction: column;
     text-align: center;
+  }
+
+  .gameSidebar,
+  .gameMain {
+    gap: var(--spacing-md);
+  }
+
+  .mobileGameStack {
+    gap: var(--spacing-md);
+    flex: none;
+  }
+
+  .tableArea {
+    flex: none;
+  }
+
+  .handArea {
+    flex: none;
   }
 }

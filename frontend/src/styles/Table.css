@@ -2,6 +2,7 @@
 .tableSection {
   width: 100%;
   min-width: 0;
+  overflow: hidden;
 }
 
 .tableSection .sectionTitle {
@@ -16,45 +17,52 @@
   padding: clamp(12px, 4vw, 24px);
   border-radius: 12px;
   box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.6), 0 8px 30px rgba(0, 0, 0, 0.6);
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: clamp(8px, 2vw, 12px);
-  min-width: 0;
-  max-width: 100%;
-}
-
-/* SUIT ROW - MOBILE (EACH SUIT IS A COLUMN) */
-.suitRow {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: clamp(4px, 1vw, 8px);
-  min-height: fit-content;
+  gap: clamp(10px, 2vw, 14px);
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
-/* SUIT SYMBOL */
-.suitTitle {
+/* DYNAMIC TABLE ROW */
+.tableRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: clamp(8px, 2vw, 12px);
+  min-height: clamp(84px, 14vw, 100px);
+  width: 100%;
+}
+
+/* ROW LABEL */
+.tableRowLabel {
   width: clamp(28px, 8vw, 36px);
   font-size: clamp(18px, 6vw, 24px);
   font-weight: 700;
   flex-shrink: 0;
-  margin-bottom: clamp(2px, 0.5vw, 4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.suitTitle.redSuit {
+.tableRowLabel.redSuit {
   color: #d32f2f;
 }
 
-/* CARD ROW - MOBILE (VERTICAL CARDS IN COLUMN) */
+/* CARDS IN A ROW */
 .tableCards {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: clamp(2px, 0.5vw, 4px);
-  flex: none;
-  min-height: auto;
+  gap: 0;
+  flex: 1;
+  min-width: 0;
+  min-height: 100%;
   flex-wrap: nowrap;
-  padding-top: 50px;
+  padding-top: 0;
+  overflow: hidden;
+  justify-content: center;
 }
 
 /* TABLE CARD */
@@ -62,7 +70,17 @@
   width: clamp(50px, 12vw, 60px);
   height: clamp(75px, 18vw, 88px);
   flex-shrink: 0;
-  margin-top:-45px;
+  margin-left: -18px;
+}
+
+.tableCard:first-child {
+  margin-left: 0;
+}
+
+.tableEmpty {
+  color: rgba(231, 214, 160, 0.75);
+  font-size: var(--font-sm);
+  padding: 6px 2px;
 }
 
 
@@ -128,34 +146,26 @@
 @media (min-width: 601px) {
   .tableArea {
     padding: 18px;
-    gap: 18px;
-    display: flex;
-    flex-direction: column;
+    gap: 12px;
+    justify-content: center;
   }
 
-  .suitRow {
+  .tableRow {
     gap: 12px;
-    flex-direction: row;
-    align-items: center;
     min-height: clamp(80px, 20vh, 100px);
   }
 
-  .suitTitle {
-    margin-bottom: 0;
+  .tableRowLabel {
+    display: none;
   }
 
   .tableCards {
-    padding-top: 0;
     margin-left: 4px;
-    flex-direction: row;
-    flex: 1;
-    align-items: center;
   }
 
   .tableCard {
     width: 60px;
     height: 88px;
-    margin-top: 0;
     margin-left: -18px;
   }
 
@@ -164,23 +174,71 @@
   }
 }
 
+/* ONLY TABLET MODE */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .tableSection,
+  .tableArea,
+  .tableCards {
+    overflow: visible;
+  }
+
+  .tableArea {
+    flex-direction: row;
+    justify-content: space-evenly;
+    gap: clamp(30px, 8vw, 60px);
+    height: auto;
+    width: 100%;
+    min-height: clamp(300px, 50vh, 400px); /* adjusted height so it grows */
+  }
+
+  .tableRow {
+    flex-direction: column;
+    min-height: auto;
+    width: clamp(55px, 8vw, 75px);
+    gap: 12px;
+  }
+
+  .tableRowLabel {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .tableCards {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding-bottom: 75px; /* Added padding to fix clipping of the last card */
+    margin-left: 0;
+  }
+
+  .tableCard {
+    width: 60px;
+    height: 88px;
+    margin-left: 0;
+    margin-top: -60px;
+  }
+
+  .tableCard:first-child {
+    margin-top: 0;
+    margin-left: 0;
+  }
+}
+
 /* DESKTOP ADJUSTMENTS */
 @media (min-width: 1025px) {
   .tableArea {
     padding: 16px; /* Reduced padding */
-    gap: 12px;     /* Reduced gap */
-    display: flex;
-    flex-direction: column;
+    gap: 10px;     /* Reduced gap */
   }
 
-  .suitRow {
+  .tableRow {
     min-height: 80px; /* Reduced min-height */
     gap: 8px;
   }
 
   .tableCards {
     margin-left: 4px;
-    height: 100%;
   }
 
   .tableCard {
@@ -201,7 +259,7 @@
     gap: 10px;
   }
 
-  .suitRow {
+  .tableRow {
     min-height: 70px;
   }
 
@@ -211,14 +269,52 @@
   }
 }
 
-/* PREVENT HORIZONTAL SCROLL */
 @media (max-width: 600px) {
-  .tableSection {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+  .tableSection,
+  .tableArea,
+  .tableCards {
+    overflow: visible;
   }
 
   .tableArea {
-    min-width: fit-content;
+    flex-direction: row;
+    justify-content: center;
+    gap: clamp(6px, 2vw, 15px);
+    height: auto;
+    min-height: clamp(250px, 40vh, 300px); /* Let height expand instead of fixing it */
+  }
+
+  .tableRow {
+    flex-direction: column;
+    min-height: auto;
+    width: clamp(45px, 15vw, 65px);
+    gap: 8px;
+  }
+
+  .tableRowLabel {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .tableCards {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    margin-left: 0;
+    padding-bottom: 60px; /* Added bottom padding to fix clipping */
+  }
+
+  .tableCard {
+    width: clamp(42px, 12vw, 54px);
+    height: clamp(64px, 18vw, 78px);
+    margin-left: 0;
+    margin-top: -45px;
+  }
+
+  .tableCard:first-child {
+    margin-top: 0;
+    margin-left: 0;
   }
 }
+
