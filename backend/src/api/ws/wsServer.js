@@ -9,7 +9,11 @@ import { setupGame } from "../../game/state/gameSetup.js";
 export function setupSocketServer(httpServer) {
     const io = new Server(httpServer, {
         cors: {
-            origin: ["https://satti-center-game.onrender.com", "http://localhost:5173"],
+            origin: [
+                "https://satti-center-game.onrender.com",
+                "http://localhost:5173",
+                "http://127.0.0.1:5173"
+            ],
             methods: ["GET", "POST"]
         }
     });

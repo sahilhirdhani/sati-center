@@ -2,7 +2,7 @@ import { io } from "socket.io-client";
 
 let socket = null;
 
-const DEFAULT_SOCKET_URL = "https://satti-center.onrender.com";
+const BACKEND_SOCKET_URL = "https://satti-center.onrender.com";
 const LOCAL_SOCKET_URL = "http://localhost:5000";
 
 const getSocketUrl = () => {
@@ -10,9 +10,9 @@ const getSocketUrl = () => {
         return import.meta.env.VITE_SOCKET_URL;
     }
 
-    return window.location.hostname === "localhost"
+    return import.meta.env.DEV
         ? LOCAL_SOCKET_URL
-        : DEFAULT_SOCKET_URL;
+        : BACKEND_SOCKET_URL;
 };
 
 export function connect(onMessage, onOpen) {
