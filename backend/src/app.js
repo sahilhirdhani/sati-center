@@ -6,8 +6,8 @@ import cors from 'cors';
 const app = express();
 
 app.use(cors({
-    origin: ["https://satti-center-game.onrender.com", "http://localhost:5173/"]
-    // origin: ["https://satti-center-game.onrender.com"]
+    origin: ["https://satti-center-game.onrender.com", "http://localhost:5173"],
+    methods: ["GET", "POST", "OPTIONS"]
 }));
 app.use(express.json());
 

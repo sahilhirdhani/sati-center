@@ -46,7 +46,7 @@ export const useGameStore = create((set,get) => ({
             playerId: session.playerId,
             role: session.role,
             name: session.name,
-            // screen: "reconnecting"
+            screen: "reconnecting"
         })
         send({
             type: "JOIN_GAME",
@@ -58,7 +58,7 @@ export const useGameStore = create((set,get) => ({
     },
 
     handleMessage: (msg) => {
-        console.log("WS Message:", msg);
+        console.log("Socket.IO Message:", msg);
 
         switch(msg.type) {
             case "GAME_CREATED":
@@ -161,7 +161,7 @@ export const useGameStore = create((set,get) => ({
     },
 
     joinGame: (gameId, name) => {
-        set ({ gameId, name}),
+        set({ gameId, name });
         send({
             type: "JOIN_GAME",
             gameId,
@@ -198,6 +198,8 @@ export const useGameStore = create((set,get) => ({
 
     onBackToLobby: () => {
         const session = loadSession();
+        if (!session?.gameId) return;
+
         console.log("Back to lobby function called with gameId in useGameStore:", session.gameId)
         set ({
             screen: "lobby",

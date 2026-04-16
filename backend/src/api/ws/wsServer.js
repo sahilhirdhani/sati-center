@@ -1,288 +1,285 @@
-import { WebSocketServer } from "ws";
-// import crypto from "crypto";
+import { Server } from "socket.io";
 import { nanoid } from "nanoid";
-import { addSocket, removeSocket, getAllSockets, getSocketsByGame } from "./wsHub.js";
 import { serializeState } from "../serializers/stateSerializer.js";
 import { createGame, getGame } from "../store/gameStore.js";
 import { validateAction } from "../../game/validation/validateAction.js";
 import { dispatchAction } from "../../game/actions/dispatchAction.js";
 import { setupGame } from "../../game/state/gameSetup.js";
 
-export function setupWebSocket(server) {
-    const wss = new WebSocketServer({ server, path: "/ws" })
+export function setupSocketServer(httpServer) {
+    const io = new Server(httpServer, {
+        cors: {
+            origin: ["https://satti-center-game.onrender.com", "http://localhost:5173"],
+            methods: ["GET", "POST"]
+        }
+    });
 
-    wss.on("connection", (ws) => {
-        ws.on("message", (raw) => {
+    io.on("connection", (socket) => {
+        console.log("New connection:", socket.id);
+
+        socket.on("message", (msg = {}) => {
             try {
-                const msg = JSON.parse(raw.toString())
                 switch (msg.type) {
                     case "CREATE_GAME":
-                        handleCreateGame(ws, msg);
+                        handleCreateGame(io, socket, msg);
                         break;
-                        
                     case "JOIN_GAME":
-                        handleJoinGame(ws, msg);
+                        handleJoinGame(io, socket, msg);
                         break;
-
                     case "START_GAME":
-                        handleStartGame(ws);
+                        handleStartGame(io, socket);
                         break;
-                        
                     case "ACTION":
-                        handleAction(ws, msg.action);
+                        handleAction(io, socket, msg.action);
                         break;
-
                     case "LEAVE_GAME":
-                        handleLeaveGame(ws);
+                        handleLeaveGame(io, socket);
                         break;
-
                     case "BACK_TO_LOBBY":
-                        console.log("back to lobby message received with gameId:", msg.gameId)
-                        handleBackToLobby(ws, msg);
+                        console.log("back to lobby message received with gameId:", msg.gameId);
+                        handleBackToLobby(io, socket, msg);
                         break;
-
                     default:
-                        sendError(ws, "Unknown message type");
+                        sendError(socket, "Unknown message type");
                 }
             } catch (err) {
-                console.log("WS ERROR:", err)
-                sendError(ws, err)
+                console.log("SOCKET ERROR:", err);
+                sendError(socket, err);
             }
-            
-        })
-        ws.on("close", () => {
-            console.log("Socket closed:", ws.playerId)
+        });
 
-            if(!ws.gameId) return;
+        socket.on("disconnect", () => {
+            console.log("Socket disconnected:", socket.data.playerId);
+            handleDisconnect(io, socket);
+        });
+    });
 
-            const game = getGame(ws.gameId);
-            if(!game) return;
-
-            const player = game.players.get(ws.playerId);
-            if(player) {
-                player.disconnected = true;
-            }
-
-            removeSocket(ws.gameId, ws)
-
-            broadcastLobby(ws.gameId)
-        })
-    })
-
+    return io;
 }
 
-function handleCreateGame(ws, msg) {
+function handleCreateGame(io, socket, msg) {
     const { name } = msg;
 
-    if(!name) return sendError(ws, "Name is required");
+    if (!name) return sendError(socket, "Name is required");
 
-    // const gameId = "1q";
     const gameId = Math.floor(100000 + Math.random() * 900000).toString();
-    // const gameId = crypto.randomUUID();
     const game = createGame(gameId);
-
-    // const playerId = crypto.randomUUID();
     const playerId = nanoid(8);
 
     game.players.set(playerId, {
         id: playerId,
         name,
         role: "admin"
-    })
+    });
 
-    ws.gameId = gameId;
-    ws.role = "admin"
-    ws.playerId = playerId;
+    socket.data.gameId = gameId;
+    socket.data.role = "admin";
+    socket.data.playerId = playerId;
 
-    addSocket(gameId, ws)
+    socket.join(gameId);
 
-    ws.send(JSON.stringify({
+    socket.emit("message", {
         type: "GAME_CREATED",
         gameId,
         playerId,
         role: "admin",
         name
-    }))
+    });
 
-    broadcastLobby(gameId);
+    broadcastLobby(io, gameId);
 }
 
-function handleJoinGame(ws, msg) {
-
+function handleJoinGame(io, socket, msg) {
     const { gameId, name } = msg;
 
     const game = getGame(gameId);
-    if(!game) return sendError(ws, "Game not found");
+    if (!game) return sendError(socket, "Game not found");
 
-    if(msg.playerId && game.players.has(msg.playerId)) {
+    if (msg.playerId && game.players.has(msg.playerId)) {
         const existingPlayer = game.players.get(msg.playerId);
 
-        ws.playerId = msg.playerId;
-        ws.gameId = msg.gameId;
-        ws.role = msg.role || "player";
+        socket.data.playerId = msg.playerId;
+        socket.data.gameId = gameId;
+        socket.data.role = msg.role || existingPlayer.role || "player";
         existingPlayer.disconnected = false;
 
-        addSocket(gameId, ws);
+        socket.join(gameId);
 
-        ws.send(JSON.stringify({
+        socket.emit("message", {
             type: "RECONNECTED",
-            gameId: msg.gameId,
+            gameId,
             playerId: msg.playerId,
-            role: ws.role,
+            role: socket.data.role,
             name: existingPlayer.name,
             players: Array.from(game.players.values())
-        }))
+        });
 
-        broadcastState(gameId)
+        broadcastState(io, gameId);
+        broadcastLobby(io, gameId);
         return;
     }
 
-    if(game.phase !== "LOBBY")
-        return sendError(ws, "Game already started");
+    if (game.phase !== "LOBBY") {
+        return sendError(socket, "Game already started");
+    }
 
-    // const playerId = crypto.randomUUID();
     const playerId = nanoid(8);
 
     game.players.set(playerId, {
         id: playerId,
         name,
         role: "player"
-    })
+    });
 
-    ws.gameId = gameId
-    ws.playerId = playerId
-    if(!ws.role){
-        ws.role = "player";
-    }
+    socket.data.gameId = gameId;
+    socket.data.playerId = playerId;
+    socket.data.role = "player";
 
-    addSocket(gameId, ws);
+    socket.join(gameId);
 
-    ws.send(JSON.stringify({
+    socket.emit("message", {
         type: "JOINED",
         playerId,
-        role: ws.role
-    }))
+        role: socket.data.role
+    });
 
-    broadcastLobby(gameId)
+    broadcastLobby(io, gameId);
 }
 
-function handleStartGame(ws) {
-    const { gameId } = ws;
+function handleStartGame(io, socket) {
+    const { gameId, role } = socket.data;
     const game = getGame(gameId);
-    if(!game) return;
+    if (!game) return;
 
-    if(ws.role !== "admin")
-        return sendError(ws, "only admin can start");
+    if (role !== "admin") {
+        return sendError(socket, "only admin can start");
+    }
 
     const players = Array.from(game.players.values());
 
     game.state = setupGame(players, "single", false);
-    game.phase = "PLAYING"
-    broadcastState(gameId)
+    game.phase = "PLAYING";
+    broadcastState(io, gameId);
 }
 
-function handleAction(ws, action) {
-    const {gameId, playerId} = ws;
+function handleAction(io, socket, action) {
+    const { gameId, playerId } = socket.data;
 
     const game = getGame(gameId);
-    if(!game || game.phase !== "PLAYING")
-        return sendError(ws, "Game not active")
+    if (!game || game.phase !== "PLAYING") {
+        return sendError(socket, "Game not active");
+    }
 
     action.playerId = playerId;
 
-    const validation = validateAction(game.state, action)
-    if(!validation.ok) {
-        return sendError(ws, validation.reason)
+    const validation = validateAction(game.state, action);
+    if (!validation.ok) {
+        return sendError(socket, validation.reason);
     }
 
     dispatchAction(game.state, action);
-
-    broadcastState(gameId)
+    broadcastState(io, gameId);
 }
 
-function handleLeaveGame(ws) {
-    const game = getGame(ws.gameId);
-    if(!game) return;
+function handleLeaveGame(io, socket) {
+    const { gameId, playerId } = socket.data;
+    const game = getGame(gameId);
+    if (!game) return;
 
-    const leavingPlayer = game.players.get(ws.playerId);
-    game.players.delete(ws.playerId);
+    const leavingPlayer = game.players.get(playerId);
+    game.players.delete(playerId);
+    socket.leave(gameId);
 
-    
-    if(leavingPlayer?.role === "admin") {
+    if (leavingPlayer?.role === "admin") {
         const remainingPlayers = Array.from(game.players.values());
-        if(remainingPlayers.length > 0) {
+        if (remainingPlayers.length > 0) {
             const newAdmin = remainingPlayers[0];
             newAdmin.role = "admin";
 
-            const sockets = getSocketsByGame(ws.gameId);
-            for(const socket of sockets) {
-                if(socket.playerId === newAdmin.id) {
-                    socket.role = "admin";
+            const sockets = getGameSockets(io, gameId);
+            for (const client of sockets) {
+                if (client.data.playerId === newAdmin.id) {
+                    client.data.role = "admin";
                 }
             }
 
-            console.log(`Admin left, new admin is ${newAdmin.name}`)
+            console.log(`Admin left, new admin is ${newAdmin.name}`);
         }
     }
-    broadcastLobby(ws.gameId)
-    removeSocket(ws.gameId, ws)
+
+    broadcastLobby(io, gameId);
 }
 
-function broadcastState(gameId) {
-    const game = getGame(gameId)
-    if(!game || !game.state) return;
+function handleDisconnect(io, socket) {
+    const { gameId, playerId } = socket.data;
+    if (!gameId) return;
 
-    const clients = getSocketsByGame(gameId)
+    const game = getGame(gameId);
+    if (!game) return;
 
-    for(const ws of clients) {
-        const view = serializeState(
-            game.state,
-            ws.role,
-            ws.playerId
-        )
+    const player = game.players.get(playerId);
+    if (player) {
+        player.disconnected = true;
+    }
 
-        ws.send(JSON.stringify({
+    broadcastLobby(io, gameId);
+}
+
+function broadcastState(io, gameId) {
+    const game = getGame(gameId);
+    if (!game || !game.state) return;
+
+    const clients = getGameSockets(io, gameId);
+
+    for (const socket of clients) {
+        const view = serializeState(game.state, socket.data.role, socket.data.playerId);
+
+        socket.emit("message", {
             type: "STATE_UPDATE",
             state: view
-        }))
+        });
     }
 }
 
-function broadcastLobby(gameId) {
-    
+function broadcastLobby(io, gameId) {
     const game = getGame(gameId);
-    if(!game) return;
-    
-    const players = Array.from(game.players.values());
-    const clients = getSocketsByGame(gameId)
+    if (!game) return;
 
-    for (const ws of clients) {
-        
-        ws.send(JSON.stringify({
+    const players = Array.from(game.players.values());
+    const clients = getGameSockets(io, gameId);
+
+    for (const socket of clients) {
+        socket.emit("message", {
             type: "LOBBY_UPDATE",
             players,
-            role: ws.role
-        }))
-        // console.log("in lobby player name:", game.players.get(ws.playerId)?.name, "player role:", ws.role)
+            role: socket.data.role
+        });
     }
 }
 
-function sendError(ws, err) {
-    ws.send(JSON.stringify({
-        type: "ERROR",
-        error: err.message || err
-    }));
+function getGameSockets(io, gameId) {
+    const room = io.sockets.adapter.rooms.get(gameId);
+    if (!room) return [];
+
+    return [...room]
+        .map((socketId) => io.sockets.sockets.get(socketId))
+        .filter(Boolean);
 }
 
-function handleBackToLobby(msg) {
-    const { gameId } = msg
+function sendError(socket, err) {
+    socket.emit("message", {
+        type: "ERROR",
+        error: err?.message || err
+    });
+}
+
+function handleBackToLobby(io, socket, msg) {
+    const gameId = msg.gameId || socket.data.gameId;
     const game = getGame(gameId);
-    if(!game) return;
+    if (!game) return;
 
     game.phase = "LOBBY";
     game.state = null;
-    // ws.send(JSON.stringify({
-    //     type: "IN_LOBBY",
-    //     gameId: msg.gameId
-    // }))
+
+    broadcastLobby(io, gameId);
 }
