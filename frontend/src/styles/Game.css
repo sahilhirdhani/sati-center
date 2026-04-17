@@ -31,6 +31,39 @@
   white-space: nowrap;
 }
 
+/* GLOBAL CHAT POPUP */
+.globalChatPopup {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.85); /* Matches chatbox aesthetic */
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  border-radius: 8px;
+  padding: 8px 16px;
+  color: #e9e0c2;
+  font-size: var(--font-sm);
+  white-space: nowrap;
+  max-width: 80%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+  z-index: 1000;
+  pointer-events: none;
+  animation: game-chat-popin 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes game-chat-popin {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -10px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
 /* MAIN BOARD - MOBILE FIRST */
 .gameBoard {
   flex: 1;

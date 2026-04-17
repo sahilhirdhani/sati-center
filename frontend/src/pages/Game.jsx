@@ -10,8 +10,29 @@ import Leaderboard from "../components/Leaderboard";
 
 export default function Game() {
   const { state, onBackToLobby, leaveGame } = useGameStore();
+  const chatMessages = useGameStore((state) => state.chatMessages);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
-  
+  const [globalChatPopup, setGlobalChatPopup] = useState(null);
+
+  useEffect(() => {
+    if (chatMessages && chatMessages.length > 0) {
+      const latestMsg = chatMessages[chatMessages.length - 1];
+      
+      // Don't show popup for our own messages
+      if (state?.you?.name && latestMsg.playerName === state.you.name) {
+        return;
+      }
+
+      setGlobalChatPopup(`${latestMsg.playerName}: ${latestMsg.text}`);
+
+      const timerId = setTimeout(() => {
+        setGlobalChatPopup(null);
+      }, 2500);
+
+      return () => clearTimeout(timerId);
+    }
+  }, [chatMessages, state?.you?.name]);
+
   useEffect(() => {
     if (state?.you?.hand?.length) {
       dealCards(state.you.hand);
@@ -88,6 +109,11 @@ export default function Game() {
 
   return (
     <div className="gameRoot">
+      {globalChatPopup && (
+        <div className="globalChatPopup">
+          {globalChatPopup}
+        </div>
+      )}
 
       <div className="gameHeader">
         <h1 className="gameTitle">Satti Center</h1>
