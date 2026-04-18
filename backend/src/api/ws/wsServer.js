@@ -15,7 +15,9 @@ export function setupSocketServer(httpServer) {
                 "http://127.0.0.1:5173"
             ],
             methods: ["GET", "POST"]
-        }
+        },
+        pingTimeout: 3600000,
+        pingInterval: 3600000
     });
 
     io.on("connection", (socket) => {

@@ -38,6 +38,7 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
   };
 
   const isCardLegal = (card) => {
+    console.log(legalMoves)
     return legalMoves.some((move) => move.card.id === card.id);
   };
 

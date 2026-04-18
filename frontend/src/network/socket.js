@@ -21,7 +21,8 @@ export function connect(onMessage, onOpen) {
     }
 
     socket = io(getSocketUrl(), {
-        autoConnect: true
+        autoConnect: true,
+        timeout: 3600000,
     });
 
     socket.on("connect", () => {
