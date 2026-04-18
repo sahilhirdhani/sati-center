@@ -59,7 +59,7 @@ export const useGameStore = create((set,get) => ({
     },
 
     handleMessage: (msg) => {
-        console.log("Socket.IO Message:", msg);
+        // console.log("Socket.IO Message:", msg);
 
         switch(msg.type) {
             case "GAME_CREATED":
@@ -218,8 +218,6 @@ export const useGameStore = create((set,get) => ({
     onBackToLobby: () => {
         const session = loadSession();
         if (!session?.gameId) return;
-
-        console.log("Back to lobby function called with gameId in useGameStore:", session.gameId)
         set ({
             screen: "lobby",
             state: null

@@ -67,8 +67,6 @@ export default function Game() {
     );
   }
 
-  console.log(state);
-
   const finishedPlayers = state.finishedPlayers;
   const finishOrder = finishedPlayers.map(player => player.id);
 

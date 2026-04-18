@@ -73,7 +73,6 @@ function batoPatte(deck, players) {
 function buildPlayer(players) {
     for(let i=0; i < players.length; i++){
         players[i] = new Player(players[i].id, players[i].name)
-        console.log("\n\nPlayer after ini: ", players[i])
     }
     return players
 }
