@@ -149,15 +149,6 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
               Skip Turn
             </button>
           )}
-          {canRollback && (
-            <button 
-              className="secondaryBtn" 
-              style={{ padding: "8px 16px", minWidth: "auto", fontSize: "0.9rem" }}
-              onClick={() => sendAction({ type: "ROLLBACK_MOVE" })}
-            >
-              Undo Move
-            </button>
-          )}
         </div>
       )}
 

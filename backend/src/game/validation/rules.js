@@ -66,6 +66,8 @@ export function getLegalMoves (hand, table, layoutMode, cheatsEnabled) {
     if(cheatsEnabled){
         legal.unshift({card:"Skip", pileKey: "Skip"})
         legal.push({card:"Rollback", pileKey:"Rollback"})
+    } else if (legal.length === 0) {
+        legal.unshift({card:"Skip", pileKey: "Skip"})
     }
     return legal
 }

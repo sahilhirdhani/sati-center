@@ -9,7 +9,7 @@ import "../styles/Game.css";
 import Leaderboard from "../components/Leaderboard";
 
 export default function Game() {
-  const { state, onBackToLobby, leaveGame } = useGameStore();
+  const { state, onBackToLobby, leaveGame, sendAction } = useGameStore();
   const chatMessages = useGameStore((state) => state.chatMessages);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
   const [globalChatPopup, setGlobalChatPopup] = useState(null);
@@ -93,9 +93,34 @@ export default function Game() {
 
   const chatBox = <Chatbox />;
 
+  // When cheats are enabled, show a central "Pass" button IF the player has exactly zero playable cards.
+  // This acts as a cover-up so opponents can't tell if they skipped by choice or by lack of cards.
+  const canPlayCard = state.legalMoves.some(m => m.card !== "Skip" && m.card !== "Rollback");
+  const canSkip = state.legalMoves.some(m => m.card === "Skip");
+  const showPassButton = state.cheatsEnabled && isPlayerTurn && !canPlayCard && canSkip;
+
   const gameTable = (
-    <div className="tableArea">
+    <div className="tableArea" style={{ position: "relative" }}>
       <Table table={state.table} />
+      {showPassButton && (
+        <button
+          className="primaryBtn"
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            zIndex: 50,
+            padding: "16px 32px",
+            fontSize: "1.2rem",
+            boxShadow: "0 4px 15px rgba(0,0,0,0.5)",
+            animation: "pulse 2s infinite"
+          }}
+          onClick={() => sendAction({ type: "SKIP_TURN" })}
+        >
+          Pass (No Cards)
+        </button>
+      )}
     </div>
   );
 

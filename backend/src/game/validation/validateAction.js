@@ -41,7 +41,8 @@ export function validateAction(state, action) {
         }
 
         case ACTIONS.SKIP_TURN: {
-            if (legalMoves.length === 0) return { ok: true };
+            const hasPlayableCards = legalMoves.some(m => m.card !== "Skip" && m.card !== "Rollback");
+            if (!hasPlayableCards) return { ok: true };
             if (!state.cheatsEnabled) {
                 return { ok: false, reason: "Skipping not allowed" };
             }

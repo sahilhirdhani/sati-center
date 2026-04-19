@@ -32,6 +32,7 @@ export function getPlayerView(state, playerId) {
         ),
 
         finishedPlayers: structuredClone(state.finishedPlayers),
-        winner: state.winner
+        winner: state.winner,
+        cheatsEnabled: state.cheatsEnabled
     };
 }
