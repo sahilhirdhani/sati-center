@@ -31,6 +31,8 @@ export const useGameStore = create((set,get) => ({
     chatMessages: [],
     screen: "landing",
 
+    setScreen: (screen) => set({ screen }),
+
     connectSocket: () => {
         connect(
             (msg) => get().handleMessage(msg),
@@ -177,8 +179,16 @@ export const useGameStore = create((set,get) => ({
         })
     },
 
-    startGame: () => {
-        send({type: "START_GAME"})
+    goToGamePrep: () => {
+        set({ screen: "gameprep" });
+    },
+
+    startGame: (options = {}) => {
+        send({
+            type: "START_GAME",
+            layoutMode: options.layoutMode || "single",
+            cheatMode: options.cheatMode || false
+        })
     },
 
     sendAction: (action) => {

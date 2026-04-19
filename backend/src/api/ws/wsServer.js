@@ -33,7 +33,7 @@ export function setupSocketServer(httpServer) {
                         handleJoinGame(io, socket, msg);
                         break;
                     case "START_GAME":
-                        handleStartGame(io, socket);
+                        handleStartGame(io, socket, msg);
                         break;
                     case "ACTION":
                         handleAction(io, socket, msg.action);
@@ -168,7 +168,7 @@ function handleJoinGame(io, socket, msg) {
     broadcastLobby(io, gameId);
 }
 
-function handleStartGame(io, socket) {
+function handleStartGame(io, socket, msg) {
     const { gameId, role } = socket.data;
     const game = getGame(gameId);
     if (!game) return;
@@ -179,7 +179,9 @@ function handleStartGame(io, socket) {
 
     const players = Array.from(game.players.values());
 
-    game.state = setupGame(players, "single", false);
+    const { layoutMode = "single", cheatMode = false } = msg || {};
+
+    game.state = setupGame(players, layoutMode, cheatMode);
     game.phase = "PLAYING";
     broadcastState(io, gameId);
 }

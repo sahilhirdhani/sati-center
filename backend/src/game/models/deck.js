@@ -7,7 +7,7 @@ const SUITS = ['hearts', 'clubs', 'diamonds', 'spades'];
 // ];
 const VALUES = Array.from({ length: 13 }, (_, i) => i + 1)
 
-export function createDeck(deckCount = 1) {
+export function createDeck(deckCount = 1, cheatsEnabled = false) {
     const deck = [];
     
     for (let d = 0; d< deckCount; d++){

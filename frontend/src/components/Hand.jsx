@@ -38,8 +38,7 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
   };
 
   const isCardLegal = (card) => {
-    console.log(legalMoves)
-    return legalMoves.some((move) => move.card.id === card.id);
+    return legalMoves.some((move) => move.card && move.card.id === card.id);
   };
 
   const handleCardClick = (card) => {
@@ -132,9 +131,35 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
   }
 }, [sortedHand.length, isMobile]);
 
+  const canSkip = legalMoves.some(m => m.card === "Skip");
+  const canRollback = legalMoves.some(m => m.card === "Rollback");
+
   return (
     <div className="handSection" ref={containerRef}>
       {/* <h3 className="sectionTitle">Your Hand</h3> */}
+
+      {isPlayerTurn && (canSkip || canRollback) && (
+        <div style={{ display: "flex", gap: "15px", justifyContent: "center", marginBottom: "15px" }}>
+          {canSkip && (
+            <button 
+              className="primaryBtn" 
+              style={{ padding: "8px 16px", minWidth: "auto", fontSize: "0.9rem" }}
+              onClick={() => sendAction({ type: "SKIP_TURN" })}
+            >
+              Skip Turn
+            </button>
+          )}
+          {canRollback && (
+            <button 
+              className="secondaryBtn" 
+              style={{ padding: "8px 16px", minWidth: "auto", fontSize: "0.9rem" }}
+              onClick={() => sendAction({ type: "ROLLBACK_MOVE" })}
+            >
+              Undo Move
+            </button>
+          )}
+        </div>
+      )}
 
       <div
         className={`handStack ${gridMode ? "gridMode" : "fanMode"}`}

@@ -46,52 +46,54 @@ export default function Landing() {
 
           <div className="landingCard">
 
-            <h1 className="mainTitle">Satti Center</h1>
-            <p className="subTitle">Classic Card Strategy — Online</p>
-            <div className="version">V1.000</div>
+            <h1 className="mainTitle" style={{textTransform: "uppercase", letterSpacing: "3px"}}>Satti Center</h1>
+            <p className="subTitle" style={{fontFamily: "inherit", marginTop: "8px", fontSize: "0.95rem"}}>Classic Card Strategy — Online</p>
+            <div className="version" style={{marginTop: "5px", marginBottom: "20px", opacity: 0.3}}>V1.000</div>
 
-            <div className="formBox">
+            <div style={{background: "radial-gradient(circle at 50% 10%, rgba(255,255,255,0.03), rgba(0,0,0,0.2) 80%)", borderRadius: "16px", padding: "20px 25px", marginBottom: "20px", border: "1px solid rgba(255,255,255,0.02)", boxShadow: "inset 0 0 20px rgba(0,0,0,0.3)"}}>
+              <div className="formBox" style={{ margin: 0 }}>
 
-              <input
-                className="inputField"
-                placeholder="Your Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                onKeyDown={handleKeyPress}
-                maxLength="30"
-              />
-
-              {(mode === "join" || isJoinMode) && (
                 <input
                   className="inputField"
-                  placeholder="Enter game code"
-                  value={gameId}
-                  onChange={(e) => setGameId(e.target.value)}
+                  placeholder="Your Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   onKeyDown={handleKeyPress}
-                  maxLength="10"
+                  maxLength="30"
                 />
-              )}
 
-              <div className="buttonGroup">
-
-                <button
-                  className="primaryBtn"
-                  disabled={!name.trim() || isJoinMode}
-                  onClick={handleCreate}
-                >
-                  Create Game
-                </button>
-
-                <button
-                  className="secondaryBtn"
-                  onClick={() =>
-                    isJoinMode ? handleJoin() : setMode("join")
-                  }
-                >
-                  {isJoinMode ? "Join Game" : "Enter Game ID"}
-                </button>
+                {(mode === "join" || isJoinMode) && (
+                  <input
+                    className="inputField"
+                    placeholder="Enter game code"
+                    value={gameId}
+                    onChange={(e) => setGameId(e.target.value)}
+                    onKeyDown={handleKeyPress}
+                    maxLength="10"
+                  />
+                )}
 
               </div>
+            </div>
+
+            <div className="buttonGroup">
+
+              <button
+                className="primaryBtn"
+                disabled={!name.trim() || isJoinMode}
+                onClick={handleCreate}
+              >
+                Create Game
+              </button>
+
+              <button
+                className="secondaryBtn"
+                onClick={() =>
+                  isJoinMode ? handleJoin() : setMode("join")
+                }
+              >
+                {isJoinMode ? "Join Game" : "Enter Game ID"}
+              </button>
 
             </div>
 
