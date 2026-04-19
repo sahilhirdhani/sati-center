@@ -93,11 +93,12 @@ export default function Game() {
 
   const chatBox = <Chatbox />;
 
-  // When cheats are enabled, show a central "Pass" button IF the player has exactly zero playable cards.
-  // This acts as a cover-up so opponents can't tell if they skipped by choice or by lack of cards.
-  const canPlayCard = state.legalMoves.some(m => m.card !== "Skip" && m.card !== "Rollback");
+  // When the player has zero standard playable cards (excluding skip tokens & rollbacks), show a central "Pass" button.
+  // This acts as a cover-up so opponents can't tell if they skipped by choice or by lack of cards, 
+  // and serves as the primary way to pass when literally stuck (even without cheats).
+  const canPlayCard = state.legalMoves.some(m => m.card !== "Skip" && m.card !== "Rollback" && (!m.card || !m.card.isSkipCard));
   const canSkip = state.legalMoves.some(m => m.card === "Skip");
-  const showPassButton = state.cheatsEnabled && isPlayerTurn && !canPlayCard && canSkip;
+  const showPassButton = isPlayerTurn && !canPlayCard && canSkip;
 
   const gameTable = (
     <div className="tableArea" style={{ position: "relative" }}>
@@ -113,6 +114,8 @@ export default function Game() {
             zIndex: 50,
             padding: "16px 32px",
             fontSize: "1.2rem",
+            width: "fit-content",
+            whiteSpace: "nowrap",
             boxShadow: "0 4px 15px rgba(0,0,0,0.5)",
             animation: "pulse 2s infinite"
           }}

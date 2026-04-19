@@ -9,6 +9,8 @@ export function dispatchAction(state, action) {
     switch (action.type) {
 
         case ACTIONS.PLAY_CARD: {
+            state.consecutiveSkips = 0; // reset consecutive skips on successful card play
+
             const cardIndex = player.hand.findIndex(c => c.id === action.cardId);
             if (cardIndex === -1) return false;
 
@@ -22,7 +24,10 @@ export function dispatchAction(state, action) {
                     type: ACTIONS.SKIP_TURN,
                     playerId: player.id
                 });
-                advanceTurn(state);
+                if (player.hand.length === 0) {
+                    finishPlayer(state, player.id);
+                }
+                if (!state.winner) advanceTurn(state);
                 return true;
             }
 
@@ -36,7 +41,8 @@ export function dispatchAction(state, action) {
                 pileKey: action.pileKey
             });
 
-            if (player.hand.length === 0) {
+            // Finish player if hands are empty OR only contain skip tokens
+            if (player.hand.length === 0 || player.hand.every(c => c.isSkipCard)) {
                 finishPlayer(state, player.id);
             }
 
@@ -45,10 +51,20 @@ export function dispatchAction(state, action) {
         }
 
         case ACTIONS.SKIP_TURN: {
+            state.consecutiveSkips = (state.consecutiveSkips || 0) + 1;
+            const activeCount = state.players.filter(p => p.isActive).length;
+
             state.moveHistory.push({
                 type: ACTIONS.SKIP_TURN,
                 playerId: player.id
             });
+
+            // Prevent infinite loop if NO active player has playable cards
+            if (activeCount > 0 && state.consecutiveSkips >= activeCount) {
+                console.warn("Deadlock detected: All remaining players skipped consecutively. Ending game automatically.");
+                import('./gameAction.js').then(m => m.endGame(state));
+                return true;
+            }
 
             advanceTurn(state);
             return true;

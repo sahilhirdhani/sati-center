@@ -79,7 +79,6 @@ export function getLegalMoves(hand, table, layoutMode, cheatsEnabled, skipMode =
     // Handle "Skip Mode" specific rules
     if (skipMode === 'limited') {
         // Only allow playing Skip cards from hand when we want to skip.
-        // Wait, they can play skip cards *instead* of passing. So they are valid moves.
         for(const sc of skipCards) {
             legal.push(sc);
         }
@@ -88,11 +87,11 @@ export function getLegalMoves(hand, table, layoutMode, cheatsEnabled, skipMode =
             legal.push({ card: "Rollback", pileKey: "Rollback" });
         }
         
-        // Wait, if no cards AND no skip cards, what happens? They can't move? The round skips?
-        // Wait! In limited mode, the user *must* spend a skip card to skip? Or what if they have no cards?
-        // Usually, if a player has *no* playable cards, in "infinite" mode they can skip. Let's force an empty legal array to cause a structural forced skip maybe? Or give a raw "ForceSkip"
-        // Let's rely on the player needing a `isSkipCard` but if they are stuck with NO skip cards and NO playable cards, they auto-skip? Yes. Let's auto-push a structural bypass skip if `legal.length === 0` to prevent game freeze.
-        if (legal.length === 0) {
+        // If there are literally no legitimate standard game cards playable,
+        // force a "Skip" string in so the UI knows to render a "Pass (No Cards)" explicit bypass button.
+        // This ensures the game never auto-skips (or freezes with only Rollback) without giving the user a chance to visibly Pass, preserving stealth.
+        const standardBaseMoves = legal.filter(m => m.card !== "Rollback" && (!m.card || !m.card.isSkipCard));
+        if (standardBaseMoves.length === 0) {
             legal.unshift({ card: "Skip", pileKey: "Skip" });
         }
     } else {
@@ -100,8 +99,11 @@ export function getLegalMoves(hand, table, layoutMode, cheatsEnabled, skipMode =
         if (cheatsEnabled) {
             legal.unshift({ card: "Skip", pileKey: "Skip" });
             legal.push({ card: "Rollback", pileKey: "Rollback" });
-        } else if (legal.length === 0) {
-            legal.unshift({ card: "Skip", pileKey: "Skip" });
+        } else {
+            const standardBaseMoves = legal.filter(m => m.card !== "Rollback" && (!m.card || !m.card.isSkipCard));
+            if (standardBaseMoves.length === 0) {
+                legal.unshift({ card: "Skip", pileKey: "Skip" });
+            }
         }
     }
 

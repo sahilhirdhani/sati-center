@@ -10,7 +10,16 @@ export function finishPlayer(state, playerId) {
     
     state.finishedPlayers.push(player);
 
-    if(state.finishedPlayers.length === state.players.length) {
+    // If only one player is left, they also finish automatically because there's no game left.
+    const activePlayers = state.players.filter(p => p.isActive);
+    if (activePlayers.length === 1) {
+        const lastPlayer = activePlayers[0];
+        lastPlayer.isActive = false;
+        lastPlayer.position = state.finishedPlayers.length + 1;
+        state.finishedPlayers.push(lastPlayer);
+    }
+
+    if(state.finishedPlayers.length >= state.players.length) {
         endGame(state);
     }
 }
