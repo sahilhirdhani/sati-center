@@ -8,38 +8,21 @@ function canPlace (card, pile, layoutMode) {
         if(len===1){
             return card.value === 8 || card.value === 6 || card.value === 7
         }
-        else if(len === 2){
-            if(pile[1].value === 8 && pile[0].value === 7){
-                return card.value === 8 || card.value === 7
-            }
-            if(pile[1].value === 7 && pile[0].value === 6){
-                return card.value === 6 || card.value === 7
-            }
-            if(pile[1].value === pile[0].value){
-                if ( card.value === 8 ) {
-                    return true;
-                }
-                else if ( card.value === 6 ) {
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            }
-            return false
-        }
+        
+        let valid = false;
         if (max === pile[len-2].value ) {
-            return card.value === max +1
+            if (card.value === max + 1) valid = true;
         }
         if (min === pile[1].value){
-            return card.value === min -1
+            if (card.value === min - 1) valid = true;
         }
         if(max-1 === pile[len-2].value){
-            return card.value === max
+            if (card.value === max) valid = true;
         }
         if(min+1 === pile[1].value){
-            return card.value === min
+            if (card.value === min) valid = true;
         }
+        return valid;
     }
     else{
         return card.value === max +1 || card.value === min -1
