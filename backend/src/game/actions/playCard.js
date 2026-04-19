@@ -12,7 +12,8 @@ export function playCard(state, cardId, pileKey) {
         player.hand, 
         state.table,
         state.config.layoutMode,
-        state.cheatsEnabled
+        state.cheatsEnabled,
+        state.config.skipMode
     );
 
     const move = legalMoves.find(
@@ -21,6 +22,13 @@ export function playCard(state, cardId, pileKey) {
 
     if (!move) return false
     
+    // If playing a physical skip card from hand
+    if (move.card.isSkipCard) {
+        player.hand = player.hand.filter(c => c.id !== cardId);
+        advanceTurn(state);
+        return true;
+    }
+
     add(state.table, pileKey, move.card);
 
     player.hand = player.hand.filter(c => c.id !== cardId);

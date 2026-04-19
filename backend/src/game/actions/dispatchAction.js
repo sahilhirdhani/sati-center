@@ -14,6 +14,18 @@ export function dispatchAction(state, action) {
 
             const card = player.hand[cardIndex];
 
+            // If we are playing a "button disguised as a card" Skip card:
+            // Route it directly to the exact pre-existing skip logic flow to prevent adding to Table!
+            if (card.isSkipCard) {
+                player.hand.splice(cardIndex, 1);
+                state.moveHistory.push({
+                    type: ACTIONS.SKIP_TURN,
+                    playerId: player.id
+                });
+                advanceTurn(state);
+                return true;
+            }
+
             add(state.table, action.pileKey, card);
             player.hand.splice(cardIndex, 1);
 

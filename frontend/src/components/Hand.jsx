@@ -51,11 +51,15 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
     if (selectedCardId === card.id) {
 
         if (!isLegal) return;
+        
+        // Find the valid move to extract the exact pileKey the backend expects
+        const validMove = legalMoves.find(m => m.card && m.card.id === card.id);
+        const correctPileKey = validMove ? validMove.pileKey : card.suit;
 
         sendAction({
             type: "PLAY_CARD",
             cardId: card.id,
-            pileKey: card.suit
+            pileKey: correctPileKey
         });
 
         setSelectedCardId(null);
@@ -91,10 +95,13 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
 
       // If card is already selected, play it on Enter/Space
       if (selectedCardId === card.id) {
+        const validMove = legalMoves.find(m => m.card && m.card.id === card.id);
+        const correctPileKey = validMove ? validMove.pileKey : card.suit;
+
         sendAction({
           type: "PLAY_CARD",
           cardId: card.id,
-          pileKey: card.suit,
+          pileKey: correctPileKey,
         });
         setSelectedCardId(null);
         return;

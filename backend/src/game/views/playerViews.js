@@ -28,11 +28,13 @@ export function getPlayerView(state, playerId) {
             player.hand,
             state.table,
             state.config.layoutMode,
-            state.cheatsEnabled
+            state.cheatsEnabled,
+            state.config.skipMode
         ),
 
         finishedPlayers: structuredClone(state.finishedPlayers),
         winner: state.winner,
-        cheatsEnabled: state.cheatsEnabled
+        cheatsEnabled: state.cheatsEnabled,
+        skipMode: state.config.skipMode
     };
 }

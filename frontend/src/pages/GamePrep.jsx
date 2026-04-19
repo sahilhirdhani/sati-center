@@ -11,6 +11,9 @@ export default function GamePrep() {
   
   const [cheatMode, setCheatMode] = useState(false);
   const [gameMode, setGameMode] = useState("double-sets"); // default if > 4 players
+  
+  const [skipMode, setSkipMode] = useState("infinite"); // "infinite" or "limited"
+  const [limitedSkipCount, setLimitedSkipCount] = useState(1);
 
   const isManyPlayers = players.length >= 5;
 
@@ -22,7 +25,7 @@ export default function GamePrep() {
     }
     
     // Start game
-    startGame({ layoutMode, cheatMode });
+    startGame({ layoutMode, cheatMode, skipMode, limitedSkipCount });
   };
   
   const goBack = () => {
@@ -78,11 +81,54 @@ export default function GamePrep() {
                           type="checkbox" 
                           style={{width: '20px', height: '20px', cursor: 'pointer', accentColor: "#a855f7"}}
                           checked={cheatMode}
-                          onChange={(e) => setCheatMode(e.target.checked)}
+                          onChange={(e) => {
+                            setCheatMode(e.target.checked);
+                            if (!e.target.checked) setSkipMode("infinite");
+                          }}
                         />
                         Enable Cheats
                     </label>
                 </div>
+
+                {cheatMode && (
+                  <div className="settingsGroup" style={{marginTop: '25px', textAlign: 'center'}}>
+                      <h3 className="subTitle" style={{ fontFamily: "'Cinzel', serif", color: "var(--accent-gold)", marginBottom: "15px", letterSpacing: "1px", fontSize: "0.9rem", textTransform: "uppercase" }}>Skip Rules</h3>
+                      <div style={{ display: "flex", gap: "25px", justifyContent: "center", marginBottom: "15px" }}>
+                          <label style={{ fontFamily: "inherit", fontSize: "0.95rem", display: "flex", alignItems: "center", gap: "8px", opacity: 0.9 }}>
+                              <input 
+                                type="radio" 
+                                name="skipMode" 
+                                value="infinite"
+                                checked={skipMode === "infinite"}
+                                onChange={(e) => setSkipMode(e.target.value)}
+                              /> 
+                              Infinite Skips
+                          </label>
+                          <label style={{ fontFamily: "inherit", fontSize: "0.95rem", display: "flex", alignItems: "center", gap: "8px", opacity: 0.9 }}>
+                              <input 
+                                type="radio" 
+                                name="skipMode" 
+                                value="limited"
+                                checked={skipMode === "limited"}
+                                onChange={(e) => setSkipMode(e.target.value)}
+                              /> 
+                              Limited Skips
+                          </label>
+                      </div>
+                      {skipMode === "limited" && (
+                          <div style={{ marginTop: "10px" }}>
+                              <label style={{ fontSize: "0.9rem", opacity: 0.8, marginRight: "10px" }}>Skips Allowed (1-5):</label>
+                              <select 
+                                  value={limitedSkipCount} 
+                                  onChange={(e) => setLimitedSkipCount(Number(e.target.value))}
+                                  style={{ padding: "4px 8px", background: "rgba(0,0,0,0.5)", color: "white", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "4px" }}
+                              >
+                                  {[1,2,3,4,5].map(n => <option key={n} value={n}>{n}</option>)}
+                              </select>
+                          </div>
+                      )}
+                  </div>
+                )}
 
                 {isManyPlayers ? (
                   <div className="settingsGroup" style={{marginTop: '35px', textAlign: 'center'}}>

@@ -21,7 +21,8 @@ export function validateAction(state, action) {
         currentPlayer.hand,
         state.table,
         state.config.layoutMode,
-        state.cheatsEnabled
+        state.cheatsEnabled,
+        state.config.skipMode
     );
 
     switch (action.type) {

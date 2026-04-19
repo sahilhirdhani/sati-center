@@ -112,7 +112,7 @@ function placeInitialSeven(table, card, layoutMode) {
     }
 }
 
-export function setupGame(players, layoutMode, cheatsEnabled) {
+export function setupGame(players, layoutMode, cheatsEnabled, extraConfig = {}) {
     
     players = buildPlayer(players)
     
@@ -122,6 +122,9 @@ export function setupGame(players, layoutMode, cheatsEnabled) {
         playerCount: players.length,
         layoutMode
     });
+    
+    config.skipMode = extraConfig.skipMode || 'infinite';
+    config.limitedSkipCount = extraConfig.limitedSkipCount || 1;
 
     const deck = createDeck(config.decks);
     shuffle(deck);
@@ -133,6 +136,21 @@ export function setupGame(players, layoutMode, cheatsEnabled) {
     placeInitialSeven(state.table, initialSeven, config.layoutMode);
 
     dealCards(deck, state.players);
+
+    // If limited skip mode, inject 'Skip' cards into everyone's hands
+    if (config.skipMode === 'limited') {
+        const numSkips = config.limitedSkipCount;
+        for (const p of state.players) {
+            for (let i = 0; i < numSkips; i++) {
+                p.hand.push({
+                    id: `skip_${p.id}_${i}`,
+                    suit: "special",
+                    value: "Skip",
+                    isSkipCard: true
+                });
+            }
+        }
+    }
 
     // for testing purposes, giving specific cards to players to test the game flow and bot moves
     // batoPatte(deck, state.players) 

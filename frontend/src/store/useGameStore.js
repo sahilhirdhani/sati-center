@@ -187,7 +187,9 @@ export const useGameStore = create((set,get) => ({
         send({
             type: "START_GAME",
             layoutMode: options.layoutMode || "single",
-            cheatMode: options.cheatMode || false
+            cheatMode: options.cheatMode || false,
+            skipMode: options.skipMode || "infinite",
+            limitedSkipCount: options.limitedSkipCount || 1
         })
     },
 

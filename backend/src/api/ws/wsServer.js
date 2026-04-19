@@ -179,9 +179,9 @@ function handleStartGame(io, socket, msg) {
 
     const players = Array.from(game.players.values());
 
-    const { layoutMode = "single", cheatMode = false } = msg || {};
+    const { layoutMode = "single", cheatMode = false, skipMode = "infinite", limitedSkipCount = 1 } = msg || {};
 
-    game.state = setupGame(players, layoutMode, cheatMode);
+    game.state = setupGame(players, layoutMode, cheatMode, { skipMode, limitedSkipCount });
     game.phase = "PLAYING";
     broadcastState(io, gameId);
 }
