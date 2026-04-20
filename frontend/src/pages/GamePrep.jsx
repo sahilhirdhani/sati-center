@@ -55,7 +55,7 @@ export default function GamePrep() {
     }
   }, [chatMessages, playerId]);
 
-  const isManyPlayers = players.length >= 5;
+  const isManyPlayers = players.length > 4;
 
   const handleStart = () => {
     // Determine layout mode
