@@ -29,6 +29,12 @@ export const useGameStore = create((set,get) => ({
     players: [],
     state: null,
     chatMessages: [],
+    prepSettings: {
+        cheatMode: false,
+        gameMode: "single",
+        skipMode: "infinite",
+        limitedSkipCount: 1
+    },
     screen: "landing",
 
     setScreen: (screen) => set({ screen }),
@@ -130,6 +136,16 @@ export const useGameStore = create((set,get) => ({
                 })
                 break;
 
+            case "GOTO_PREP":
+                set({ screen: "gameprep" });
+                break;
+                
+            case "SETTINGS_UPDATED":
+                if (msg.settings) {
+                    set({ prepSettings: msg.settings });
+                }
+                break;
+
             // case "IN_LOBBY":
             //     set({
             //         gameId: msg.gameId,
@@ -153,6 +169,19 @@ export const useGameStore = create((set,get) => ({
                 }
 
                 alert(msg.error)
+                break;
+            
+            case "WARNING":
+                import('sweetalert2').then(Swal => {
+                    Swal.default.fire({
+                        title: "Warning",
+                        text: msg.message,
+                        icon: "warning",
+                        background: '#1a1a1a',
+                        color: '#f0e6d2',
+                        confirmButtonColor: '#c5a059'
+                    });
+                });
                 break;
             
             default:
@@ -180,7 +209,11 @@ export const useGameStore = create((set,get) => ({
     },
 
     goToGamePrep: () => {
-        set({ screen: "gameprep" });
+        send({ type: "GOTO_PREP" });
+    },
+
+    updateSettings: (settings) => {
+        send({ type: "UPDATE_SETTINGS", settings });
     },
 
     startGame: (options = {}) => {

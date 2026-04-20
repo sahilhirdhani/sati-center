@@ -5,6 +5,11 @@ import { add, remove } from "../state/gameState.js";
 
 export function dispatchAction(state, action) {
     const player = getCurrentPlayer(state);
+    
+    // Clear the deadlock flag on any player input
+    if (state.isDeadlocked) {
+        state.isDeadlocked = false;
+    }
 
     switch (action.type) {
 
@@ -61,9 +66,10 @@ export function dispatchAction(state, action) {
 
             // Prevent infinite loop if NO active player has playable cards
             if (activeCount > 0 && state.consecutiveSkips >= activeCount) {
-                console.warn("Deadlock detected: All remaining players skipped consecutively. Ending game automatically.");
-                import('./gameAction.js').then(m => m.endGame(state));
-                return true;
+                console.warn("Deadlock detected: All remaining players skipped consecutively. Triggering warning.");
+                state.deadlockWarning = true;
+                state.consecutiveSkips = 0; // Reset so they can choose to rollback or keep going
+                state.isDeadlocked = true; 
             }
 
             advanceTurn(state);

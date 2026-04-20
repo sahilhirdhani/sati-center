@@ -35,6 +35,12 @@ export function setupSocketServer(httpServer) {
                     case "START_GAME":
                         handleStartGame(io, socket, msg);
                         break;
+                    case "GOTO_PREP":
+                        handleGotoPrep(io, socket, msg);
+                        break;
+                    case "UPDATE_SETTINGS":
+                        handleUpdateSettings(io, socket, msg);
+                        break;
                     case "ACTION":
                         handleAction(io, socket, msg.action);
                         break;
@@ -42,7 +48,6 @@ export function setupSocketServer(httpServer) {
                         handleLeaveGame(io, socket);
                         break;
                     case "BACK_TO_LOBBY":
-                        console.log("back to lobby message received with gameId:", msg.gameId);
                         handleBackToLobby(io, socket, msg);
                         break;
                     case "CHAT_MESSAGE":
@@ -132,10 +137,18 @@ function handleJoinGame(io, socket, msg) {
 
         broadcastState(io, gameId);
         broadcastLobby(io, gameId);
+        
+        // Let reconnected players jump back to prep if it's there
+        if (game.phase === "PREP") {
+            socket.emit("message", { type: "GOTO_PREP" });
+            if (game.prepSettings) {
+                socket.emit("message", { type: "SETTINGS_UPDATED", settings: game.prepSettings });
+            }
+        }
         return;
     }
 
-    if (game.phase !== "LOBBY") {
+    if (game.phase !== "LOBBY" && game.phase !== "PREP") {
         return sendError(socket, "Game already started");
     }
 
@@ -166,6 +179,47 @@ function handleJoinGame(io, socket, msg) {
     });
 
     broadcastLobby(io, gameId);
+
+    if (game.phase === "PREP") {
+        socket.emit("message", { type: "GOTO_PREP" });
+        if (game.prepSettings) {
+            socket.emit("message", { type: "SETTINGS_UPDATED", settings: game.prepSettings });
+        }
+    }
+}
+
+function handleGotoPrep(io, socket, msg) {
+    const { gameId, role } = socket.data;
+    const game = getGame(gameId);
+    if (!game) return;
+
+    if (role !== "admin") return sendError(socket, "only admin can do this");
+
+    game.phase = "PREP";
+    
+    // Broadcast to everyone in the room
+    const clients = getGameSockets(io, gameId);
+    for (const client of clients) {
+        client.emit("message", { type: "GOTO_PREP" });
+    }
+}
+
+function handleUpdateSettings(io, socket, msg) {
+    const { gameId, role } = socket.data;
+    const game = getGame(gameId);
+    if (!game) return;
+
+    if (role !== "admin") return sendError(socket, "only admin can do this");
+
+    game.prepSettings = msg.settings;
+    
+    const clients = getGameSockets(io, gameId);
+    for (const client of clients) {
+        // Send to non-admins
+        if (client.data.role !== "admin") {
+            client.emit("message", { type: "SETTINGS_UPDATED", settings: msg.settings });
+        }
+    }
 }
 
 function handleStartGame(io, socket, msg) {
@@ -203,6 +257,17 @@ function handleAction(io, socket, action) {
 
     dispatchAction(game.state, action);
     broadcastState(io, gameId);
+
+    if (game.state?.deadlockWarning) {
+        const clients = getGameSockets(io, gameId);
+        for (const client of clients) {
+            client.emit("message", {
+                type: "WARNING",
+                message: "Deadlock detected: All players skipped consecutively! Check for legal moves, or use Rollback."
+            });
+        }
+        game.state.deadlockWarning = false;
+    }
 }
 
 function handleLeaveGame(io, socket) {

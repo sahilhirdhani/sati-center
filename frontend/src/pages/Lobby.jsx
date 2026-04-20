@@ -1,12 +1,35 @@
+import { useEffect, useState } from "react";
 import { useGameStore } from "../store/useGameStore";
 import Reconnecting from "./Reconnecting";
 import LeftPanel from "../components/LeftPanel";
 import RightPanel from "../components/RightPanel";
 import VersionPanel from "../components/VersionPanel";
+import Chatbox from "../components/Chatbox";
 import "../styles/Lobby.css"
 
 export default function Lobby() {
-  const { gameId, players, role, goToGamePrep, leaveGame } = useGameStore();
+  const { gameId, players, role, goToGamePrep, leaveGame, playerId } = useGameStore();
+  const chatMessages = useGameStore((state) => state.chatMessages);
+  const [globalChatPopup, setGlobalChatPopup] = useState(null);
+
+  useEffect(() => {
+    if (chatMessages && chatMessages.length > 0) {
+      const latestMsg = chatMessages[chatMessages.length - 1];
+
+      // Block popups for our own messages
+      if (latestMsg.playerId === playerId) {
+        return;
+      }
+
+      setGlobalChatPopup({ id: latestMsg.id, text: `${latestMsg.playerName}: ${latestMsg.text}` });
+
+      const timerId = setTimeout(() => {
+        setGlobalChatPopup(null);
+      }, 3000);
+
+      return () => clearTimeout(timerId);
+    }
+  }, [chatMessages, playerId]);
 
   if (!players) return <Reconnecting />;
 
@@ -16,6 +39,11 @@ export default function Lobby() {
 
   return (
     <div className="lobbyPage">
+      {globalChatPopup && (
+        <div key={globalChatPopup.id} className="globalChatPopup">
+          {globalChatPopup.text}
+        </div>
+      )}
       <div className="lobbyContent">
         <div className="tableLayout">
           <LeftPanel />
@@ -44,6 +72,10 @@ export default function Lobby() {
                 📋
               </button>
             </h2>
+
+            <div style={{ marginBottom: "15px" }}>
+               <Chatbox />
+            </div>
 
             <div className="playersBox">
               <h3 className="subTitle" style={{fontFamily: "'Cinzel', serif", color: "var(--accent-gold)", textTransform: "uppercase", letterSpacing: "2px", marginBottom: "10px", fontSize: "0.9rem", fontWeight: "600"}}>

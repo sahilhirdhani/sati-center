@@ -1,19 +1,59 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useGameStore } from "../store/useGameStore";
 import LeftPanel from "../components/LeftPanel";
 import RightPanel from "../components/RightPanel";
 import VersionPanel from "../components/VersionPanel";
+import Chatbox from "../components/Chatbox";
 import "../styles/Lobby.css"; // Reuse lobby layout logic for Left/Right panel structure
 import "../styles/GamePrep.css";
 
 export default function GamePrep() {
-  const { players, role, startGame, setScreen } = useGameStore();
+  const { players, role, startGame, setScreen, prepSettings, updateSettings, playerId } = useGameStore();
+  const chatMessages = useGameStore((state) => state.chatMessages);
+  const [globalChatPopup, setGlobalChatPopup] = useState(null);
   
-  const [cheatMode, setCheatMode] = useState(false);
-  const [gameMode, setGameMode] = useState("double-sets"); // default if > 4 players
+  const [cheatMode, setCheatMode] = useState(prepSettings.cheatMode || false);
+  const [gameMode, setGameMode] = useState(prepSettings.gameMode || "single"); // default if > 4 players
   
-  const [skipMode, setSkipMode] = useState("infinite"); // "infinite" or "limited"
-  const [limitedSkipCount, setLimitedSkipCount] = useState(1);
+  const [skipMode, setSkipMode] = useState(prepSettings.skipMode || "infinite"); // "infinite" or "limited"
+  const [limitedSkipCount, setLimitedSkipCount] = useState(prepSettings.limitedSkipCount || 1);
+
+  // Sync state if non-admin gets an update
+  useEffect(() => {
+    if (role !== "admin" && prepSettings) {
+      setCheatMode(prepSettings.cheatMode);
+      setGameMode(prepSettings.gameMode);
+      setSkipMode(prepSettings.skipMode);
+      setLimitedSkipCount(prepSettings.limitedSkipCount);
+    }
+  }, [prepSettings, role]);
+
+  // Sync to server if admin makes an update
+  useEffect(() => {
+    if (role === "admin" && updateSettings) {
+      updateSettings({ cheatMode, gameMode, skipMode, limitedSkipCount });
+    }
+  }, [cheatMode, gameMode, skipMode, limitedSkipCount, role]);
+
+  useEffect(() => {
+    if (chatMessages && chatMessages.length > 0) {
+      const latestMsg = chatMessages[chatMessages.length - 1];
+
+      // Block popups for our own messages
+      if (latestMsg.playerId === playerId) {
+        return;
+      }
+      
+      // Update object instead of just text so we can use its ID as key
+      setGlobalChatPopup({ id: latestMsg.id, text: `${latestMsg.playerName}: ${latestMsg.text}` });
+
+      const timerId = setTimeout(() => {
+        setGlobalChatPopup(null);
+      }, 3000);
+
+      return () => clearTimeout(timerId);
+    }
+  }, [chatMessages, playerId]);
 
   const isManyPlayers = players.length >= 5;
 
@@ -35,6 +75,11 @@ export default function GamePrep() {
   if (role !== "admin") {
     return (
       <div className="lobbyPage">
+        {globalChatPopup && (
+          <div key={globalChatPopup.id} className="globalChatPopup">
+            {globalChatPopup.text}
+          </div>
+        )}
         <div className="lobbyContent">
           <div className="tableLayout">
             <LeftPanel />
@@ -45,11 +90,26 @@ export default function GamePrep() {
 
               <div style={{background: "radial-gradient(circle at 50% 10%, rgba(255,255,255,0.03), rgba(0,0,0,0.2) 80%)", borderRadius: "16px", padding: "20px 25px", marginBottom: "20px", border: "1px solid rgba(255,255,255,0.02)", boxShadow: "inset 0 0 20px rgba(0,0,0,0.3)"}}>
                   <h2 className="subTitle" style={{fontFamily: "'Cinzel', serif", color: "var(--accent-gold)", textTransform: "uppercase", letterSpacing: "2px", fontSize: "1.05rem", fontWeight: "700"}}>
-                    Game Starting...
+                    Host is configuring...
                   </h2>
+
+                  <div style={{ marginTop: "20px", padding: "15px", background: "rgba(0,0,0,0.4)", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
+                    <h3 style={{ fontSize: "0.9rem", color: "var(--accent-gold)", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "10px" }}>Current Settings</h3>
+                    <ul style={{ listStyle: "none", padding: 0, margin: 0, fontSize: "0.95rem", textAlign: "left", opacity: 0.9 }}>
+                      <li style={{ marginBottom: "6px" }}>• Cheats: {cheatMode ? 'Enabled' : 'Disabled'}</li>
+                      <li style={{ marginBottom: "6px" }}>• Game Mode: {!isManyPlayers ? 'Single Deck' : (gameMode === 'double-sets' ? 'Double Sets' : 'Double Repeated')}</li>
+                      {cheatMode && (
+                        <li style={{ marginBottom: "6px" }}>• Skips: {skipMode === 'infinite' ? 'Infinite' : `${limitedSkipCount} limited skips`}</li>
+                      )}
+                    </ul>
+                  </div>
+
                   <p className="subTitle" style={{ fontFamily: "inherit", marginTop: 25, fontSize: "0.95rem" }}>
-                    Waiting for host to set up the game...
+                    Waiting for host to start the game...
                   </p>
+                  <div style={{ marginTop: "25px" }}>
+                     <Chatbox />
+                  </div>
               </div>
             </div>
             <RightPanel />
@@ -62,6 +122,11 @@ export default function GamePrep() {
 
   return (
     <div className="lobbyPage">
+      {globalChatPopup && (
+        <div key={globalChatPopup.id} className="globalChatPopup">
+          {globalChatPopup.text}
+        </div>
+      )}
       <div className="lobbyContent">
         <div className="tableLayout">
           <LeftPanel />
@@ -163,6 +228,10 @@ export default function GamePrep() {
                       </p>
                   </div>
                 )}
+                
+                <div style={{ marginTop: "25px", textAlign: "left" }}>
+                   <Chatbox />
+                </div>
             </div>
 
             <div className="buttonGroup">

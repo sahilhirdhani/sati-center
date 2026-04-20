@@ -5,8 +5,6 @@ import Game from "./pages/Game";
 import GamePrep from "./pages/GamePrep";
 import Reconnecting from "./pages/Reconnecting";
 import { useEffect } from "react";
-import Swal from 'sweetalert2';
-
 
 export default function App() {
   const screen = useGameStore(state => state.screen);

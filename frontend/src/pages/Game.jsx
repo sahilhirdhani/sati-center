@@ -9,7 +9,7 @@ import "../styles/Game.css";
 import Leaderboard from "../components/Leaderboard";
 
 export default function Game() {
-  const { state, onBackToLobby, leaveGame, sendAction } = useGameStore();
+  const { state, onBackToLobby, leaveGame, sendAction, playerId } = useGameStore();
   const chatMessages = useGameStore((state) => state.chatMessages);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
   const [globalChatPopup, setGlobalChatPopup] = useState(null);
@@ -17,21 +17,21 @@ export default function Game() {
   useEffect(() => {
     if (chatMessages && chatMessages.length > 0) {
       const latestMsg = chatMessages[chatMessages.length - 1];
-      
-      // Don't show popup for our own messages
-      if (state?.you?.name && latestMsg.playerName === state.you.name) {
+
+      // Block popups for our own messages
+      if (latestMsg.playerId === playerId) {
         return;
       }
-
-      setGlobalChatPopup(`${latestMsg.playerName}: ${latestMsg.text}`);
+      
+      setGlobalChatPopup({ id: latestMsg.id, text: `${latestMsg.playerName}: ${latestMsg.text}` });
 
       const timerId = setTimeout(() => {
         setGlobalChatPopup(null);
-      }, 2500);
+      }, 3000);
 
       return () => clearTimeout(timerId);
     }
-  }, [chatMessages, state?.you?.name]);
+  }, [chatMessages, playerId]);
 
   useEffect(() => {
     if (state?.you?.hand?.length) {
@@ -136,8 +136,8 @@ export default function Game() {
   return (
     <div className="gameRoot">
       {globalChatPopup && (
-        <div className="globalChatPopup">
-          {globalChatPopup}
+        <div key={globalChatPopup.id} className="globalChatPopup">
+          {globalChatPopup.text}
         </div>
       )}
 

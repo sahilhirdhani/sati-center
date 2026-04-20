@@ -103,6 +103,14 @@ export function advanceTurn(state) {
     
     if (activeCount === 0 || state.winner) return;
 
+    if (state.isDeadlocked) {
+        // Just advance the index once to the next active player and pause the auto-play loop.
+        do {
+            state.currentTurnIndex = (state.currentTurnIndex + 1) % total;
+        } while (!state.players[state.currentTurnIndex].isActive);
+        return;
+    }
+
     while (true) {
         state.currentTurnIndex = (state.currentTurnIndex + 1) % total;
 
