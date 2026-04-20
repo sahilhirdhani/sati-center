@@ -70,6 +70,20 @@ export function dispatchAction(state, action) {
                 state.deadlockWarning = true;
                 state.consecutiveSkips = 0; // Reset so they can choose to rollback or keep going
                 state.isDeadlocked = true; 
+
+                if (state.cheatsEnabled && state.config.skipMode === "infinite") {
+                    // Revert turn back to the last real player who skipped
+                    const recentSkips = state.moveHistory.slice(-activeCount);
+                    for (let i = recentSkips.length - 1; i >= 0; i--) {
+                        if (recentSkips[i].type === ACTIONS.SKIP_TURN) {
+                            const p = state.players.find(x => x.id === recentSkips[i].playerId);
+                            if (p && !p.isBot) {
+                                state.currentTurnIndex = state.players.findIndex(x => x.id === p.id);
+                                return true;
+                            }
+                        }
+                    }
+                }
             }
 
             advanceTurn(state);

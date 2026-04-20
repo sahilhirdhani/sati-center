@@ -32,6 +32,13 @@ function canBotPlay (state, player) {
         // If they have no standard cards, they just use the free "Skip" string injected by rules.js.
         let botMoves = legalMoves.filter(m => m.card === "Skip" || (!m.card.isSkipCard && m.card !== "Rollback"));
         
+        if (state.cheatsEnabled && state.config.skipMode === "infinite") {
+            const hasStandardMoves = botMoves.some(m => m.card !== "Skip");
+            if (hasStandardMoves) {
+                botMoves = botMoves.filter(m => m.card !== "Skip");
+            }
+        }
+        
         // If the bot only has skip tokens left, it should just throw them away.
         if (player.hand.every(c => c.isSkipCard)) {
             let physicalSkips = legalMoves.filter(m => m.card && m.card.isSkipCard);
@@ -65,6 +72,13 @@ export function getStartingPlayer (state) {
                 )
                 
                 let botMoves = legalMoves.filter(m => m.card === "Skip" || (!m.card.isSkipCard && m.card !== "Rollback"));
+                
+                if (state.cheatsEnabled && state.config.skipMode === "infinite") {
+                    const hasStandardMoves = botMoves.some(m => m.card !== "Skip");
+                    if (hasStandardMoves) {
+                        botMoves = botMoves.filter(m => m.card !== "Skip");
+                    }
+                }
                 
                 // If a bot has ONLY skip cards left in hand, it should finish immediately or throw them away.
                 // Or simply allow them to play the physical skip token if they have no standard moves, 
