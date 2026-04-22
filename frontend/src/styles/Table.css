@@ -11,62 +11,174 @@
   color: #cfd8dc;
 }
 
-/* FELT TABLE - MOBILE FIRST (GRID LAYOUT) */
-.tableArea {
-  background: radial-gradient(circle at center, #1f6b2a, #0b2e12);
-  padding: clamp(12px, 4vw, 24px);
-  border-radius: 12px;
-  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.6), 0 8px 30px rgba(0, 0, 0, 0.6);
+/* FELT TABLE SURFACE */
+.tableFelt {
+  position: relative;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(45, 128, 55, 0.36) 0%, rgba(17, 72, 28, 0) 58%),
+    radial-gradient(circle at 22% 14%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 42%),
+    radial-gradient(circle at 72% 88%, rgba(0, 0, 0, 0.28) 0%, rgba(0, 0, 0, 0) 50%),
+    linear-gradient(160deg, #0b3a15, #1c6a2f 48%, #0a2e12);
+  border: 1px solid rgba(255, 225, 142, 0.14);
+  padding: clamp(10px, 3vw, 20px) clamp(10px, 3vw, 20px);
+  border-radius: 18px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    inset 0 0 58px rgba(0, 0, 0, 0.42),
+    0 16px 42px rgba(0, 0, 0, 0.52);
   display: flex;
   flex-direction: column;
-  gap: clamp(10px, 2vw, 14px);
+  justify-content: center;
+  gap: clamp(6px, 1.5vw, 12px);
   min-width: 0;
-  min-height: clamp(480px, 62vh, 760px);
+  min-height: 45dvh;
+  max-height: none;
+  width: min(100%, 1320px);
   max-width: 100%;
-  overflow: visible;
+  overflow-x: visible;
+  overflow-y: visible;
+  isolation: isolate;
 }
 
-/* DYNAMIC TABLE ROW */
-.tableRow {
+@media (min-width: 1025px) {
+  .tableFelt {
+    max-height: none;
+    min-height: min(68dvh, calc(100dvh - 210px));
+    padding: clamp(22px, 5vw, 34px) clamp(14px, 4vw, 26px);
+    gap: clamp(10px, 1.8vw, 16px);
+  }
+}
+
+
+.tableFelt::before,
+.tableFelt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.tableFelt::before {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.016) 0,
+      rgba(255, 255, 255, 0.016) 3px,
+      rgba(0, 0, 0, 0.02) 3px,
+      rgba(0, 0, 0, 0.02) 6px
+    );
+  opacity: 0.45;
+  mix-blend-mode: soft-light;
+}
+
+.tableFelt::after {
+  box-shadow: inset 0 -26px 48px rgba(0, 0, 0, 0.26), inset 0 22px 30px rgba(255, 255, 255, 0.03);
+}
+
+/* SUIT LANE */
+.suitRow {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: clamp(8px, 2vw, 12px);
-  min-height: clamp(84px, 14vw, 100px);
+  gap: clamp(10px, 1.4vw, 16px);
   width: 100%;
+  min-height: clamp(88px, 13vh, 104px);
+  border-radius: 12px;
+  padding: 2px 8px;
+  background: transparent;
 }
 
-/* ROW LABEL */
-.tableRowLabel {
-  width: clamp(28px, 8vw, 36px);
-  font-size: clamp(18px, 6vw, 24px);
+
+
+.suitLabel {
+  width: clamp(30px, 3vw, 36px);
+  font-size: clamp(22px, 2.4vw, 26px);
   font-weight: 700;
-  flex-shrink: 0;
+  text-align: center;
+  color: #d9e4d7;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+}
+
+.suitLabel .redSuit {
+  color: #ff5c5c;
+}
+
+.pilesContainer {
   display: flex;
-  align-items: center;
+  flex: 1;
+  gap: clamp(16px, 2vw, 24px);
+  min-width: 0;
+}
+
+/* PILE SLOT */
+.tablePile {
+  flex: 1;
+  min-width: 0;
+  display: flex;
   justify-content: center;
+  align-items: center;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 8px 6px;
+  background: transparent;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-.tableRowLabel.redSuit {
-  color: #d32f2f;
+.tablePile-highlight {
+  border-color: #ffd83d;
+  box-shadow: 0 0 0 1px rgba(255, 216, 61, 0.6), 0 0 16px rgba(255, 216, 61, 0.26);
 }
 
-/* CARDS IN A ROW */
+/* CARDS IN A PILE */
 .tableCards {
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
   gap: 0;
   flex: 1;
   min-width: 0;
   min-height: 100%;
   flex-wrap: nowrap;
-  padding-top: 0;
-  overflow: hidden;
+  overflow: visible;
+}
+
+.tableCardsCompact {
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.tableCenterZone,
+.tableForwardZone {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tableCenterZone {
   justify-content: center;
 }
 
-/* TABLE CARD */
+.tableForwardZone {
+  justify-content: flex-start;
+}
+
+.tableCardsCompact .tableCard {
+  margin-left: 0;
+  margin-top: clamp(-60px, -14vw, -45px);
+  margin-bottom: 0;
+}
+
+.tableCardsCompact .tableCenterZone .tableCard:first-child,
+.tableCardsCompact .tableForwardZone .tableCard:first-child {
+  margin-top: 0;
+}
+
+/* CARD */
 .tableCard {
   width: clamp(50px, 12vw, 60px);
   height: clamp(75px, 18vw, 88px);
@@ -78,18 +190,16 @@
   margin-left: 0;
 }
 
-.tableEmpty {
-  color: rgba(231, 214, 160, 0.75);
-  font-size: var(--font-sm);
-  padding: 6px 2px;
+.tableCardEmpty {
+  opacity: 0;
+  border: none;
+  background: transparent;
 }
 
-
-/* PLAYING CARD */
 .tablePlayingCard {
   width: 100%;
   height: 100%;
-  background: white;
+  background: linear-gradient(165deg, #ffffff, #f0f3f5);
   border-radius: 8px;
   border: 2px solid #e6e6e6;
   position: relative;
@@ -102,12 +212,10 @@
   padding: clamp(3px, 0.5vw, 4px);
 }
 
-/* RED CARDS */
 .tablePlayingCard.tableRedCard {
   color: #d32f2f;
 }
 
-/* CARD CORNERS */
 .tableCorner {
   position: absolute;
   font-size: clamp(11px, 2vw, 13px);
@@ -134,7 +242,6 @@
   transform: rotate(180deg);
 }
 
-/* CENTER SUIT */
 .tableCenter {
   position: absolute;
   top: 50%;
@@ -143,72 +250,56 @@
   font-size: clamp(18px, 4vw, 28px);
 }
 
-/* TABLET ADJUSTMENTS */
-@media (min-width: 601px) {
-  .tableArea {
-    padding: 18px;
-    gap: 12px;
-    justify-content: center;
-    min-height: clamp(520px, 64vh, 820px);
+/* DESKTOP */
+@media (min-width: 1025px) {
+  .tableFelt {
+    max-height: min(72dvh, calc(100dvh - 220px));
+    padding: 20px 18px;
+    gap: 10px;
   }
 
-  .tableRow {
-    gap: 12px;
-    min-height: clamp(80px, 20vh, 100px);
-  }
-
-  .tableRowLabel {
-    display: none;
-  }
-
-  .tableCards {
-    margin-left: 4px;
+  .suitRow {
+    min-height: 84px;
+    gap: 10px;
   }
 
   .tableCard {
-    width: 60px;
-    height: 88px;
+    width: 50px;
+    height: 75px;
     margin-left: -18px;
   }
-
-  .tableCard:first-child {
-    margin-left: 0;
-  }
 }
 
-@media (min-width: 1025px) {
-  .tableArea {
-    min-height: clamp(560px, 68vh, 860px);
-  }
-}
-
-/* ONLY TABLET MODE */
+/* TABLET */
 @media (min-width: 601px) and (max-width: 1024px) {
-  .tableSection,
-  .tableArea,
-  .tableCards {
-    overflow: visible;
-  }
-
-  .tableArea {
+  .tableFelt {
     flex-direction: row;
+    align-items: stretch;
     justify-content: space-evenly;
-    gap: clamp(30px, 8vw, 60px);
-    height: auto;
-    width: 100%;
-    min-height: clamp(300px, 50vh, 400px); /* adjusted height so it grows */
+    gap: clamp(24px, 6vw, 52px);
+    max-height: none;
+    min-height: 250px;
+    padding-top: clamp(24px, 4vh, 38px);
+    padding-bottom: clamp(24px, 4vh, 38px);
   }
 
-  .tableRow {
+  .suitRow {
     flex-direction: column;
+    width: clamp(56px, 8vw, 76px);
     min-height: auto;
-    width: clamp(55px, 8vw, 75px);
     gap: 12px;
+    background: transparent;
+    padding: 0;
   }
 
-  .tableRowLabel {
+  .suitLabel {
     display: flex;
     justify-content: center;
+    width: 100%;
+  }
+
+  .pilesContainer {
+    gap: 14px;
     width: 100%;
   }
 
@@ -216,58 +307,96 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    padding-bottom: 75px; /* Added padding to fix clipping of the last card */
     margin-left: 0;
+    padding-top: clamp(14px, 2vh, 22px);
   }
 
   .tableCard {
     width: 60px;
     height: 88px;
     margin-left: 0;
-    margin-top: -60px;
+    margin-bottom: -60px;
+    margin-top: 0;
   }
 
   .tableCard:first-child {
     margin-top: 0;
     margin-left: 0;
   }
+  
+  .tableCard:last-child {
+    margin-bottom: 0;
+  }
 }
 
-/* DESKTOP ADJUSTMENTS */
-@media (min-width: 1025px) {
-  .tableArea {
-    padding: 16px; /* Reduced padding */
-    gap: 10px;     /* Reduced gap */
+/* MOBILE */
+@media (max-width: 600px) {
+  .tableFelt {
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    gap: clamp(6px, 2vw, 15px);
+    max-height: none;
+    min-height: 250px;
+    padding-top: clamp(18px, 4vh, 26px);
+    padding-bottom: clamp(18px, 4vh, 26px);
   }
 
-  .tableRow {
-    min-height: 80px; /* Reduced min-height */
+  .suitRow {
+    flex-direction: column;
+    width: clamp(45px, 15vw, 65px);
+    min-height: auto;
     gap: 8px;
+    background: transparent;
+    padding: 0;
+  }
+
+  .suitLabel {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    font-size: clamp(19px, 6vw, 24px);
+  }
+
+  .pilesContainer {
+    gap: 10px;
+    width: 100%;
   }
 
   .tableCards {
-    margin-left: 4px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    margin-left: 0;
+    padding-top: clamp(10px, 2vh, 16px);
   }
 
   .tableCard {
-    width: 50px;  /* Reduced width */
-    height: 75px; /* Reduced height */
-    margin-left: -18px;
+    width: clamp(42px, 12vw, 54px);
+    height: clamp(64px, 18vw, 78px);
+    margin-left: 0;
+    margin-bottom: -45px;
+    margin-top: 0;
   }
 
   .tableCard:first-child {
+    margin-top: 0;
     margin-left: 0;
+  }
+
+  .tableCard:last-child {
+    margin-bottom: 0;
   }
 }
 
-/* LANDSCAPE MODE OPTIMIZATION */
+/* SHORT LANDSCAPE */
 @media (orientation: landscape) and (max-height: 700px) {
-  .tableArea {
+  .tableFelt {
     padding: 12px;
     gap: 10px;
   }
 
-  .tableRow {
+  .suitRow {
     min-height: 70px;
   }
 
@@ -276,53 +405,3 @@
     height: clamp(65px, 15vh, 88px);
   }
 }
-
-@media (max-width: 600px) {
-  .tableSection,
-  .tableArea,
-  .tableCards {
-    overflow: visible;
-  }
-
-  .tableArea {
-    flex-direction: row;
-    justify-content: center;
-    gap: clamp(6px, 2vw, 15px);
-    height: auto;
-    min-height: clamp(250px, 40vh, 300px); /* Let height expand instead of fixing it */
-  }
-
-  .tableRow {
-    flex-direction: column;
-    min-height: auto;
-    width: clamp(45px, 15vw, 65px);
-    gap: 8px;
-  }
-
-  .tableRowLabel {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-  }
-
-  .tableCards {
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    margin-left: 0;
-    padding-bottom: 60px; /* Added bottom padding to fix clipping */
-  }
-
-  .tableCard {
-    width: clamp(42px, 12vw, 54px);
-    height: clamp(64px, 18vw, 78px);
-    margin-left: 0;
-    margin-top: -45px;
-  }
-
-  .tableCard:first-child {
-    margin-top: 0;
-    margin-left: 0;
-  }
-}
-
