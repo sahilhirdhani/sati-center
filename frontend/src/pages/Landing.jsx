@@ -1,7 +1,7 @@
+import { useState, useEffect } from "react";
 import { useGameStore } from "../store/useGameStore";
-import { useEffect, useState } from "react";
-import LeftPanel from "../components/LeftPanel";
-import RightPanel from "../components/RightPanel";
+import LandingAboutPanel from "../components/LandingAboutPanel";
+import LandingStartPanel from "../components/LandingStartPanel";
 import VersionPanel from "../components/VersionPanel";
 import { motion } from "framer-motion";
 
@@ -36,22 +36,19 @@ export default function Landing() {
   const isJoinMode = gameId.trim() !== "";
 
   return (
-    <div className="w-full min-h-screen flex flex-col items-center justify-center p-4 lg:p-8">
-      <div className="w-full max-w-7xl flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12 z-10 relative">
-        
-        {/* Left Panel - Hidden on mobile, shows on desktop */}
+    <div className="w-full min-h-screen flex flex-col items-center justify-center py-10 px-4 lg:p-8 relative overflow-hidden">
+      <div className="w-full max-w-7xl flex flex-col lg:flex-row items-center lg:items-stretch justify-center gap-8 lg:gap-12 z-10 flex-1 my-auto">
         <div className="hidden lg:block lg:w-1/4">
-          <LeftPanel />
+          <LandingAboutPanel />
         </div>
 
-        {/* Main Center Card */}
         <motion.div 
-          initial={{ scale: 0.9, opacity: 0 }}
+          initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="glass-panel w-full max-w-md rounded-3xl p-8 flex flex-col items-center relative overflow-hidden"
+          transition={{ duration: 0.5 }}
+          className="glass-panel w-full max-w-md rounded-3xl p-6 md:p-8 flex flex-col items-center relative overflow-hidden shrink-0 my-auto"
         >
-          {/* Subtle glow effect behind card content */}
+          {/* Subtle animated background glow inside card */}
           <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-[radial-gradient(circle_at_50%_50%,rgba(212,175,55,0.05)_0%,transparent_50%)] animate-[spin_20s_linear_infinite] pointer-events-none" />
 
           <h1 className="font-serif text-5xl md:text-6xl text-transparent bg-clip-text bg-gradient-to-b from-[#f3d37c] to-[#8c6a1a] tracking-widest uppercase mb-2 drop-shadow-lg text-center z-10">
@@ -107,13 +104,12 @@ export default function Landing() {
           </div>
         </motion.div>
 
-        {/* Right Panel - Hidden on mobile, shows on desktop */}
         <div className="hidden lg:block lg:w-1/4">
-          <RightPanel />
+          <LandingStartPanel />
         </div>
       </div>
 
-      <div className="absolute bottom-4 left-0 w-full flex justify-center z-10">
+      <div className="w-full flex justify-center mt-8 z-10">
         <VersionPanel />
       </div>
     </div>

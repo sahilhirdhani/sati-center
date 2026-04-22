@@ -2,11 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const versionHistory = [
-  { version: "v1.0.0", text: "Premium Redesign & Tailwind Upgrade" },
-  { version: "v0.004", text: "Panels added: How to Play and Game Info." },
-  { version: "v0.003", text: "Join room flow implemented with game code input." },
-  { version: "v0.002", text: "Landing page UI and room creation system added." },
-  { version: "v0.001", text: "Initial project setup and socket connection." }
+  { version: "v1.3.0", text: "Added live Lobby Chatbox." },
+  { version: "v1.2.1", text: "Added Cheat Modes & Skip rules." },
+  { version: "v1.2.0", text: "Added Game Modes for 4+ players." },
+  { version: "v1.1.1", text: "Premium UI overhaul & mobile responsiveness." },
+  { version: "v1.1.0", text: "Premium Redesign & Tailwind Upgrade." },
+  { version: "v1.0.3", text: "Panels added: How to Play and Game Info." },
+  { version: "v1.0.2", text: "Join room flow implemented with game code input." },
+  { version: "v1.0.1", text: "Landing page UI and room creation system added." },
+  { version: "v1.0.0", text: "Initial project setup and socket connection." }
 ];
 
 export default function VersionPanel() {

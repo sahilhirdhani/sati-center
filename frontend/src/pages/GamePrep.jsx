@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useGameStore } from "../store/useGameStore";
 import LeftPanel from "../components/LeftPanel";
-import RightPanel from "../components/RightPanel";
+import ConfigRulesPanel from "../components/ConfigRulesPanel";
 import VersionPanel from "../components/VersionPanel";
 import Chatbox from "../components/Chatbox";
 import { motion, AnimatePresence } from "framer-motion";
@@ -280,7 +280,7 @@ export default function GamePrep() {
         </motion.div>
 
         <div className="hidden lg:block lg:w-1/4">
-          <RightPanel />
+          <ConfigRulesPanel />
         </div>
       </div>
 
