@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { useGameStore } from "../store/useGameStore";
 import LandingAboutPanel from "../components/LandingAboutPanel";
 import LandingStartPanel from "../components/LandingStartPanel";
+import MobileTutorial from "../components/MobileTutorial";
 import VersionPanel from "../components/VersionPanel";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Landing() {
   const { createGame, joinGame, connectSocket } = useGameStore();
@@ -107,6 +108,10 @@ export default function Landing() {
         <div className="hidden lg:block lg:w-1/4">
           <LandingStartPanel />
         </div>
+      </div>
+
+      <div className="lg:hidden w-full flex justify-center mt-6 z-50">
+        <MobileTutorial />
       </div>
 
       <div className="w-full flex justify-center mt-8 z-10">

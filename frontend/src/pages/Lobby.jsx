@@ -66,7 +66,7 @@ export default function Lobby() {
           className="glass-panel w-full max-w-md rounded-3xl p-6 md:p-8 flex flex-col relative overflow-hidden"
         >
           {/* Subtle animated background glow inside card */}
-          <div className="absolute top-[-50%] right-[-50%] w-[200%] h-[200%] bg-[radial-gradient(circle_at_50%_50%,rgba(0,240,255,0.03)_0%,transparent_50%)] animate-[spin_25s_linear_infinite_reverse] pointer-events-none" />
+          <div className="absolute top-[-50%] right-[-50%] w-[200%] h-[200%] bg-[radial-gradient(circle_at_50%_50%,rgba(212,175,55,0.05)_0%,transparent_50%)] animate-[spin_25s_linear_infinite_reverse] pointer-events-none" />
 
           <div className="text-center mb-6 z-10">
             <h1 className="font-serif text-4xl text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 tracking-widest uppercase mb-1">

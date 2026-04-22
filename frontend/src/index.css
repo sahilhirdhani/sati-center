@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --color-dark-bg: #050505;
-  --color-dark-surface: #0a0a0a;
-  --color-dark-surface-elevated: #141414;
+  --color-dark-bg: #0c0b0a;
+  --color-dark-surface: #141210;
+  --color-dark-surface-elevated: #1e1b18;
   --color-accent-gold: #d4af37;
   --color-accent-gold-light: #f3d37c;
   --color-accent-gold-dark: #8c6a1a;
@@ -29,8 +29,8 @@
   body {
     @apply bg-dark-bg text-white font-sans antialiased min-h-screen w-full;
     background-image: 
-      radial-gradient(circle at 15% 50%, rgba(176, 38, 255, 0.08), transparent 30%),
-      radial-gradient(circle at 85% 30%, rgba(0, 240, 255, 0.08), transparent 30%);
+      radial-gradient(circle at 15% 50%, rgba(212, 175, 55, 0.08), transparent 30%),
+      radial-gradient(circle at 85% 30%, rgba(212, 175, 55, 0.08), transparent 30%);
   }
 
   #root {

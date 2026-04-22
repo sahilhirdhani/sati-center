@@ -155,7 +155,7 @@ export default function Game() {
           <div className="flex-1 relative p-2 md:p-6 flex flex-col justify-center items-center overflow-hidden min-h-0">
             
             {/* Table Graphic Background */}
-            <div className="absolute inset-1 md:inset-8 bg-gradient-to-b from-[#1c2e25] to-[#0a1410] rounded-[20px] md:rounded-[80px] border-2 md:border-4 border-[#3a5245] shadow-[0_0_50px_rgba(0,0,0,0.8)_inset] opacity-80 pointer-events-none" />
+            <div className="absolute inset-1 md:inset-8 bg-gradient-to-b from-[#1a1a1c] to-[#0d0d0f] rounded-[20px] md:rounded-[80px] border-2 md:border-4 border-accent-gold/20 shadow-[0_0_50px_rgba(0,0,0,0.8)_inset] opacity-80 pointer-events-none" />
             
             <div className="relative z-10 w-full h-full overflow-hidden">
               <Table table={state.table} legalMoves={state.legalMoves} isPlayerTurn={isPlayerTurn} />
