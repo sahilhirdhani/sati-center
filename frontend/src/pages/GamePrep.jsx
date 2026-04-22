@@ -81,7 +81,7 @@ export default function GamePrep() {
         )}
       </AnimatePresence>
 
-      <div className="w-full max-w-7xl flex flex-col lg:flex-row items-center lg:items-stretch justify-center gap-8 lg:gap-12 z-10 flex-1 my-auto">
+      <div className="w-full max-w-7xl flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12 z-10 flex-1 my-auto">
         <div className="hidden lg:block lg:w-1/4">
           <LeftPanel />
         </div>
