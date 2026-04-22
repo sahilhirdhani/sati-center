@@ -1,23 +1,38 @@
-import "../styles/LeftPanel.css";
+import { motion } from "framer-motion";
 
 export default function LeftPanel() {
   return (
-    <div className="sidePanel">
-
-      <div className="goldPanel">
-
-        <h3>Game Rules</h3>
-
-        <ul>
-          <li>Match suit or rank</li>
-          <li>Players take turns clockwise</li>
-          <li>Block opponents strategically</li>
-          <li>First player to empty hand wins</li>
-          <li>2 – 4 players per table</li>
-        </ul>
-
-      </div>
-
-    </div>
+    <motion.div 
+      initial={{ opacity: 0, x: -50 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.8, delay: 0.2 }}
+      className="glass-panel rounded-2xl p-6 text-sm text-white/80"
+    >
+      <h3 className="font-serif text-xl text-accent-gold mb-4 border-b border-white/10 pb-2 uppercase tracking-widest">
+        Game Rules
+      </h3>
+      <ul className="space-y-3 font-sans font-light tracking-wide">
+        <li className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-accent-gold"></span>
+          Match suit or rank
+        </li>
+        <li className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-accent-gold"></span>
+          Players take turns clockwise
+        </li>
+        <li className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-accent-gold"></span>
+          Block opponents strategically
+        </li>
+        <li className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-accent-gold"></span>
+          First player to empty hand wins
+        </li>
+        <li className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-accent-gold"></span>
+          2 – 4 players per table
+        </li>
+      </ul>
+    </motion.div>
   );
 }

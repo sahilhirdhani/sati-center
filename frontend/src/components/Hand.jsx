@@ -1,6 +1,6 @@
 import { useGameStore } from "../store/useGameStore";
-import "../styles/Hand.css";
 import { useRef, useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 export default function Hand({ hand, legalMoves, isPlayerTurn }) {
   const { sendAction, selectedCardId, setSelectedCardId } = useGameStore();
@@ -11,9 +11,6 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
     typeof window !== "undefined" && window.innerWidth < 970
   );
 
-  
-
-  // Sort hand to alternate red and black suits
   const sortedHand = [...hand].sort((a, b) => {
     const suitOrder = ["diamonds", "spades", "hearts", "clubs"];
     return suitOrder.indexOf(a.suit) - suitOrder.indexOf(b.suit);
@@ -41,199 +38,138 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
   };
 
   const handleCardClick = (card) => {
-
     if (!isPlayerTurn) return;
 
     const isLegal = isCardLegal(card);
 
-    // If the same card is clicked again → PLAY it
     if (selectedCardId === card.id) {
-
-        if (!isLegal) return;
-        
-        // Find the valid moves for this card
-        const validMoves = legalMoves.filter(m => m.card && m.card.id === card.id);
-        
-        // If there's more than one valid move (e.g. double-sets), force the user to pick a pile on the table
-        if (validMoves.length > 1) {
-            return;
-        }
-
-        const validMove = validMoves[0];
-        const correctPileKey = validMove ? validMove.pileKey : card.suit;
-
-        sendAction({
-            type: "PLAY_CARD",
-            cardId: card.id,
-            pileKey: correctPileKey
-        });
-
-        setSelectedCardId(null);
-        return;
-    }
-
-    // If another card was already selected
-    if (selectedCardId !== null) {
-
-        // If the new card is legal → switch selection
-        if (isLegal) {
-            setSelectedCardId(card.id);
-        } 
-        // If illegal → deselect
-        else {
-            setSelectedCardId(null);
-        }
-
-        return;
-    }
-
-    // First click → select if legal
-    if (isLegal) {
-        setSelectedCardId(card.id);
-    }
-};
-
-  const handleCardKeyDown = (e, card) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-
-      if (!isPlayerTurn || !isCardLegal(card)) return;
-
-      // If card is already selected, play it on Enter/Space
-      if (selectedCardId === card.id) {
-        const validMoves = legalMoves.filter(m => m.card && m.card.id === card.id);
-        
-        if (validMoves.length > 1) {
-            return;
-        }
-
-        const validMove = validMoves[0];
-        const correctPileKey = validMove ? validMove.pileKey : card.suit;
-
-        sendAction({
-          type: "PLAY_CARD",
-          cardId: card.id,
-          pileKey: correctPileKey,
-        });
-        setSelectedCardId(null);
-        return;
+      if (!isLegal) return;
+      
+      const validMoves = legalMoves.filter(m => m.card && m.card.id === card.id);
+      
+      if (validMoves.length > 1) {
+          return;
       }
 
-      // Otherwise select it
+      const validMove = validMoves[0];
+      const correctPileKey = validMove ? validMove.pileKey : card.suit;
+
+      sendAction({
+          type: "PLAY_CARD",
+          cardId: card.id,
+          pileKey: correctPileKey
+      });
+
+      setSelectedCardId(null);
+      return;
+    }
+
+    if (selectedCardId !== null) {
+      if (isLegal) {
+          setSelectedCardId(card.id);
+      } else {
+          setSelectedCardId(null);
+      }
+      return;
+    }
+
+    if (isLegal) {
       setSelectedCardId(card.id);
     }
   };
 
   const handleBackgroundClick = (e) => {
-    // If clicking on the handStack background (not on a card button)
     if (e.target === handStackRef.current) {
       setSelectedCardId(null);
     }
   };
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 970);
-    };
-
+    const handleResize = () => setIsMobile(window.innerWidth < 970);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
-  if (isMobile) {
-    setGridMode(true);
-    // return;
-  }
-  else {
-    setGridMode(false);
-  }
-}, [sortedHand.length, isMobile]);
-
-  const canSkip = legalMoves.some(m => m.card === "Skip");
-  const canRollback = legalMoves.some(m => m.card === "Rollback");
+    setGridMode(isMobile);
+  }, [sortedHand.length, isMobile]);
 
   return (
-    <div className="handSection" ref={containerRef}>
-      {/* <h3 className="sectionTitle">Your Hand</h3> */}
-
-      {isPlayerTurn && (canSkip || canRollback) && (
-        <div style={{ display: "flex", gap: "15px", justifyContent: "center", marginBottom: "15px" }}>
-          {canSkip && (
-            <button 
-              className="primaryBtn" 
-              style={{ padding: "8px 16px", minWidth: "auto", fontSize: "0.9rem" }}
-              onClick={() => sendAction({ type: "SKIP_TURN" })}
-            >
-              Skip Turn
-            </button>
-          )}
-        </div>
-      )}
-
+    <div className="w-full h-full flex flex-col items-center justify-end overflow-visible" ref={containerRef}>
+      
       <div
-        className={`handStack ${gridMode ? "gridMode" : "fanMode"}`}
+        className={`relative w-full h-full hide-scrollbar pb-4 px-2 md:px-4 ${
+          isMobile 
+            ? 'grid grid-cols-5 gap-x-2 content-start justify-items-center overflow-y-auto overflow-x-hidden pt-4' 
+            : 'flex items-end justify-center overflow-x-auto overflow-y-hidden'
+        }`}
         ref={handStackRef}
         onClick={handleBackgroundClick}
-        role="region"
-        aria-label="Player hand of cards"
       >
         {sortedHand.map((card, i) => {
-          const baseSpacing = 45;
-          const maxWidth = containerRef.current?.offsetWidth || window.innerWidth;
-          const maxSpread = maxWidth * 0.42; // keep cards inside screen
-          const rawOffset = (i - middle) * baseSpacing;
-          const offset = Math.max(
-            -maxSpread,
-            Math.min(maxSpread, rawOffset)
-          );
           const isLegal = isCardLegal(card);
           const isSelected = selectedCardId === card.id;
           const red = card.suit === "hearts" || card.suit === "diamonds";
 
+          const isDimmed = !isLegal;
+
           return (
-            <div
+            <motion.div
               key={card.id}
-              className="cardWrapper"
-              style={
-                gridMode
-                ? { zIndex: isSelected ? 9999 : i }
-                : {
-                    transform: !isMobile
-                    ? `translateX(${offset}px)`
-                    : "none",
-                    zIndex: isSelected ? 9999 : i,
-                    }
-                }
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ 
+                opacity: 1, 
+                y: isSelected ? -15 : 0,
+                x: 0,
+                rotate: 0,
+                scale: isSelected ? 1.05 : 1
+              }}
+              whileHover={isPlayerTurn && isLegal && !isSelected ? { y: -10, scale: 1.02 } : {}}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              style={{
+                zIndex: isSelected ? 9999 : i,
+                position: 'relative',
+                marginLeft: !isMobile && i !== 0 ? '-40px' : '0', 
+                marginTop: isMobile && i >= 5 ? '-45px' : '0',
+              }}
+              className={`cursor-pointer shrink-0 transition-all duration-300 ${isDimmed ? 'opacity-50 brightness-90' : 'opacity-100'} ${isLegal && !isSelected ? 'ring-2 ring-green-400/50 shadow-[0_0_15px_rgba(74,222,128,0.3)] rounded-xl md:rounded-2xl' : ''}`}
+              onClick={() => handleCardClick(card)}
             >
-              <button
-                className={`playingCard ${
-                  isLegal ? "legalCard" : ""
-                } ${red ? "redCard" : ""} ${
-                  !isPlayerTurn ? "notPlayerTurnCard" : ""
-                } ${!isPlayerTurn && isLegal ? "legalCard" : ""
-                } ${isSelected && isLegal ? "selectedCard" : ""}`}
-                onClick={() => handleCardClick(card)}
-                onKeyDown={(e) => handleCardKeyDown(e, card)}
-                aria-pressed={isSelected}
-                title={`${cardSymbol(card.value)}${suitSymbol(card.suit)}`}
+              <div 
+                className={`relative w-[55px] h-[80px] md:w-[75px] md:h-[105px] rounded-xl md:rounded-2xl border bg-[#f9f9f9] shadow-xl flex flex-col p-1 md:p-1.5 select-none
+                ${red ? 'text-red-600 border-red-500/30' : 'text-slate-900 border-slate-500/30'}
+                ${isSelected && isLegal ? 'ring-4 ring-accent-gold shadow-[0_0_30px_rgba(212,175,55,0.6)]' : ''}
+                ${isLegal && !isSelected ? 'border-green-400/50' : ''}
+                transition-shadow duration-300`}
               >
-                <div className="cardCorner top">
-                  {cardSymbol(card.value)}
-                  <span>{suitSymbol(card.suit)}</span>
+                <div className="absolute top-1 left-1.5 flex flex-col items-center leading-none text-[10px] md:text-xs font-bold">
+                  <span>{cardSymbol(card.value)}</span>
+                  <span className="text-[10px]">{suitSymbol(card.suit)}</span>
+                </div>
+                
+                <div className="absolute inset-0 flex items-center justify-center opacity-70 pointer-events-none">
+                  <span className="text-2xl md:text-4xl drop-shadow-sm">{suitSymbol(card.suit)}</span>
                 </div>
 
-                <div className="cardCenter">{suitSymbol(card.suit)}</div>
-
-                <div className="cardCorner bottom">
-                  {cardSymbol(card.value)}
-                  <span>{suitSymbol(card.suit)}</span>
+                <div className="absolute bottom-1 right-1.5 flex flex-col items-center leading-none text-[10px] md:text-xs font-bold rotate-180">
+                  <span>{cardSymbol(card.value)}</span>
+                  <span className="text-[10px]">{suitSymbol(card.suit)}</span>
                 </div>
-              </button>
-            </div>
+              </div>
+              
+              {isSelected && validMoveCount(legalMoves, card.id) > 1 && (
+                <div className="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap bg-black/80 backdrop-blur border border-accent-gold text-accent-gold px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider animate-bounce">
+                  Select Pile
+                </div>
+              )}
+            </motion.div>
           );
         })}
       </div>
     </div>
   );
+}
+
+function validMoveCount(legalMoves, cardId) {
+  return legalMoves.filter(m => m.card && m.card.id === cardId).length;
 }

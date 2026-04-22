@@ -7,8 +7,8 @@ const LAYOUT_MODES = {
     DOUBLE_REPEATED: 'double-repeated'
 }
 
-export function createGameConfig ({ playerCount, layoutMode}) {
-    if(playerCount < MIN_PLAYERS || playerCount > MAX_PLAYERS) {
+export function createGameConfig({ playerCount, layoutMode }) {
+    if (playerCount < MIN_PLAYERS || playerCount > MAX_PLAYERS) {
         throw new Error(`Player count must be between ${MIN_PLAYERS} and ${MAX_PLAYERS}`);
     }
 
@@ -16,19 +16,19 @@ export function createGameConfig ({ playerCount, layoutMode}) {
 
     let finalLayoutMode = LAYOUT_MODES.SINGLE;
 
-    if(decks === 2) {
-        if (!Object.values(LAYOUT_MODES).includes(layoutMode)){
+    if (decks === 2) {
+        if (!Object.values(LAYOUT_MODES).includes(layoutMode)) {
             throw new Error("Invalid layout mode for 2 decks");
         }
-        if(layoutMode === LAYOUT_MODES.DOUBLE_REPEATED) {
-            finalLayoutMode = LAYOUT_MODES.DOUBLE_REPEATED;
+        if (layoutMode === LAYOUT_MODES.DOUBLE_SETS) {
+            finalLayoutMode = LAYOUT_MODES.DOUBLE_SETS;
         }
         else {
-            finalLayoutMode = LAYOUT_MODES.DOUBLE_SETS;
+            finalLayoutMode = LAYOUT_MODES.DOUBLE_REPEATED;
         }
     }
 
-    return{
+    return {
         playerCount,
         decks,
         layoutMode: finalLayoutMode

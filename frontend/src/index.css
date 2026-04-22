@@ -1,173 +1,85 @@
-/* FONTS */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
 
-:root {
+@theme {
+  --color-dark-bg: #050505;
+  --color-dark-surface: #0a0a0a;
+  --color-dark-surface-elevated: #141414;
+  --color-accent-gold: #d4af37;
+  --color-accent-gold-light: #f3d37c;
+  --color-accent-gold-dark: #8c6a1a;
+  --color-accent-neon: #00f0ff;
+  --color-accent-purple: #b026ff;
 
-  /* BREAKPOINTS */
-  --mobile: 600px;
-  --tablet: 1024px;
-
-  /* SPACING */
-  --spacing-xs: 8px;
-  --spacing-sm: 12px;
-  --spacing-md: 16px;
-  --spacing-lg: 20px;
-  --spacing-xl: 24px;
-  --spacing-2xl: 40px;
-
-  /* FONT SIZES */
-  --font-xs: clamp(10px, 2vw, 12px);
-  --font-sm: clamp(12px, 2.5vw, 14px);
-  --font-base: clamp(14px, 3vw, 16px);
-  --font-lg: clamp(16px, 4vw, 20px);
-  --font-xl: clamp(24px, 6vw, 32px);
-  --font-2xl: clamp(28px, 8vw, 40px);
-
-  /* COLORS */
-
-  --accent-gold: #d4af37;
-  --gold-light: #f3d37c;
-  --gold-dark: #8c6a1a;
-
-  --red: #c62828;
-
-  --dark-bg: #0d0d0d;
-  --darker-bg: #1a1a1a;
+  --font-sans: "Outfit", "Inter", sans-serif;
+  --font-serif: "Cinzel", serif;
 }
 
-/* GLOBAL RESET */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-/* BODY */
-
-body {
-
-  font-family: "Inter", "Segoe UI", sans-serif;
-
-  background: #0d0d0d;
-  background-image: 
-    radial-gradient(circle at 15% 50%, rgba(212, 175, 55, 0.05), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(212, 175, 55, 0.03), transparent 25%);
-
-  color: #e6c98f;
-
-  min-height: 100vh;
-
-  font-size: var(--font-base);
-
-  line-height: 1.5;
-}
-
-/* HEADINGS */
-
-h1, h2, h3 {
-
-  font-family: "Cinzel", serif;
-
-  font-weight: 600;
-
-  letter-spacing: 1px;
-
-}
-
-/* BUTTONS */
-
-button {
-
-  font-family: inherit;
-
-  cursor: pointer;
-
-  transition: transform 0.15s ease;
-
-}
-
-button:active {
-
-  transform: scale(0.97);
-
-}
-
-/* INPUTS */
-
-input {
-
-  font-family: inherit;
-
-}
-
-input::placeholder {
-
-  opacity: 0.7;
-
-}
-
-/* TOUCH DEVICE OPTIMIZATIONS */
-
-@media (hover: none) and (pointer: coarse) {
-
-  button {
-    min-height: 44px;
-    min-width: 44px;
+@layer base {
+  * {
+    @apply border-white/10;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
   }
 
-}
-
-/* PREVENT ZOOM ON MOBILE INPUT FOCUS */
-
-@media (max-width: 768px) {
-
-  input,
-  button {
-    font-size: 16px;
+  body {
+    @apply bg-dark-bg text-white font-sans antialiased min-h-screen w-full;
+    background-image: 
+      radial-gradient(circle at 15% 50%, rgba(176, 38, 255, 0.08), transparent 30%),
+      radial-gradient(circle at 85% 30%, rgba(0, 240, 255, 0.08), transparent 30%);
   }
 
-}
-
-/* GLOBAL CHAT POPUP */
-.globalChatPopup {
-  position: fixed; /* Changed from absolute to fixed to break out of any container clipping */
-  top: 15px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.85); /* Matches chatbox aesthetic */
-  border: 1px solid rgba(255, 215, 0, 0.25);
-  border-radius: 8px;
-  padding: 8px 16px;
-  color: #e9e0c2;
-  font-size: var(--font-sm);
-  white-space: nowrap;
-  max-width: 80%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
-  z-index: 10000;
-  pointer-events: none;
-  animation: game-chat-popin 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-/* Ensure parents containing popups use relative/static to prevent clipping under hidden overflows */
-.lobbyPage, .gamePrepPage, .gameRoot {
-  position: relative;
-}
-
-@keyframes game-chat-popin {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -10px) scale(0.9);
+  #root {
+    @apply w-full min-h-screen flex flex-col;
   }
-  100% {
-    opacity: 1;
-    transform: translate(-50%, 0) scale(1);
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-white/[0.03] backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)];
   }
+  
+  .glass-panel-heavy {
+    @apply bg-black/60 backdrop-blur-2xl border border-white/5 shadow-2xl;
+  }
+
+  .btn-primary {
+    @apply bg-accent-gold text-black font-bold uppercase tracking-wider py-3 px-8 rounded-full 
+           hover:bg-accent-gold-light hover:shadow-[0_0_20px_rgba(212,175,55,0.4)]
+           transition-all duration-300 transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-white/5 text-white font-semibold py-3 px-8 rounded-full border border-white/20
+           hover:bg-white/15 transition-all duration-300 transform active:scale-95 disabled:opacity-50;
+  }
+
+  .input-premium {
+    @apply w-full bg-black/40 border border-white/20 rounded-xl px-5 py-3.5 text-white text-lg
+           focus:outline-none focus:border-accent-gold focus:ring-1 focus:ring-accent-gold/50
+           transition-all duration-300 placeholder:text-white/30;
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Game specific animations */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
 }

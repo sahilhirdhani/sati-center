@@ -4,8 +4,7 @@ import LeftPanel from "../components/LeftPanel";
 import RightPanel from "../components/RightPanel";
 import VersionPanel from "../components/VersionPanel";
 import Chatbox from "../components/Chatbox";
-import "../styles/Lobby.css"; // Reuse lobby layout logic for Left/Right panel structure
-import "../styles/GamePrep.css";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function GamePrep() {
   const { players, role, startGame, setScreen, prepSettings, updateSettings, playerId } = useGameStore();
@@ -13,9 +12,8 @@ export default function GamePrep() {
   const [globalChatPopup, setGlobalChatPopup] = useState(null);
   
   const [cheatMode, setCheatMode] = useState(prepSettings.cheatMode || false);
-  const [gameMode, setGameMode] = useState(prepSettings.gameMode || "single"); // default if > 4 players
-  
-  const [skipMode, setSkipMode] = useState(prepSettings.skipMode || "infinite"); // "infinite" or "limited"
+  const [gameMode, setGameMode] = useState(prepSettings.gameMode || "single");
+  const [skipMode, setSkipMode] = useState(prepSettings.skipMode || "infinite");
   const [limitedSkipCount, setLimitedSkipCount] = useState(prepSettings.limitedSkipCount || 1);
 
   // Sync state if non-admin gets an update
@@ -33,18 +31,16 @@ export default function GamePrep() {
     if (role === "admin" && updateSettings) {
       updateSettings({ cheatMode, gameMode, skipMode, limitedSkipCount });
     }
-  }, [cheatMode, gameMode, skipMode, limitedSkipCount, role]);
+  }, [cheatMode, gameMode, skipMode, limitedSkipCount, role, updateSettings]);
 
   useEffect(() => {
     if (chatMessages && chatMessages.length > 0) {
       const latestMsg = chatMessages[chatMessages.length - 1];
 
-      // Block popups for our own messages
       if (latestMsg.playerId === playerId) {
         return;
       }
       
-      // Update object instead of just text so we can use its ID as key
       setGlobalChatPopup({ id: latestMsg.id, text: `${latestMsg.playerName}: ${latestMsg.text}` });
 
       const timerId = setTimeout(() => {
@@ -58,13 +54,10 @@ export default function GamePrep() {
   const isManyPlayers = players.length > 4;
 
   const handleStart = () => {
-    // Determine layout mode
     let layoutMode = "single";
     if (isManyPlayers) {
       layoutMode = gameMode;
     }
-    
-    // Start game
     startGame({ layoutMode, cheatMode, skipMode, limitedSkipCount });
   };
   
@@ -72,176 +65,226 @@ export default function GamePrep() {
     setScreen("lobby");
   };
 
-  if (role !== "admin") {
-    return (
-      <div className="lobbyPage">
-        {globalChatPopup && (
-          <div key={globalChatPopup.id} className="globalChatPopup">
-            {globalChatPopup.text}
-          </div>
-        )}
-        <div className="lobbyContent">
-          <div className="tableLayout">
-            <LeftPanel />
-            <div className="landingCard">
-              <h1 className="mainTitle" style={{textTransform: "uppercase", letterSpacing: "3px"}}>Satti Center</h1>
-              <p className="subTitle" style={{fontFamily: "inherit", marginTop: "8px", fontSize: "0.95rem"}}>Classic Card Strategy — Online</p>
-              <div className="version" style={{marginTop: "5px", marginBottom: "20px", opacity: 0.3}}>V1.000</div>
-
-              <div style={{background: "radial-gradient(circle at 50% 10%, rgba(255,255,255,0.03), rgba(0,0,0,0.2) 80%)", borderRadius: "16px", padding: "20px 25px", marginBottom: "20px", border: "1px solid rgba(255,255,255,0.02)", boxShadow: "inset 0 0 20px rgba(0,0,0,0.3)"}}>
-                  <h2 className="subTitle" style={{fontFamily: "'Cinzel', serif", color: "var(--accent-gold)", textTransform: "uppercase", letterSpacing: "2px", fontSize: "1.05rem", fontWeight: "700"}}>
-                    Host is configuring...
-                  </h2>
-
-                  <div style={{ marginTop: "20px", padding: "15px", background: "rgba(0,0,0,0.4)", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
-                    <h3 style={{ fontSize: "0.9rem", color: "var(--accent-gold)", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "10px" }}>Current Settings</h3>
-                    <ul style={{ listStyle: "none", padding: 0, margin: 0, fontSize: "0.95rem", textAlign: "left", opacity: 0.9 }}>
-                      <li style={{ marginBottom: "6px" }}>• Cheats: {cheatMode ? 'Enabled' : 'Disabled'}</li>
-                      <li style={{ marginBottom: "6px" }}>• Game Mode: {!isManyPlayers ? 'Single Deck' : (gameMode === 'double-sets' ? 'Double Sets' : 'Double Repeated')}</li>
-                      {cheatMode && (
-                        <li style={{ marginBottom: "6px" }}>• Skips: {skipMode === 'infinite' ? 'Infinite' : `${limitedSkipCount} limited skips`}</li>
-                      )}
-                    </ul>
-                  </div>
-
-                  <p className="subTitle" style={{ fontFamily: "inherit", marginTop: 25, fontSize: "0.95rem" }}>
-                    Waiting for host to start the game...
-                  </p>
-                  <div style={{ marginTop: "25px" }}>
-                     <Chatbox />
-                  </div>
-              </div>
-            </div>
-            <RightPanel />
-          </div>
-          <VersionPanel />
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="lobbyPage">
-      {globalChatPopup && (
-        <div key={globalChatPopup.id} className="globalChatPopup">
-          {globalChatPopup.text}
-        </div>
-      )}
-      <div className="lobbyContent">
-        <div className="tableLayout">
+    <div className="w-full min-h-screen flex flex-col items-center justify-center py-10 px-4 lg:p-8 relative overflow-y-auto overflow-x-hidden">
+      <AnimatePresence>
+        {globalChatPopup && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: -10, x: "-50%" }}
+            className="fixed top-4 left-1/2 z-50 glass-panel-heavy px-6 py-3 rounded-full text-white text-sm max-w-[80vw] truncate border border-accent-gold/30 shadow-[0_0_15px_rgba(212,175,55,0.2)]"
+          >
+            <span className="text-accent-gold mr-2 font-semibold">Message:</span>
+            {globalChatPopup.text}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="w-full max-w-7xl flex flex-col lg:flex-row items-center lg:items-stretch justify-center gap-8 lg:gap-12 z-10 flex-1 my-auto">
+        <div className="hidden lg:block lg:w-1/4">
           <LeftPanel />
-          <div className="landingCard">
-            <h1 className="mainTitle" style={{textTransform: "uppercase", letterSpacing: "3px"}}>Satti Center</h1>
-            <p className="subTitle" style={{fontFamily: "inherit", marginTop: "8px", fontSize: "0.95rem"}}>Classic Card Strategy — Online</p>
-            <div className="version" style={{marginTop: "5px", marginBottom: "20px", opacity: 0.3}}>V1.000</div>
+        </div>
 
-            <div style={{background: "radial-gradient(circle at 50% 10%, rgba(255,255,255,0.03), rgba(0,0,0,0.2) 80%)", borderRadius: "16px", padding: "20px 25px", marginBottom: "20px", border: "1px solid rgba(255,255,255,0.02)", boxShadow: "inset 0 0 20px rgba(0,0,0,0.3)"}}>
-                <h2 className="subTitle" style={{fontFamily: "'Cinzel', serif", color: "var(--accent-gold)", textTransform: "uppercase", letterSpacing: "2px", marginBottom: "20px", fontSize: "1.05rem", fontWeight: "700"}}>
-                  Game Settings
-                </h2>
+        <motion.div 
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="glass-panel w-full max-w-md rounded-3xl p-6 md:p-8 flex flex-col relative overflow-hidden"
+        >
+          {/* Animated gradient for prep screen (warm tension vibe) */}
+          <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-[radial-gradient(circle_at_50%_50%,rgba(212,175,55,0.06)_0%,transparent_60%)] animate-[spin_30s_linear_infinite] pointer-events-none" />
 
-                <div className="settingsGroup" style={{marginTop: '10px'}}>
-                    <label style={{ fontFamily: "inherit", fontSize: "1.05rem", fontWeight: "500", display: "flex", alignItems: "center", gap: "10px", justifyContent: 'center' }}>
-                        <input 
-                          type="checkbox" 
-                          style={{width: '20px', height: '20px', cursor: 'pointer', accentColor: "#a855f7"}}
-                          checked={cheatMode}
-                          onChange={(e) => {
-                            setCheatMode(e.target.checked);
-                            if (!e.target.checked) setSkipMode("infinite");
-                          }}
-                        />
-                        Enable Cheats
-                    </label>
+          <div className="text-center mb-6 z-10">
+            <h1 className="font-serif text-3xl text-accent-gold tracking-widest uppercase mb-1 drop-shadow-[0_0_8px_rgba(212,175,55,0.5)]">
+              {role === "admin" ? "Game Configuration" : "Waiting for Host"}
+            </h1>
+            <p className="text-white/50 text-sm tracking-widest uppercase mt-2">
+              Preparing the deck...
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-6 z-10 w-full mb-6 flex-1">
+            
+            {/* Admin View */}
+            {role === "admin" ? (
+              <>
+                {/* Cheats Toggle */}
+                <div className="bg-black/30 backdrop-blur-sm border border-white/10 rounded-2xl p-5">
+                  <label className="flex items-center justify-between cursor-pointer group">
+                    <div className="flex flex-col">
+                      <span className="font-serif text-white tracking-widest uppercase text-sm group-hover:text-accent-gold transition-colors">Enable Cheats</span>
+                      <span className="text-xs text-white/40 mt-1">Allows skipping turns strategically</span>
+                    </div>
+                    <div className="relative inline-block w-12 h-6 rounded-full bg-white/10 transition-colors">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer"
+                        checked={cheatMode}
+                        onChange={(e) => {
+                          setCheatMode(e.target.checked);
+                          if (!e.target.checked) setSkipMode("infinite");
+                        }}
+                      />
+                      <span className="absolute left-1 top-1 w-4 h-4 rounded-full bg-white/50 peer-checked:bg-accent-gold peer-checked:translate-x-6 transition-all shadow-md"></span>
+                    </div>
+                  </label>
                 </div>
 
-                {cheatMode && (
-                  <div className="settingsGroup" style={{marginTop: '25px', textAlign: 'center'}}>
-                      <h3 className="subTitle" style={{ fontFamily: "'Cinzel', serif", color: "var(--accent-gold)", marginBottom: "15px", letterSpacing: "1px", fontSize: "0.9rem", textTransform: "uppercase" }}>Skip Rules</h3>
-                      <div style={{ display: "flex", gap: "25px", justifyContent: "center", marginBottom: "15px" }}>
-                          <label style={{ fontFamily: "inherit", fontSize: "0.95rem", display: "flex", alignItems: "center", gap: "8px", opacity: 0.9 }}>
-                              <input 
-                                type="radio" 
-                                name="skipMode" 
-                                value="infinite"
-                                checked={skipMode === "infinite"}
-                                onChange={(e) => setSkipMode(e.target.value)}
-                              /> 
-                              Infinite Skips
+                {/* Skip Rules (Conditional) */}
+                <AnimatePresence>
+                  {cheatMode && (
+                    <motion.div 
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="bg-black/30 backdrop-blur-sm border border-accent-gold/20 rounded-2xl p-5 mt-2">
+                        <h3 className="text-xs text-accent-gold uppercase tracking-widest mb-3 font-semibold">Skip Rules</h3>
+                        <div className="flex flex-col gap-3">
+                          <label className="flex items-center gap-3 cursor-pointer">
+                            <input 
+                              type="radio" 
+                              name="skipMode" 
+                              value="infinite"
+                              checked={skipMode === "infinite"}
+                              onChange={(e) => setSkipMode(e.target.value)}
+                              className="accent-accent-gold w-4 h-4"
+                            /> 
+                            <span className="text-sm text-white/90">Infinite Skips</span>
                           </label>
-                          <label style={{ fontFamily: "inherit", fontSize: "0.95rem", display: "flex", alignItems: "center", gap: "8px", opacity: 0.9 }}>
-                              <input 
-                                type="radio" 
-                                name="skipMode" 
-                                value="limited"
-                                checked={skipMode === "limited"}
-                                onChange={(e) => setSkipMode(e.target.value)}
-                              /> 
-                              Limited Skips
+                          <label className="flex items-center gap-3 cursor-pointer">
+                            <input 
+                              type="radio" 
+                              name="skipMode" 
+                              value="limited"
+                              checked={skipMode === "limited"}
+                              onChange={(e) => setSkipMode(e.target.value)}
+                              className="accent-accent-gold w-4 h-4"
+                            /> 
+                            <span className="text-sm text-white/90">Limited Skips</span>
                           </label>
-                      </div>
-                      {skipMode === "limited" && (
-                          <div style={{ marginTop: "10px" }}>
-                              <label style={{ fontSize: "0.9rem", opacity: 0.8, marginRight: "10px" }}>Skips Allowed (1-5):</label>
+
+                          {skipMode === "limited" && (
+                            <motion.div 
+                              initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                              className="flex items-center justify-between mt-2 pl-7"
+                            >
+                              <span className="text-xs text-white/50">Skips per player:</span>
                               <select 
-                                  value={limitedSkipCount} 
-                                  onChange={(e) => setLimitedSkipCount(Number(e.target.value))}
-                                  style={{ padding: "4px 8px", background: "rgba(0,0,0,0.5)", color: "white", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "4px" }}
+                                value={limitedSkipCount} 
+                                onChange={(e) => setLimitedSkipCount(Number(e.target.value))}
+                                className="bg-black/50 border border-white/20 rounded-lg px-3 py-1 text-sm outline-none focus:border-accent-gold"
                               >
-                                  {[1,2,3,4,5].map(n => <option key={n} value={n}>{n}</option>)}
+                                {[1,2,3,4,5].map(n => <option key={n} value={n}>{n}</option>)}
                               </select>
-                          </div>
-                      )}
-                  </div>
-                )}
-
-                {isManyPlayers ? (
-                  <div className="settingsGroup" style={{marginTop: '35px', textAlign: 'center'}}>
-                      <h3 className="subTitle" style={{ fontFamily: "'Cinzel', serif", color: "var(--accent-gold)", marginBottom: "15px", letterSpacing: "1px", fontSize: "0.9rem", textTransform: "uppercase" }}>Game Mode ({players.length} players)</h3>
-                      <div style={{ display: "flex", gap: "25px", justifyContent: "center" }}>
-                          <label style={{ fontFamily: "inherit", fontSize: "0.95rem", display: "flex", alignItems: "center", gap: "8px", opacity: 0.9 }}>
-                              <input 
-                                type="radio" 
-                                name="gameMode" 
-                                value="double-sets"
-                                checked={gameMode === "double-sets"}
-                                onChange={(e) => setGameMode(e.target.value)}
-                              /> 
-                              Double Sets
-                          </label>
-                          <label style={{ fontFamily: "inherit", fontSize: "0.95rem", display: "flex", alignItems: "center", gap: "8px", opacity: 0.9 }}>
-                              <input 
-                                type="radio" 
-                                name="gameMode" 
-                                value="double-repeated"
-                                checked={gameMode === "double-repeated"}
-                                onChange={(e) => setGameMode(e.target.value)}
-                              /> 
-                              Double Repeated
-                          </label>
+                            </motion.div>
+                          )}
+                        </div>
                       </div>
-                  </div>
-                ) : (
-                  <div className="settingsGroup" style={{marginTop: '25px', textAlign: 'center', opacity: 0.6}}>
-                      <p style={{ fontFamily: "inherit", fontSize: "0.9rem", fontStyle: "italic", maxWidth: "250px", margin: "0 auto" }}>
-                          you can select game mode when there are more than 4 players
-                      </p>
-                  </div>
-                )}
-                
-                <div style={{ marginTop: "25px", textAlign: "left" }}>
-                   <Chatbox />
-                </div>
-            </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
-            <div className="buttonGroup">
-              <button className="primaryBtn" onClick={handleStart}>Start Now</button>
-              <button className="secondaryBtn" onClick={goBack}>Back to Lobby</button>
+                {/* Game Mode (Conditional for >4 players) */}
+                <div className="bg-black/30 backdrop-blur-sm border border-white/10 rounded-2xl p-5">
+                  <h3 className="text-xs text-accent-gold uppercase tracking-widest mb-3 font-semibold">
+                    Game Mode {isManyPlayers && `(${players.length} players)`}
+                  </h3>
+                  
+                  {isManyPlayers ? (
+                    <div className="flex flex-col gap-3">
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <input 
+                          type="radio" 
+                          name="gameMode" 
+                          value="double-sets"
+                          checked={gameMode === "double-sets"}
+                          onChange={(e) => setGameMode(e.target.value)}
+                          className="accent-accent-gold w-4 h-4"
+                        /> 
+                        <span className="text-sm text-white/90">Double Sets</span>
+                      </label>
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <input 
+                          type="radio" 
+                          name="gameMode" 
+                          value="double-repeated"
+                          checked={gameMode === "double-repeated"}
+                          onChange={(e) => setGameMode(e.target.value)}
+                          className="accent-accent-gold w-4 h-4"
+                        /> 
+                        <span className="text-sm text-white/90">Double Repeated</span>
+                      </label>
+                    </div>
+                  ) : (
+                    <div className="text-sm text-white/40 italic flex items-center justify-center p-2 bg-black/20 rounded-lg border border-white/5">
+                      Single Deck (4 or fewer players)
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              /* Non-Admin View */
+              <div className="bg-black/30 backdrop-blur-sm border border-white/10 rounded-2xl p-5">
+                <h3 className="text-xs text-accent-gold uppercase tracking-widest mb-4 font-semibold text-center border-b border-white/10 pb-2">Current Settings</h3>
+                <ul className="space-y-3 text-sm text-white/80">
+                  <li className="flex justify-between items-center bg-white/5 px-3 py-2 rounded-lg">
+                    <span>Cheats</span>
+                    <span className={cheatMode ? "text-accent-gold font-medium" : "text-white/40"}>
+                      {cheatMode ? 'Enabled' : 'Disabled'}
+                    </span>
+                  </li>
+                  <li className="flex justify-between items-center bg-white/5 px-3 py-2 rounded-lg">
+                    <span>Game Mode</span>
+                    <span className="text-accent-gold font-medium text-right max-w-[150px] truncate">
+                      {!isManyPlayers ? 'Single Deck' : (gameMode === 'double-sets' ? 'Double Sets' : 'Double Repeated')}
+                    </span>
+                  </li>
+                  {cheatMode && (
+                    <li className="flex justify-between items-center bg-white/5 px-3 py-2 rounded-lg border border-accent-gold/20">
+                      <span>Skip Rules</span>
+                      <span className="text-accent-gold font-medium text-right">
+                        {skipMode === 'infinite' ? 'Infinite' : `${limitedSkipCount} limited`}
+                      </span>
+                    </li>
+                  )}
+                </ul>
+                <div className="mt-6 flex justify-center">
+                  <div className="flex gap-1">
+                    <span className="w-2 h-2 rounded-full bg-accent-gold animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <span className="w-2 h-2 rounded-full bg-accent-gold animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <span className="w-2 h-2 rounded-full bg-accent-gold animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="mt-auto">
+              <Chatbox />
             </div>
 
           </div>
+
+          <div className="flex flex-col gap-3 z-10 w-full mt-2">
+            {role === "admin" && (
+              <button className="btn-primary" onClick={handleStart}>
+                Start Game
+              </button>
+            )}
+            <button className="btn-secondary" onClick={goBack}>
+              Back to Lobby
+            </button>
+          </div>
+        </motion.div>
+
+        <div className="hidden lg:block lg:w-1/4">
           <RightPanel />
         </div>
+      </div>
+
+      <div className="w-full flex justify-center mt-8 z-10">
         <VersionPanel />
       </div>
     </div>

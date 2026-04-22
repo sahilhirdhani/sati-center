@@ -1,6 +1,6 @@
-import "../styles/Table.css";
 import { useState, useEffect } from "react";
 import { useGameStore } from "../store/useGameStore";
+import { motion, AnimatePresence } from "framer-motion";
 
 const suitSymbols = {
   spades: "♠",
@@ -16,7 +16,6 @@ const cardSymbols = {
   13: "K"
 };
 
-// Base suit order for display
 const baseSuitOrder = ["diamonds", "spades", "hearts", "clubs"];
 
 export default function Table({ table, legalMoves, isPlayerTurn }) {
@@ -25,21 +24,13 @@ export default function Table({ table, legalMoves, isPlayerTurn }) {
   );
   const { selectedCardId, setSelectedCardId, sendAction } = useGameStore();
 
-  // Extract all pile keys and group by suit
   const groupPilesBySuit = () => {
     const groups = {};
-
     for (const key of Object.keys(table)) {
-      // Extract base suit: "hearts_1" -> "hearts", "hearts" -> "hearts"
       const suit = key.split("_")[0];
-
-      if (!groups[suit]) {
-        groups[suit] = [];
-      }
+      if (!groups[suit]) groups[suit] = [];
       groups[suit].push(key);
     }
-
-    // Sort each suit's piles numerically if they have suffixes
     for (const suit in groups) {
       groups[suit].sort((a, b) => {
         const aNum = parseInt(a.split("_")[1]) || 0;
@@ -47,26 +38,20 @@ export default function Table({ table, legalMoves, isPlayerTurn }) {
         return aNum - bNum;
       });
     }
-
     return groups;
   };
 
   const pileGroups = groupPilesBySuit();
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsCompact(window.innerWidth < 1025);
-    };
-
+    const handleResize = () => setIsCompact(window.innerWidth < 1025);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Click on a table pile to place the card
   const handlePileClick = (pileKey) => {
     if (!isPlayerTurn || !selectedCardId) return;
 
-    // Check if throwing the selected card onto this deck is a legal move
     const validMoves = (legalMoves || []).filter(
       (m) => m.card && m.card.id === selectedCardId && m.pileKey === pileKey
     );
@@ -81,11 +66,49 @@ export default function Table({ table, legalMoves, isPlayerTurn }) {
     }
   };
 
-  // Render a single pile with its cards or empty spot
+  const renderCard = (card, isTop = true) => {
+    const isRed = card.suit === "hearts" || card.suit === "diamonds";
+    
+    // 7 is center.
+    // Desktop: span left/right. Mobile: span up/down.
+    const overlap = isCompact ? 18 : 25;
+    const offset = (card.value - 7) * overlap;
+    
+    // Cards > 7 stack on top (higher z-index). Cards < 7 tuck underneath (lower z-index).
+    const zIndex = card.value;
+    
+    return (
+      <div
+        key={card.id}
+        className={`absolute h-[75px] w-[50px] md:h-[85px] md:w-[60px] bg-[#f9f9f9] rounded-md md:rounded-lg border border-black/10 shadow-[2px_2px_8px_rgba(0,0,0,0.5)] flex flex-col p-1 ${isRed ? 'text-red-600 border-red-500/30' : 'text-slate-900 border-slate-500/30'} animate-in fade-in zoom-in duration-300`}
+        style={{
+          zIndex: zIndex, 
+          left: isCompact ? '50%' : `calc(50% + ${offset}px)`,
+          top: isCompact ? `calc(50% + ${offset}px)` : '50%',
+          transform: 'translate(-50%, -50%)',
+        }}
+      >
+        <div className="absolute top-1 left-1.5 flex flex-col items-center leading-none text-[10px] md:text-xs font-bold">
+          <span>{cardSymbols[card.value] || card.value}</span>
+          <span className="text-[10px]">{suitSymbols[card.suit]}</span>
+        </div>
+        
+        {isTop && (
+          <div className="absolute inset-0 flex items-center justify-center opacity-70 pointer-events-none">
+            <span className="text-2xl md:text-3xl drop-shadow-md">{suitSymbols[card.suit]}</span>
+          </div>
+        )}
+
+        <div className="absolute bottom-1 right-1.5 flex flex-col items-center leading-none text-[10px] md:text-xs font-bold rotate-180">
+          <span>{cardSymbols[card.value] || card.value}</span>
+          <span className="text-[10px]">{suitSymbols[card.suit]}</span>
+        </div>
+      </div>
+    );
+  };
+
   const renderPile = (pileKey) => {
     const cards = table[pileKey] || [];
-
-    // Highlight pile if the selected card can be played here
     let isHighlight = false;
     if (isPlayerTurn && selectedCardId) {
       isHighlight = (legalMoves || []).some(
@@ -93,100 +116,53 @@ export default function Table({ table, legalMoves, isPlayerTurn }) {
       );
     }
 
-    const renderCard = (card) => {
-      const isRedCard = card.suit === "hearts" || card.suit === "diamonds";
+    // Fixed widths so the 7 is ALWAYS perfectly centered
+    const containerWidthClass = isCompact ? "w-[60px]" : "w-[360px]";
+    const containerHeightClass = isCompact ? "h-[290px]" : "h-[95px]";
 
-      return (
-        <div
-          key={card.id}
-          className="tableCard"
-          role="img"
-          aria-label={`${cardSymbols[card.value] || card.value}${suitSymbols[card.suit]}`}
-        >
-          <div className={`tablePlayingCard ${isRedCard ? "tableRedCard" : ""}`}>
-            <div className="tableCorner top">
-              {cardSymbols[card.value] || card.value}
-              <span>{suitSymbols[card.suit]}</span>
-            </div>
-
-            <div className="tableCenter">
-              {suitSymbols[card.suit]}
-            </div>
-
-            <div className="tableCorner bottom">
-              {cardSymbols[card.value] || card.value}
-              <span>{suitSymbols[card.suit]}</span>
-            </div>
-          </div>
-        </div>
-      );
-    };
-
-    const renderEmptySpot = () => (
-      <div className="tableCard tableCardEmpty">
-        <div className="tablePlayingCard">
-          <div className="tableCenter" aria-hidden="true"></div>
-        </div>
-      </div>
-    );
-
-    // In compact mode, show all stack descending.
-    const compactContent = () => {
-      const sortedCards = [...cards].sort((a, b) => b.value - a.value);
-
-      return (
-        <div className="tableCards tableCardsCompact" role="presentation">
-          <div className="tableCenterZone">
-            {sortedCards.length > 0 ? sortedCards.map((card) => renderCard(card)) : renderEmptySpot()}
-          </div>
-        </div>
-      );
-    };
-
-    const defaultContent = () => (
-      <div className="tableCards" role="presentation">
-        {cards.map((card) => renderCard(card))}
-
-        {cards.length === 0 && renderEmptySpot()}
-      </div>
-    );
+    // Find the extremums to flag as 'isTop' for the big watermark symbol
+    const maxVal = cards.length > 0 ? Math.max(...cards.map(c => c.value)) : -1;
+    const minVal = cards.length > 0 ? Math.min(...cards.map(c => c.value)) : -1;
 
     return (
       <div
         key={pileKey}
-        className={`tablePile ${isHighlight ? "tablePile-highlight" : ""}`}
-        role="cell"
+        className={`relative ${containerWidthClass} ${containerHeightClass} rounded-xl transition-all duration-300 flex items-center justify-center shrink-0
+          ${isHighlight ? "ring-2 ring-accent-gold shadow-[0_0_20px_rgba(212,175,55,0.5)] cursor-pointer bg-white/5" : ""}
+          ${cards.length === 0 ? "border-2 border-dashed border-white/20 bg-black/20" : ""}
+        `}
         onClick={() => handlePileClick(pileKey)}
-        style={{ cursor: isHighlight ? "pointer" : "default" }}
       >
-        {isCompact ? compactContent() : defaultContent()}
+        {cards.length === 0 && (
+          <div className="absolute inset-0 w-full h-full flex items-center justify-center opacity-20">
+            <span className="text-xl md:text-2xl">{suitSymbols[pileKey.split("_")[0]]}</span>
+          </div>
+        )}
+        
+        {cards.map((card) => renderCard(card, card.value === maxVal || card.value === minVal))}
+
+        {isHighlight && (
+          <div className="absolute inset-0 bg-accent-gold/10 rounded-xl animate-pulse pointer-events-none" />
+        )}
       </div>
     );
   };
 
   return (
-    <div className="tableSection" role="region" aria-label="Game table">
-      <div className="tableFelt">
-        {baseSuitOrder
-          .map((suit) => {
-            const piles = pileGroups[suit] || [];
-            if (piles.length === 0) return null;
+    <div className="w-full h-full flex justify-center items-center py-4">
+      <div className={`flex justify-center items-start md:items-center overflow-auto hide-scrollbar max-h-full max-w-full px-2 py-4 w-full min-w-max ${isCompact ? 'flex-row gap-4 md:gap-6' : 'flex-col gap-6 md:gap-8'}`}>
+        {baseSuitOrder.map((suit) => {
+          const piles = pileGroups[suit] || [];
+          if (piles.length === 0) return null;
 
-            return (
-              <div key={suit} className="suitRow" role="row">
-                {isCompact && (
-                  <div className="suitLabel" style={{ fontSize: "24px", marginBottom: "4px" }}>
-                    <span className={suit === "hearts" || suit === "diamonds" ? "redSuit" : ""}>
-                      {suitSymbols[suit]}
-                    </span>
-                  </div>
-                )}
-                <div className="pilesContainer">
-                  {piles.map((pileKey) => renderPile(pileKey))}
-                </div>
+          return (
+            <div key={suit} className={`flex ${isCompact ? 'flex-col items-center gap-4' : 'flex-row items-center gap-8 w-full justify-center'}`}>
+              <div className={`flex ${isCompact ? 'flex-col' : 'flex-row'} gap-4 md:gap-8 justify-center`}>
+                {piles.map((pileKey) => renderPile(pileKey))}
               </div>
-            );
-          })}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

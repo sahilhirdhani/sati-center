@@ -1,92 +1,44 @@
 import { useEffect, useRef, useState } from "react";
-import "../styles/VersionPanel.css";
+import { motion, AnimatePresence } from "framer-motion";
 
 const versionHistory = [
-  { version: "v0.001", text: "Initial project setup and socket connection." },
-  { version: "v0.002", text: "Landing page UI and room creation system added." },
+  { version: "v1.0.0", text: "Premium Redesign & Tailwind Upgrade" },
+  { version: "v0.004", text: "Panels added: How to Play and Game Info." },
   { version: "v0.003", text: "Join room flow implemented with game code input." },
-  { version: "v0.004", text: "Panels added: How to Play and Game Info." }
+  { version: "v0.002", text: "Landing page UI and room creation system added." },
+  { version: "v0.001", text: "Initial project setup and socket connection." }
 ];
 
 export default function VersionPanel() {
-
-  const containerRef = useRef(null);
-  const itemRefs = useRef([]);
-  const autoScroll = useRef(true);
-
   const [index, setIndex] = useState(0);
-  const [stepSize, setStepSize] = useState(0);
 
   useEffect(() => {
-
-    if (itemRefs.current[0]) {
-
-      const item = itemRefs.current[0];
-
-      const style = window.getComputedStyle(item);
-
-      const margin =
-        parseFloat(style.marginTop) +
-        parseFloat(style.marginBottom);
-
-      const height = item.offsetHeight + margin -1;
-
-      setStepSize(height);
-
-    }
-
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % versionHistory.length);
+    }, 4000);
+    return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-
-    if (!stepSize) return;
-
-    const el = containerRef.current;
-
-    const interval = setInterval(() => {
-
-      if (!autoScroll.current) return;
-
-      const nextIndex = (index + 1) % versionHistory.length;
-
-      el.scrollTo({
-        top: nextIndex * stepSize,
-        behavior: "smooth"
-      });
-
-      setIndex(nextIndex);
-
-    }, 3500);
-
-    return () => clearInterval(interval);
-
-  }, [index, stepSize]);
-
   return (
-    <div className="versionPanel">
-
-      <h3 className="panelTitle">Version History</h3>
-
-      <div
-        ref={containerRef}
-        className="versionList"
-        onMouseEnter={() => (autoScroll.current = false)}
-        onMouseLeave={() => (autoScroll.current = true)}
-      >
-
-        {versionHistory.map((v, i) => (
-          <div
-            key={i}
-            className={`versionItem ${i === index ? "active" : ""}`}
-            ref={(el) => (itemRefs.current[i] = el)}
+    <div className="glass-panel px-6 py-3 rounded-full flex items-center gap-4 max-w-sm w-full overflow-hidden">
+      <span className="text-accent-gold font-bold text-sm uppercase tracking-widest shrink-0">
+        Latest
+      </span>
+      <div className="relative h-6 w-full flex-1 overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="absolute inset-0 flex items-center gap-2 text-xs md:text-sm text-white/70 whitespace-nowrap"
           >
-            <span className="versionTag">{v.version}</span>
-            <p>{v.text}</p>
-          </div>
-        ))}
-
+            <span className="font-mono text-white/40">{versionHistory[index].version}</span>
+            <span className="truncate">{versionHistory[index].text}</span>
+          </motion.div>
+        </AnimatePresence>
       </div>
-
     </div>
   );
 }
