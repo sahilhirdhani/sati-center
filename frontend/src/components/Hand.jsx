@@ -3,11 +3,10 @@ import "../styles/Hand.css";
 import { useRef, useState, useEffect } from "react";
 
 export default function Hand({ hand, legalMoves, isPlayerTurn }) {
-  const { sendAction } = useGameStore();
+  const { sendAction, selectedCardId, setSelectedCardId } = useGameStore();
   const containerRef = useRef(null);
   const handStackRef = useRef(null);
   const [gridMode, setGridMode] = useState(false);
-  const [selectedCardId, setSelectedCardId] = useState(null);
   const [isMobile, setIsMobile] = useState(
     typeof window !== "undefined" && window.innerWidth < 970
   );
@@ -52,8 +51,15 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
 
         if (!isLegal) return;
         
-        // Find the valid move to extract the exact pileKey the backend expects
-        const validMove = legalMoves.find(m => m.card && m.card.id === card.id);
+        // Find the valid moves for this card
+        const validMoves = legalMoves.filter(m => m.card && m.card.id === card.id);
+        
+        // If there's more than one valid move (e.g. double-sets), force the user to pick a pile on the table
+        if (validMoves.length > 1) {
+            return;
+        }
+
+        const validMove = validMoves[0];
         const correctPileKey = validMove ? validMove.pileKey : card.suit;
 
         sendAction({
@@ -95,7 +101,13 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
 
       // If card is already selected, play it on Enter/Space
       if (selectedCardId === card.id) {
-        const validMove = legalMoves.find(m => m.card && m.card.id === card.id);
+        const validMoves = legalMoves.filter(m => m.card && m.card.id === card.id);
+        
+        if (validMoves.length > 1) {
+            return;
+        }
+
+        const validMove = validMoves[0];
         const correctPileKey = validMove ? validMove.pileKey : card.suit;
 
         sendAction({

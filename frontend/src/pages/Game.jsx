@@ -102,7 +102,7 @@ export default function Game() {
 
   const gameTable = (
     <div className="tableArea" style={{ position: "relative" }}>
-      <Table table={state.table} />
+      <Table table={state.table} legalMoves={state.legalMoves} isPlayerTurn={isPlayerTurn} />
       {showPassButton && (
         <button
           className="primaryBtn"

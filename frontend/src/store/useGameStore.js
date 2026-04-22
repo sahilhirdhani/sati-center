@@ -28,6 +28,7 @@ export const useGameStore = create((set,get) => ({
     name: null,
     players: [],
     state: null,
+    selectedCardId: null,
     chatMessages: [],
     prepSettings: {
         cheatMode: false,
@@ -37,6 +38,7 @@ export const useGameStore = create((set,get) => ({
     },
     screen: "landing",
 
+    setSelectedCardId: (id) => set({ selectedCardId: id }),
     setScreen: (screen) => set({ screen }),
 
     connectSocket: () => {

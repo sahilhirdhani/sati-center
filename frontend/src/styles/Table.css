@@ -2,7 +2,7 @@
 .tableSection {
   width: 100%;
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .tableSection .sectionTitle {
@@ -21,8 +21,9 @@
   flex-direction: column;
   gap: clamp(10px, 2vw, 14px);
   min-width: 0;
+  min-height: clamp(480px, 62vh, 760px);
   max-width: 100%;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* DYNAMIC TABLE ROW */
@@ -148,6 +149,7 @@
     padding: 18px;
     gap: 12px;
     justify-content: center;
+    min-height: clamp(520px, 64vh, 820px);
   }
 
   .tableRow {
@@ -171,6 +173,12 @@
 
   .tableCard:first-child {
     margin-left: 0;
+  }
+}
+
+@media (min-width: 1025px) {
+  .tableArea {
+    min-height: clamp(560px, 68vh, 860px);
   }
 }
 
