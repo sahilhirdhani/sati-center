@@ -14,15 +14,11 @@ export default function Game() {
   const [globalChatPopup, setGlobalChatPopup] = useState(null);
 
   useEffect(() => {
-    if (!chatMessages || chatMessages.length === 0) {
-      return;
-    }
+    if (!chatMessages || chatMessages.length === 0) return;
 
     const latestMessage = chatMessages[chatMessages.length - 1];
 
-    if (latestMessage.playerId === playerId) {
-      return;
-    }
+    if (latestMessage.playerId === playerId) return;
 
     setGlobalChatPopup({
       id: latestMessage.id,
@@ -37,26 +33,22 @@ export default function Game() {
   }, [chatMessages, playerId]);
 
   useEffect(() => {
-    if (state?.you?.hand?.length) {
-      dealCards(state.you.hand);
-    }
+    if (state?.you?.hand?.length) dealCards(state.you.hand);
   }, [state?.you?.hand]);
 
   if (!state) {
     return (
-      <div className="gameRoot">
-        <div className="gameBackdrop" aria-hidden="true">
-          <span className="backdropOrb backdropOrbA" />
-          <span className="backdropOrb backdropOrbB" />
-          <span className="backdropGrid" />
+      <div className="sexy-game-root loading-state">
+        <div className="sexy-game-bg">
+          <div className="glow-orb orb-1"></div>
+          <div className="glow-orb orb-2"></div>
+          <div className="cyber-grid"></div>
         </div>
-        <div className="gameLoadingScreen">
-          <div className="gameLoadingCard">
-            <span className="loadingPip" />
-            <span className="loadingPip" />
-            <span className="loadingPip" />
-            <p>Loading the table...</p>
+        <div className="loading-card glass-panel">
+          <div className="spinner-dots">
+            <div></div><div></div><div></div>
           </div>
+          <p>Connecting to Table...</p>
         </div>
       </div>
     );
@@ -85,137 +77,112 @@ export default function Game() {
   const showPassButton = isPlayerTurn && legalPlayCount === 0 && canSkip;
 
   return (
-    <div className="gameRoot">
-      <div className="gameBackdrop" aria-hidden="true">
-        <span className="backdropOrb backdropOrbA" />
-        <span className="backdropOrb backdropOrbB" />
-        <span className="backdropGrid" />
+    <div className="sexy-game-root">
+      {/* Immersive Animated Background */}
+      <div className="sexy-game-bg">
+        <div className="glow-orb orb-1"></div>
+        <div className="glow-orb orb-2"></div>
+        <div className="cyber-grid"></div>
       </div>
 
       {globalChatPopup && (
-        <div key={globalChatPopup.id} className="globalChatPopup">
+        <div key={globalChatPopup.id} className="global-toast-popup visible">
           {globalChatPopup.text}
         </div>
       )}
 
-      <header className="gameHeader">
-        <div className="gameBrand">
-          <p className="gameEyebrow">Premium table</p>
-          <h1 className="gameTitle">Satti Center</h1>
-          <p className="gameSubtitle">Read the lanes, keep your timing sharp, and close the hand.</p>
+      {/* Top Navigation Bar */}
+      <header className="sexy-navbar glass-panel">
+        <div className="brand-section">
+          <div className="logo-badge">SC</div>
+          <div className="brand-text">
+            <h1>Satti Center</h1>
+            <span>Premium Lounge</span>
+          </div>
         </div>
 
-        <div className="gameMeta">
-          <div className="metaChip">
-            <span className="metaLabel">Turn</span>
-            <strong className="metaValue">{currentTurnPlayer?.name || "Waiting"}</strong>
+        <div className="status-section">
+          <div className="status-pill">
+            <span className="pill-label">Legal Moves</span>
+            <span className="pill-value">{state.legalMoves.length}</span>
           </div>
-          <div className={`metaChip ${isPlayerTurn ? "metaChipAccent" : ""}`}>
-            <span className="metaLabel">Status</span>
-            <strong className="metaValue">{isPlayerTurn ? "Your move" : "Watching"}</strong>
+          <div className="status-pill">
+            <span className="pill-label">Turn</span>
+            <span className="pill-value highlight">{currentTurnPlayer?.name || "Waiting"}</span>
           </div>
-          <div className="metaChip">
-            <span className="metaLabel">Hand</span>
-            <strong className="metaValue">{state.you.hand.length} cards</strong>
+          <div className={`status-pill ${isPlayerTurn ? 'active' : ''}`}>
+            <span className="pill-label">Status</span>
+            <span className="pill-value">{isPlayerTurn ? "YOUR MOVE" : "WATCHING"}</span>
           </div>
+          <button className="leave-btn sexy-button" onClick={leaveGame}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <span className="btn-text">Exit</span>
+          </button>
         </div>
       </header>
 
-      <main className="gameLayout">
-        <aside className="gameSidebar">
-          <section className="panelCard">
-            <div className="panelHeader">
-              <div>
-                <p className="panelKicker">Table intel</p>
-                <h2 className="panelTitle">Players</h2>
-              </div>
-              <span className="panelBadge">{state.players.length} seats</span>
+      {/* Main Game Interface */}
+      <main className="sexy-dashboard">
+        
+        {/* Left/Top Sidebar Area */}
+        <aside className="sexy-sidebar">
+          {/* Players List Card */}
+          <div className="glass-panel panel-card players-card">
+            <div className="panel-header">
+              <h3>Table Intel</h3>
+              <span className="seat-count">{state.players.length}/4 Seats</span>
             </div>
-
-            <PlayerList
-              players={state.players}
-              currentTurn={state.currentTurnPlayerId}
-              finishOrder={finishOrder}
-            />
-          </section>
-
-          <section className="panelCard chatPanel">
-            <div className="panelHeader">
-              <div>
-                <p className="panelKicker">Live chat</p>
-                <h2 className="panelTitle">Channel</h2>
-              </div>
-              <span className="panelBadge">Popups on</span>
+            <div className="panel-content">
+              <PlayerList
+                players={state.players}
+                currentTurn={state.currentTurnPlayerId}
+                finishOrder={finishOrder}
+              />
             </div>
+          </div>
 
-            <Chatbox />
-          </section>
+          {/* Chatbox Card */}
+          <div className="glass-panel panel-card chat-card flex-grow">
+            <div className="panel-header">
+              <h3>Live Comms</h3>
+              <div className="live-indicator"><span className="pulse-dot"></span></div>
+            </div>
+            <div className="panel-content unpadded chatbox-wrapper">
+              <Chatbox />
+            </div>
+          </div>
         </aside>
 
-        <section className="gameMain">
-          <section className="stageCard">
-            <div className="stageHeader">
-              <div>
-                <p className="panelKicker">Battlefield</p>
-                <h2 className="stageTitle">Table</h2>
-                <p className="stageCopy">Match the lane, stack pressure, and make every card count.</p>
+        {/* Center Board Area */}
+        <section className="sexy-board-area">
+          <div className="glass-panel table-wrapper">
+            <Table table={state.table} legalMoves={state.legalMoves} isPlayerTurn={isPlayerTurn} />
+            
+            {showPassButton && (
+              <div className="pass-action-wrapper">
+                <button
+                  className="sexy-button pass-btn glow-effect"
+                  onClick={() => sendAction({ type: "SKIP_TURN" })}
+                >
+                  Pass Turn (No Valid Cards)
+                </button>
               </div>
-
-              <div className="stageStats" aria-label="Table status">
-                <div className="stageStat">
-                  <span>Legal moves</span>
-                  <strong>{state.legalMoves.length}</strong>
-                </div>
-                <div className="stageStat">
-                  <span>Turn</span>
-                  <strong>{currentTurnPlayer?.name || "Waiting"}</strong>
-                </div>
-              </div>
-            </div>
-
-            <div className="tableBlock">
-              <div className="tableArea">
-                <Table table={state.table} legalMoves={state.legalMoves} isPlayerTurn={isPlayerTurn} />
-              </div>
-
-              {showPassButton && (
-                <div className="tableActions">
-                  <button
-                    className="primaryBtn skipTurnBtn"
-                    onClick={() => sendAction({ type: "SKIP_TURN" })}
-                  >
-                    Pass (No Cards)
-                  </button>
-                </div>
-              )}
-            </div>
-          </section>
-        </section>
-
-        <section className="stageCard handCardFrame">
-          <div className="stageHeader">
-            <div>
-              <p className="panelKicker">Your hand</p>
-              <h2 className="stageTitle">Playable cards</h2>
-              <p className="stageCopy">Select a card, then drop it into the correct lane or tap it again.</p>
-            </div>
-
-            <span className={`panelBadge ${isPlayerTurn ? "panelBadgeAccent" : ""}`}>
-              {isPlayerTurn ? "Active" : "Locked"}
-            </span>
+            )}
           </div>
 
-          <div className="handArea">
-            <Hand hand={state.you.hand} legalMoves={state.legalMoves} isPlayerTurn={isPlayerTurn} />
+          {/* Bottom Hand Area */}
+          <div className={`glass-panel hand-wrapper ${isPlayerTurn ? 'is-turn' : ''}`}>
+            <div className="hand-header">
+              <h3>Your Hand</h3>
+              <span className="card-count">{state.you.hand.length} Cards Remaining</span>
+            </div>
+            <div className="hand-content">
+              <Hand hand={state.you.hand} legalMoves={state.legalMoves} isPlayerTurn={isPlayerTurn} />
+            </div>
           </div>
         </section>
+
       </main>
-
-      <footer className="gameFooter">
-        <button className="secondaryBtn leaveBtn" onClick={leaveGame}>
-          Leave Game
-        </button>
-      </footer>
     </div>
   );
 }
