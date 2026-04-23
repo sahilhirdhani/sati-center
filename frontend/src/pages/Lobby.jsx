@@ -21,7 +21,7 @@ export default function Lobby() {
         return;
       }
 
-      setGlobalChatPopup({ id: latestMsg.id, text: `${latestMsg.playerName}: ${latestMsg.text}` });
+      setGlobalChatPopup({ id: latestMsg.id, playerName: latestMsg.playerName, text: latestMsg.text });
 
       const timerId = setTimeout(() => {
         setGlobalChatPopup(null);
@@ -48,8 +48,8 @@ export default function Lobby() {
             exit={{ opacity: 0, y: -10, x: "-50%" }}
             className="fixed top-4 left-1/2 z-50 glass-panel-heavy px-6 py-3 rounded-full text-white text-sm max-w-[80vw] truncate border border-accent-gold/30 shadow-[0_0_15px_rgba(212,175,55,0.2)]"
           >
-            <span className="text-accent-gold mr-2 font-semibold">Message:</span>
-            {globalChatPopup.text}
+            <span className="text-accent-gold font-bold mr-1">{globalChatPopup.playerName}:</span>
+            <span className="text-white/90">{globalChatPopup.text}</span>
           </motion.div>
         )}
       </AnimatePresence>

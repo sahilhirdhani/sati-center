@@ -22,7 +22,8 @@ export default function Game() {
 
     setGlobalChatPopup({
       id: latestMessage.id,
-      text: `${latestMessage.playerName}: ${latestMessage.text}`,
+      playerName: latestMessage.playerName,
+      text: latestMessage.text,
     });
 
     const timerId = window.setTimeout(() => {
@@ -90,9 +91,10 @@ export default function Game() {
             initial={{ opacity: 0, y: -20, x: "-50%" }}
             animate={{ opacity: 1, y: 0, x: "-50%" }}
             exit={{ opacity: 0, y: -10, x: "-50%" }}
-            className="fixed top-4 left-1/2 z-50 glass-panel-heavy px-6 py-3 rounded-full text-white text-sm max-w-[90vw] md:max-w-md truncate border border-accent-gold/30 shadow-lg shadow-black/50"
+            className="fixed top-4 left-1/2 z-50 glass-panel-heavy px-6 py-3 rounded-full text-sm max-w-[90vw] md:max-w-md truncate border border-accent-gold/30 shadow-lg shadow-black/50"
           >
-            {globalChatPopup.text}
+            <span className="text-accent-gold font-bold mr-1">{globalChatPopup.playerName}:</span>
+            <span className="text-white/90">{globalChatPopup.text}</span>
           </motion.div>
         )}
       </AnimatePresence>
