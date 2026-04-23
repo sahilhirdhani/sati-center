@@ -3,6 +3,7 @@ import { useGameStore } from "../store/useGameStore";
 import LeftPanel from "../components/LeftPanel";
 import ConfigRulesPanel from "../components/ConfigRulesPanel";
 import VersionPanel from "../components/VersionPanel";
+import MobileTutorial from "../components/MobileTutorial";
 import Chatbox from "../components/Chatbox";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -282,6 +283,10 @@ export default function GamePrep() {
         <div className="hidden lg:block lg:w-1/4">
           <ConfigRulesPanel />
         </div>
+      </div>
+
+      <div className="lg:hidden w-full flex justify-center mt-6 z-50">
+        <MobileTutorial />
       </div>
 
       <div className="w-full flex justify-center mt-8 z-10">

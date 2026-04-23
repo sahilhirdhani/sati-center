@@ -4,6 +4,7 @@ import Reconnecting from "./Reconnecting";
 import LeftPanel from "../components/LeftPanel";
 import RightPanel from "../components/RightPanel";
 import VersionPanel from "../components/VersionPanel";
+import MobileTutorial from "../components/MobileTutorial";
 import Chatbox from "../components/Chatbox";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -143,6 +144,10 @@ export default function Lobby() {
         <div className="hidden lg:block lg:w-1/4">
           <RightPanel />
         </div>
+      </div>
+
+      <div className="lg:hidden w-full flex justify-center mt-6 z-50">
+        <MobileTutorial />
       </div>
 
       <div className="w-full flex justify-center mt-8 z-10">

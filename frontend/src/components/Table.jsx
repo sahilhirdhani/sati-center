@@ -70,9 +70,9 @@ export default function Table({ table, legalMoves, isPlayerTurn }) {
     const isRed = card.suit === "hearts" || card.suit === "diamonds";
     
     // 7 is center.
-    // Desktop: span left/right. Mobile: span up/down.
+    // Desktop: span left/right. Mobile: reverse vertical order so higher cards are above 7.
     const overlap = isCompact ? 18 : 25;
-    const offset = (card.value - 7) * overlap;
+    const offset = isCompact ? (7 - card.value) * overlap : (card.value - 7) * overlap;
     
     // Cards > 7 stack on top (higher z-index). Cards < 7 tuck underneath (lower z-index).
     const zIndex = card.value;
