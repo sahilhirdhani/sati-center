@@ -6,9 +6,9 @@ export default function Leaderboard({ players, finishOrder, onBackToLobby, onLea
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-hidden bg-black/80 backdrop-blur-md">
       
       {/* Animated celebratory background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[50vw] h-[50vw] bg-accent-gold/20 rounded-full blur-[100px] animate-[pulse_3s_ease-in-out_infinite]" />
-        <div className="absolute bottom-0 right-1/4 w-[50vw] h-[50vw] bg-accent-gold-light/20 rounded-full blur-[100px] animate-[pulse_4s_ease-in-out_infinite]" />
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-0 left-1/4 w-[50vw] h-[50vw] bg-accent-gold/20 rounded-full blur-3xl md:blur-[100px] md:animate-[pulse_3s_ease-in-out_infinite] opacity-50" />
+        <div className="absolute bottom-0 right-1/4 w-[50vw] h-[50vw] bg-accent-gold-light/20 rounded-full blur-3xl md:blur-[100px] md:animate-[pulse_4s_ease-in-out_infinite] opacity-50" />
       </div>
 
       <motion.div 

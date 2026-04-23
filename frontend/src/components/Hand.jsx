@@ -1,8 +1,8 @@
 import { useGameStore } from "../store/useGameStore";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, memo } from "react";
 import { motion } from "framer-motion";
 
-export default function Hand({ hand, legalMoves, isPlayerTurn }) {
+const Hand = memo(function Hand({ hand, legalMoves, isPlayerTurn }) {
   const { sendAction, selectedCardId, setSelectedCardId } = useGameStore();
   const containerRef = useRef(null);
   const handStackRef = useRef(null);
@@ -131,6 +131,7 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
                 position: 'relative',
                 marginLeft: !isMobile && i !== 0 ? '-40px' : '0', 
                 marginTop: isMobile && i >= 5 ? '-45px' : '0',
+                willChange: 'transform, opacity'
               }}
               className={`cursor-pointer shrink-0 transition-all duration-300 ${isDimmed ? 'opacity-50 brightness-90' : 'opacity-100'} ${isPlayerTurn && isLegal && !isSelected ? 'ring-2 ring-yellow-300/50 shadow-[0_0_12px_rgba(250,204,21,0.18)] rounded-xl md:rounded-2xl' : ''}`}
               onClick={() => handleCardClick(card)}
@@ -168,7 +169,9 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
       </div>
     </div>
   );
-}
+});
+
+export default Hand;
 
 function validMoveCount(legalMoves, cardId) {
   return legalMoves.filter(m => m.card && m.card.id === cardId).length;

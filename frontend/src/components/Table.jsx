@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { useGameStore } from "../store/useGameStore";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -18,7 +18,7 @@ const cardSymbols = {
 
 const baseSuitOrder = ["diamonds", "spades", "hearts", "clubs"];
 
-export default function Table({ table, legalMoves, isPlayerTurn }) {
+const Table = memo(function Table({ table, legalMoves, isPlayerTurn }) {
   const [isCompact, setIsCompact] = useState(
     typeof window !== "undefined" && window.innerWidth < 1025
   );
@@ -86,6 +86,7 @@ export default function Table({ table, legalMoves, isPlayerTurn }) {
           left: isCompact ? '50%' : `calc(50% + ${offset}px)`,
           top: isCompact ? `calc(50% + ${offset}px)` : '50%',
           transform: 'translate(-50%, -50%)',
+          willChange: 'transform, opacity'
         }}
       >
         <div className="absolute top-1 left-1.5 flex flex-col items-center leading-none text-[10px] md:text-xs font-bold">
@@ -166,4 +167,6 @@ export default function Table({ table, legalMoves, isPlayerTurn }) {
       </div>
     </div>
   );
-}
+});
+
+export default Table;

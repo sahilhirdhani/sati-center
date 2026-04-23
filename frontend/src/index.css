@@ -40,11 +40,11 @@
 
 @layer components {
   .glass-panel {
-    @apply bg-white/[0.03] backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)];
+    @apply bg-black/40 md:bg-white/[0.03] backdrop-blur-md md:backdrop-blur-xl border border-white/10 shadow-lg md:shadow-[0_8px_32px_rgba(0,0,0,0.5)];
   }
   
   .glass-panel-heavy {
-    @apply bg-black/60 backdrop-blur-2xl border border-white/5 shadow-2xl;
+    @apply bg-black/80 md:bg-black/60 backdrop-blur-md md:backdrop-blur-2xl border border-white/5 shadow-xl md:shadow-2xl;
   }
 
   .btn-primary {

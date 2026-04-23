@@ -9,8 +9,13 @@ import Chatbox from "../components/Chatbox";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Lobby() {
-  const { gameId, players, role, goToGamePrep, leaveGame, playerId } = useGameStore();
-  const chatMessages = useGameStore((state) => state.chatMessages);
+  const gameId = useGameStore((s) => s.gameId);
+  const players = useGameStore((s) => s.players);
+  const role = useGameStore((s) => s.role);
+  const goToGamePrep = useGameStore((s) => s.goToGamePrep);
+  const leaveGame = useGameStore((s) => s.leaveGame);
+  const playerId = useGameStore((s) => s.playerId);
+  const chatMessages = useGameStore((s) => s.chatMessages);
   const [globalChatPopup, setGlobalChatPopup] = useState(null);
 
   useEffect(() => {
@@ -67,7 +72,7 @@ export default function Lobby() {
           className="glass-panel w-full max-w-md rounded-3xl p-6 md:p-8 flex flex-col relative overflow-hidden"
         >
           {/* Subtle animated background glow inside card */}
-          <div className="absolute top-[-50%] right-[-50%] w-[200%] h-[200%] bg-[radial-gradient(circle_at_50%_50%,rgba(212,175,55,0.05)_0%,transparent_50%)] animate-[spin_25s_linear_infinite_reverse] pointer-events-none" />
+          <div className="absolute top-[-50%] right-[-50%] w-[200%] h-[200%] bg-[radial-gradient(circle_at_50%_50%,rgba(212,175,55,0.05)_0%,transparent_50%)] md:animate-[spin_25s_linear_infinite_reverse] pointer-events-none" />
 
           <div className="text-center mb-6 z-10">
             <h1 className="font-serif text-4xl text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 tracking-widest uppercase mb-1">

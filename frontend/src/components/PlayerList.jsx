@@ -26,7 +26,7 @@ export default function PlayerList({ players, currentTurn, finishOrder }) {
             `}
           >
             {isTurn && (
-              <div className="absolute inset-0 bg-gradient-to-r from-accent-gold/0 via-accent-gold/10 to-accent-gold/0 animate-[shimmer_2s_infinite]" />
+              <div className="absolute inset-0 bg-gradient-to-r from-accent-gold/0 via-accent-gold/10 to-accent-gold/0 md:animate-[shimmer_2s_infinite]" />
             )}
 
             <div className="flex items-center gap-3 relative z-10">
@@ -47,8 +47,8 @@ export default function PlayerList({ players, currentTurn, finishOrder }) {
 
             {isTurn && (
               <div className="flex gap-1 relative z-10">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent-gold animate-ping" />
-                <span className="w-1.5 h-1.5 rounded-full bg-accent-gold animate-ping" style={{ animationDelay: '200ms' }} />
+                <span className="w-1.5 h-1.5 rounded-full bg-accent-gold md:animate-ping" />
+                <span className="w-1.5 h-1.5 rounded-full bg-accent-gold md:animate-ping" style={{ animationDelay: '200ms' }} />
               </div>
             )}
             

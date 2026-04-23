@@ -8,8 +8,14 @@ import Chatbox from "../components/Chatbox";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function GamePrep() {
-  const { players, role, startGame, setScreen, prepSettings, updateSettings, playerId } = useGameStore();
-  const chatMessages = useGameStore((state) => state.chatMessages);
+  const players = useGameStore((s) => s.players);
+  const role = useGameStore((s) => s.role);
+  const startGame = useGameStore((s) => s.startGame);
+  const setScreen = useGameStore((s) => s.setScreen);
+  const prepSettings = useGameStore((s) => s.prepSettings);
+  const updateSettings = useGameStore((s) => s.updateSettings);
+  const playerId = useGameStore((s) => s.playerId);
+  const chatMessages = useGameStore((s) => s.chatMessages);
   const [globalChatPopup, setGlobalChatPopup] = useState(null);
   
   const [cheatMode, setCheatMode] = useState(prepSettings.cheatMode || false);
@@ -94,7 +100,7 @@ export default function GamePrep() {
           className="glass-panel w-full max-w-md rounded-3xl p-6 md:p-8 flex flex-col relative overflow-hidden"
         >
           {/* Animated gradient for prep screen (warm tension vibe) */}
-          <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-[radial-gradient(circle_at_50%_50%,rgba(212,175,55,0.06)_0%,transparent_60%)] animate-[spin_30s_linear_infinite] pointer-events-none" />
+          <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-[radial-gradient(circle_at_50%_50%,rgba(212,175,55,0.06)_0%,transparent_60%)] md:animate-[spin_30s_linear_infinite] pointer-events-none" />
 
           <div className="text-center mb-6 z-10">
             <h1 className="font-serif text-3xl text-accent-gold tracking-widest uppercase mb-1 drop-shadow-[0_0_8px_rgba(212,175,55,0.5)]">

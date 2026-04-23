@@ -9,8 +9,13 @@ import { dealCards } from "../utils/dealCard";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Game() {
-  const { state, onBackToLobby, leaveGame, sendAction, playerId } = useGameStore();
-  const chatMessages = useGameStore((gameState) => gameState.chatMessages);
+  const state = useGameStore((s) => s.state);
+  const onBackToLobby = useGameStore((s) => s.onBackToLobby);
+  const leaveGame = useGameStore((s) => s.leaveGame);
+  const sendAction = useGameStore((s) => s.sendAction);
+  const playerId = useGameStore((s) => s.playerId);
+  const chatMessages = useGameStore((s) => s.chatMessages);
+  
   const [globalChatPopup, setGlobalChatPopup] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -34,7 +39,7 @@ export default function Game() {
   }, [chatMessages, playerId]);
 
   useEffect(() => {
-    if (state?.you?.hand?.length) dealCards(state.you.hand);
+    // Hand sync or side effects can go here
   }, [state?.you?.hand]);
 
   if (!state) {
@@ -79,9 +84,9 @@ export default function Game() {
     <div className="w-full min-h-screen flex flex-col relative selection:bg-accent-gold/30">
       {/* Background Ambience */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute top-0 left-1/4 w-[50vw] h-[50vw] bg-accent-purple/10 rounded-full blur-[120px] mix-blend-screen opacity-50" />
-        <div className="absolute bottom-0 right-1/4 w-[50vw] h-[50vw] bg-accent-neon/10 rounded-full blur-[120px] mix-blend-screen opacity-50" />
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDIiLz4KPC9zdmc+')] opacity-20" />
+        <div className="absolute top-0 left-1/4 w-[50vw] h-[50vw] bg-accent-purple/10 rounded-full blur-3xl md:blur-[120px] mix-blend-normal md:mix-blend-screen opacity-30 md:opacity-50" />
+        <div className="absolute bottom-0 right-1/4 w-[50vw] h-[50vw] bg-accent-neon/10 rounded-full blur-3xl md:blur-[120px] mix-blend-normal md:mix-blend-screen opacity-30 md:opacity-50" />
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDIiLz4KPC9zdmc+')] opacity-10 md:opacity-20" />
       </div>
 
       {/* Global Toast */}
@@ -157,7 +162,7 @@ export default function Game() {
           <div className="flex-1 relative p-2 md:p-6 flex flex-col justify-center items-center overflow-hidden min-h-0">
             
             {/* Table Graphic Background */}
-            <div className="absolute inset-1 md:inset-8 bg-gradient-to-b from-[#1a1a1c] to-[#0d0d0f] rounded-[20px] md:rounded-[80px] border-2 md:border-4 border-accent-gold/20 shadow-[0_0_50px_rgba(0,0,0,0.8)_inset] opacity-80 pointer-events-none" />
+            <div className="absolute inset-1 md:inset-8 bg-gradient-to-b from-[#1a1a1c] to-[#0d0d0f] rounded-[20px] md:rounded-[80px] border-2 md:border-4 border-accent-gold/20 shadow-none md:shadow-[0_0_50px_rgba(0,0,0,0.8)_inset] opacity-80 pointer-events-none" />
             
             <div className="relative z-10 w-full h-full overflow-hidden">
               <Table table={state.table} legalMoves={state.legalMoves} isPlayerTurn={isPlayerTurn} />

@@ -7,7 +7,9 @@ import VersionPanel from "../components/VersionPanel";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Landing() {
-  const { createGame, joinGame, connectSocket } = useGameStore();
+  const createGame = useGameStore((s) => s.createGame);
+  const joinGame = useGameStore((s) => s.joinGame);
+  const connectSocket = useGameStore((s) => s.connectSocket);
   const [name, setName] = useState("");
   const [gameId, setGameId] = useState("");
   const [mode, setMode] = useState("create");
@@ -50,7 +52,7 @@ export default function Landing() {
           className="glass-panel w-full max-w-md rounded-3xl p-6 md:p-8 flex flex-col items-center relative overflow-hidden shrink-0 my-auto"
         >
           {/* Subtle animated background glow inside card */}
-          <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-[radial-gradient(circle_at_50%_50%,rgba(212,175,55,0.05)_0%,transparent_50%)] animate-[spin_20s_linear_infinite] pointer-events-none" />
+          <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-[radial-gradient(circle_at_50%_50%,rgba(212,175,55,0.05)_0%,transparent_50%)] md:animate-[spin_20s_linear_infinite] pointer-events-none" />
 
           <h1 className="font-serif text-5xl md:text-6xl text-transparent bg-clip-text bg-gradient-to-b from-[#f3d37c] to-[#8c6a1a] tracking-widest uppercase mb-2 drop-shadow-lg text-center z-10">
             Satti Center
