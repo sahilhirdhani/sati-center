@@ -80,7 +80,7 @@ export default function Table({ table, legalMoves, isPlayerTurn }) {
     return (
       <div
         key={card.id}
-        className={`absolute h-[75px] w-[50px] md:h-[85px] md:w-[60px] bg-[#f9f9f9] rounded-md md:rounded-lg border border-black/10 shadow-[2px_2px_8px_rgba(0,0,0,0.5)] flex flex-col p-1 ${isRed ? 'text-red-600 border-red-500/30' : 'text-slate-900 border-slate-500/30'} animate-in fade-in zoom-in duration-300`}
+        className={`absolute h-[75px] w-[50px] md:h-[85px] md:w-[60px] bg-[#f9f9f9] rounded-md md:rounded-lg border border-black/20 shadow-[2px_2px_8px_rgba(0,0,0,0.5)] flex flex-col p-1 ${isRed ? 'text-red-600' : 'text-slate-900'} animate-in fade-in zoom-in duration-300`}
         style={{
           zIndex: zIndex, 
           left: isCompact ? '50%' : `calc(50% + ${offset}px)`,

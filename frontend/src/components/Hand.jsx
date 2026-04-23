@@ -136,8 +136,8 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
               onClick={() => handleCardClick(card)}
             >
               <div 
-                className={`relative w-[55px] h-[80px] md:w-[75px] md:h-[105px] rounded-xl md:rounded-2xl border bg-[#f9f9f9] shadow-xl flex flex-col p-1 md:p-1.5 select-none
-                ${red ? 'text-red-600 border-red-500/30' : 'text-slate-900 border-slate-500/30'}
+                className={`relative w-[55px] h-[80px] md:w-[75px] md:h-[105px] rounded-xl md:rounded-2xl border border-black/20 bg-[#f9f9f9] shadow-xl flex flex-col p-1 md:p-1.5 select-none
+                ${red ? 'text-red-600' : 'text-slate-900'}
                 ${isSelected && isLegal ? 'ring-4 ring-accent-gold shadow-[0_0_30px_rgba(212,175,55,0.6)]' : ''}
                 ${isLegal && !isSelected ? 'border-green-400/50' : ''}
                 transition-shadow duration-300`}
