@@ -182,7 +182,7 @@ export default function Game() {
           </AnimatePresence>
 
           {/* Hand Area */}
-          <div className={`relative h-[18vh] md:h-[25vh] shrink-0 w-full border-t border-white/5 bg-gradient-to-t from-black/80 to-transparent flex flex-col pt-2 pb-2 md:pb-4 px-2 md:px-8 z-20 ${isPlayerTurn ? 'shadow-[0_-10px_40px_rgba(212,175,55,0.15)]' : ''}`}>
+          <div className={`relative h-[20h] md:h-[25vh] shrink-0 w-full border-t border-white/5 bg-gradient-to-t from-black/80 to-transparent flex flex-col pt-2 pb-2 md:pb-4 px-2 md:px-8 z-20 ${isPlayerTurn ? 'shadow-[0_-10px_40px_rgba(212,175,55,0.15)]' : ''}`}>
             <div className="flex justify-between items-center mb-1 md:mb-2 px-2 md:px-4 pointer-events-none">
               <h3 className="text-[10px] md:text-sm font-serif text-accent-gold uppercase tracking-widest shadow-black drop-shadow-md">Your Hand</h3>
               <span className="text-[10px] md:text-xs text-white/70 bg-black/50 px-2 py-1 rounded-full border border-white/10 backdrop-blur-md">
