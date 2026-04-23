@@ -132,14 +132,14 @@ export default function Hand({ hand, legalMoves, isPlayerTurn }) {
                 marginLeft: !isMobile && i !== 0 ? '-40px' : '0', 
                 marginTop: isMobile && i >= 5 ? '-45px' : '0',
               }}
-              className={`cursor-pointer shrink-0 transition-all duration-300 ${isDimmed ? 'opacity-50 brightness-90' : 'opacity-100'} ${isLegal && !isSelected ? 'ring-2 ring-green-400/50 shadow-[0_0_15px_rgba(74,222,128,0.3)] rounded-xl md:rounded-2xl' : ''}`}
+              className={`cursor-pointer shrink-0 transition-all duration-300 ${isDimmed ? 'opacity-50 brightness-90' : 'opacity-100'} ${isPlayerTurn && isLegal && !isSelected ? 'ring-2 ring-yellow-300/50 shadow-[0_0_12px_rgba(250,204,21,0.18)] rounded-xl md:rounded-2xl' : ''}`}
               onClick={() => handleCardClick(card)}
             >
               <div 
                 className={`relative w-[48px] h-[70px] md:w-[66px] md:h-[92px] rounded-xl md:rounded-2xl border border-black/20 bg-[#f9f9f9] shadow-xl flex flex-col p-1 md:p-1.5 select-none
                 ${red ? 'text-red-600' : 'text-slate-900'}
                 ${isSelected && isLegal ? 'ring-4 ring-accent-gold shadow-[0_0_30px_rgba(212,175,55,0.6)]' : ''}
-                ${isLegal && !isSelected ? 'border-green-400/50' : ''}
+                ${isPlayerTurn && isLegal && !isSelected ? 'border-yellow-300/60 shadow-[0_0_12px_rgba(250,204,21,0.12)]' : ''}
                 transition-shadow duration-300`}
               >
                 <div className="absolute top-1 left-1.5 flex flex-col items-center leading-none text-[10px] md:text-xs font-bold">

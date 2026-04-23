@@ -42,7 +42,7 @@ export default function Chatbox() {
 
       <AnimatePresence>
         <motion.div 
-          animate={{ height: isExpanded ? 300 : (window.innerWidth < 768 ? 0 : 150) }}
+          animate={{ height: isExpanded ? 400 : (window.innerWidth < 768 ? 200 : 220) }}
           transition={{ duration: 0.3 }}
           className="relative flex flex-col"
         >
