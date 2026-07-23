@@ -2,8 +2,10 @@ import { io } from "socket.io-client";
 
 let socket = null;
 
-const BACKEND_SOCKET_URL = "https://satti-center.onrender.com";
-const LOCAL_SOCKET_URL = "http://localhost:5000";
+const BACKEND_SOCKET_URL =
+    import.meta.env.VITE_BACKEND_SOCKET_URL || "https://satti-center.onrender.com";
+const LOCAL_SOCKET_URL =
+    import.meta.env.VITE_LOCAL_SOCKET_URL || "http://localhost:5000";
 
 const getSocketUrl = () => {
     if (import.meta.env.VITE_SOCKET_URL) {
