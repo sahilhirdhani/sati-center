@@ -12,7 +12,8 @@ export function getPlayerView(state, playerId) {
             id: player.id,
             name: player.name,
             hand: structuredClone(player.hand),
-            isActive: player.isActive
+            isActive: player.isActive,
+            skipDisabledForCycle: Boolean(player.skipDisabledForCycle)
         },
 
         players: state.players.map(p => ({
@@ -29,7 +30,8 @@ export function getPlayerView(state, playerId) {
             state.table,
             state.config.layoutMode,
             state.cheatsEnabled,
-            state.config.skipMode
+            state.config.skipMode,
+            Boolean(player.skipDisabledForCycle)
         ),
 
         finishedPlayers: structuredClone(state.finishedPlayers),

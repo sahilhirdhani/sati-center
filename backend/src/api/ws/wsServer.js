@@ -263,7 +263,7 @@ function handleAction(io, socket, action) {
         for (const client of clients) {
             client.emit("message", {
                 type: "WARNING",
-                message: "Deadlock detected: All players skipped consecutively! Check for legal moves, or use Rollback."
+                message: "Deadlock detected! Players with playable cards who skipped have their skip turn disabled for the next cycle."
             });
         }
         game.state.deadlockWarning = false;

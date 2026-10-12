@@ -12,7 +12,8 @@ function canPlayerTakeTurn (state, player) {
         state.table,
         state.config.layoutMode,
         state.cheatsEnabled,
-        state.config.skipMode
+        state.config.skipMode,
+        Boolean(player.skipDisabledForCycle)
     );
     return legalMoves.length > 0;
 }

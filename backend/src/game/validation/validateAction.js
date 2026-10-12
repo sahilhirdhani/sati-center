@@ -22,7 +22,8 @@ export function validateAction(state, action) {
         state.table,
         state.config.layoutMode,
         state.cheatsEnabled,
-        state.config.skipMode
+        state.config.skipMode,
+        Boolean(currentPlayer.skipDisabledForCycle)
     );
 
     switch (action.type) {
@@ -42,6 +43,15 @@ export function validateAction(state, action) {
         }
 
         case ACTIONS.SKIP_TURN: {
+            if (currentPlayer.skipDisabledForCycle) {
+                const hasPlayableCards = legalMoves.some(
+                    m => m.card !== "Skip" && m.card !== "Rollback" && (!m.card || !m.card.isSkipCard)
+                );
+                if (hasPlayableCards) {
+                    return { ok: false, reason: "Skip is disabled for this cycle due to deadlock penalty" };
+                }
+            }
+
             const hasPlayableCards = legalMoves.some(m => m.card !== "Skip" && m.card !== "Rollback");
             if (!hasPlayableCards) return { ok: true };
             if (!state.cheatsEnabled) {

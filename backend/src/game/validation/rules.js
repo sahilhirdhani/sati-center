@@ -29,7 +29,7 @@ function canPlace (card, pile, layoutMode) {
     }
 }
 
-export function getLegalMoves(hand, table, layoutMode, cheatsEnabled, skipMode = 'infinite') {
+export function getLegalMoves(hand, table, layoutMode, cheatsEnabled, skipMode = 'infinite', isSkipDisabled = false) {
     const legal = []
     
     // First, collect real card moves
@@ -104,6 +104,13 @@ export function getLegalMoves(hand, table, layoutMode, cheatsEnabled, skipMode =
             if (standardBaseMoves.length === 0) {
                 legal.unshift({ card: "Skip", pileKey: "Skip" });
             }
+        }
+    }
+
+    if (isSkipDisabled) {
+        const standardMoves = legal.filter(m => m.card !== "Skip" && m.card !== "Rollback" && (!m.card || !m.card.isSkipCard));
+        if (standardMoves.length > 0) {
+            return standardMoves;
         }
     }
 

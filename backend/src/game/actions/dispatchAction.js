@@ -2,6 +2,7 @@ import { ACTIONS } from "./actionTypes.js";
 import { getCurrentPlayer, advanceTurn } from "../core/turnActions.js";
 import { finishPlayer } from "./gameAction.js";
 import { add, remove } from "../state/gameState.js";
+import { getLegalMoves } from "../validation/rules.js";
 
 export function dispatchAction(state, action) {
     const player = getCurrentPlayer(state);
@@ -15,6 +16,10 @@ export function dispatchAction(state, action) {
 
         case ACTIONS.PLAY_CARD: {
             state.consecutiveSkips = 0; // reset consecutive skips on successful card play
+
+            if (player.skipDisabledForCycle) {
+                player.skipDisabledForCycle = false;
+            }
 
             const cardIndex = player.hand.findIndex(c => c.id === action.cardId);
             if (cardIndex === -1) return false;
@@ -59,10 +64,26 @@ export function dispatchAction(state, action) {
             state.consecutiveSkips = (state.consecutiveSkips || 0) + 1;
             const activeCount = state.players.filter(p => p.isActive).length;
 
+            const currentLegalMoves = getLegalMoves(
+                player.hand,
+                state.table,
+                state.config.layoutMode,
+                state.cheatsEnabled,
+                state.config.skipMode
+            );
+            const hadLegalMove = currentLegalMoves.some(
+                m => m.card !== "Skip" && m.card !== "Rollback" && (!m.card || !m.card.isSkipCard)
+            );
+
             state.moveHistory.push({
                 type: ACTIONS.SKIP_TURN,
-                playerId: player.id
+                playerId: player.id,
+                hadLegalMove
             });
+
+            if (player.skipDisabledForCycle) {
+                player.skipDisabledForCycle = false;
+            }
 
             // Prevent infinite loop if NO active player has playable cards
             if (activeCount > 0 && state.consecutiveSkips >= activeCount) {
@@ -71,9 +92,19 @@ export function dispatchAction(state, action) {
                 state.consecutiveSkips = 0; // Reset so they can choose to rollback or keep going
                 state.isDeadlocked = true; 
 
+                // Penalize all players who skipped despite having a legal playable card
+                const recentSkips = state.moveHistory.slice(-activeCount);
+                for (const move of recentSkips) {
+                    if (move.type === ACTIONS.SKIP_TURN && move.hadLegalMove) {
+                        const guiltyPlayer = state.players.find(p => p.id === move.playerId);
+                        if (guiltyPlayer) {
+                            guiltyPlayer.skipDisabledForCycle = true;
+                        }
+                    }
+                }
+
                 if (state.cheatsEnabled && state.config.skipMode === "infinite") {
                     // Revert turn back to the last real player who skipped
-                    const recentSkips = state.moveHistory.slice(-activeCount);
                     for (let i = recentSkips.length - 1; i >= 0; i--) {
                         if (recentSkips[i].type === ACTIONS.SKIP_TURN) {
                             const p = state.players.find(x => x.id === recentSkips[i].playerId);
